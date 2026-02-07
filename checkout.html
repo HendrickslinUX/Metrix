@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — METRIX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">METRIX</a>
+      <nav class="nav">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#plans">Plans</a>
+        <a href="index.html" class="btn btn-ghost">Back to home</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="checkout-page">
+    <div class="checkout-inner">
+      <div class="checkout-main">
+        <h1>Complete your subscription</h1>
+        <p class="subtitle">Choose your plan and enter your payment details.</p>
+
+        <form class="checkout-form" id="checkout-form">
+          <div class="form-section">
+            <h3>Select plan</h3>
+            <div class="plan-selector" id="plan-selector">
+              <label class="plan-option" data-plan="freelance">
+                <span>
+                  <span class="name">Freelance Plan</span>
+                  <span class="desc">1 user · Up to 25 subscriptions</span>
+                </span>
+                <span class="price">£6.99 / month</span>
+              </label>
+              <label class="plan-option" data-plan="family">
+                <span>
+                  <span class="name">Family Plan</span>
+                  <span class="desc">Up to 5 users · Up to 75 subscriptions</span>
+                </span>
+                <span class="price">£14.99 / month</span>
+              </label>
+              <label class="plan-option" data-plan="small-business">
+                <span>
+                  <span class="name">Small Business Plan</span>
+                  <span class="desc">Up to 10 users · Up to 150 subscriptions</span>
+                </span>
+                <span class="price">£24.99 / month</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Contact</h3>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="you@company.com" required />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Payment</h3>
+            <div class="form-group">
+              <label for="card-name">Name on card</label>
+              <input type="text" id="card-name" name="card-name" placeholder="Full name" required />
+            </div>
+            <div class="form-group">
+              <label for="card-number">Card number</label>
+              <input type="text" id="card-number" name="card-number" placeholder="4242 4242 4242 4242" maxlength="19" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="card-exp">Expiry</label>
+                <input type="text" id="card-exp" name="card-exp" placeholder="MM/YY" maxlength="5" required />
+              </div>
+              <div class="form-group">
+                <label for="card-cvc">CVC</label>
+                <input type="text" id="card-cvc" name="card-cvc" placeholder="123" maxlength="4" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="country">Country</label>
+              <select id="country" name="country" required>
+                <option value="">Select country</option>
+                <option value="US">United States</option>
+                <option value="CA">Canada</option>
+                <option value="GB" selected>United Kingdom</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="AU">Australia</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <aside class="checkout-summary">
+        <h2>Order summary</h2>
+        <div class="summary-plan">
+          <div>
+            <strong id="summary-plan-name">Family Plan</strong>
+            <br /><span id="summary-plan-period" style="font-size: 0.875rem; color: var(--text-muted);">Monthly billing</span>
+          </div>
+          <a href="index.html#plans" class="change-link">Change</a>
+        </div>
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">£14.99 / month</span>
+        </div>
+        <div class="summary-line">
+          <span>Tax (estimated)</span>
+          <span id="summary-tax">£0</span>
+        </div>
+        <div class="summary-line total">
+          <span>Total</span>
+          <span id="summary-total">£14.99 / month</span>
+        </div>
+        <button type="submit" form="checkout-form" class="btn btn-primary">
+          Subscribe — <span id="summary-cta-total">£14.99 / month</span>
+        </button>
+        <p class="secure-note">🔒 Secure payment. Cancel anytime.</p>
+      </aside>
+    </div>
+  </div>
+
+  <script src="checkout.js"></script>
+</body>
+</html>
