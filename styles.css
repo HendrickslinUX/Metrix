@@ -298,6 +298,12 @@ a {
   padding: 80px 0 100px;
 }
 
+.plan-option {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
 .billing-toggle {
   display: flex;
   align-items: center;
@@ -762,3 +768,4 @@ a {
     gap: 24px;
   }
 }
+
