@@ -89,5 +89,38 @@
   </script>
 </body>
 </html>
+<script>
+  // Logout button
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    window.location.href = "admin.html";
+  });
+
+  // Get all buttons in the table
+  const table = document.querySelector("table tbody");
+
+  table.addEventListener("click", (e) => {
+    const target = e.target;
+    const row = target.closest("tr"); // the clicked user's row
+    const username = row ? row.cells[0].textContent : "";
+
+    if (target.textContent === "View Tasks") {
+      // Show mock tasks in an alert or modal
+      alert(`Tasks for ${username}:\n- Task 1: Completed\n- Task 2: Missed\n- Task 3: Pending`);
+    }
+
+    if (target.textContent === "Send Reminder") {
+      // Simulate sending reminder
+      alert(`Reminder sent to ${username}!`);
+    }
+
+    if (target.textContent === "Remove") {
+      if (confirm(`Are you sure you want to remove ${username}?`)) {
+        row.remove();
+        alert(`${username} has been removed.`);
+      }
+    }
+  });
+</script>
+
 
 
