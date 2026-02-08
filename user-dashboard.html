@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Metrix HardLine — User Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #ff7f50, #ff4500); margin:0; padding:0; color:#0b0b0b; }
-    header { background:#0b0b0b; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
-    header h1 { font-size:1.6rem; margin:0; }
-    header button { background:#ffd700; color:#0b0b0b; border:none; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; transition: background 0.2s; }
-    header button:hover { background:#e6c200; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metrix HardLine — User Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'DM Sans',sans-serif; background:#ff7f50; margin:0; padding:0; color:#0b0b0b; }
+  header { background:#0b0b0b; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
+  header h1 { font-size:1.4rem; margin:0; }
+  header button { background:#ffd700; color:#0b0b0b; border:none; padding:.5rem 1rem; border-radius:5px; cursor:pointer; font-weight:bold; }
 
-    .menu-drawer { position:fixed; top:0; right:-300px; width:300px; height:100%; background:#1a1a1a; color:white; padding:1rem; transition:right 0.3s; display:flex; flex-direction:column; z-index:100; }
-    .menu-drawer.open { right:0; }
-    .menu-drawer h2 { margin-top:0; margin-bottom:1rem; }
-    .menu-drawer button, .menu-drawer label { margin-bottom:1rem; font-weight:bold; }
+  .menu-drawer { position:fixed; top:0; right:-280px; width:280px; height:100%; background:#0b0b0b; color:white; padding:1rem; transition:right 0.3s; display:flex; flex-direction:column; z-index:100; }
+  .menu-drawer.open { right:0; }
+  .menu-drawer h2 { margin-top:0; margin-bottom:1rem; }
+  .menu-drawer button, .menu-drawer label { margin-bottom:1rem; font-weight:bold; cursor:pointer; }
 
-    .stats { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
-    .stat-card { flex:1; min-width:120px; background:#ffe4b5; padding:1rem; border-radius:15px; box-shadow:0 6px 12px rgba(0,0,0,0.25); text-align:center; color:#0b0b0b; font-weight:bold; transition: transform 0.2s; }
-    .stat-card:hover { transform: translateY(-3px); }
+  .menu-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); display:none; z-index:50; }
+  .menu-overlay.show { display:block; }
 
-    .calendar { display:grid; grid-template-columns: repeat(7,1fr); gap:6px; margin-bottom:2rem; }
-    .day { min-height:90px; border-radius:12px; padding:.5rem; display:flex; flex-direction:column; transition: transform 0.2s, box-shadow 0.2s; cursor:pointer; background:#ffdab9; }
-    .day:hover { transform: translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,0.3); }
-    .day-header { font-weight:bold; font-size:.9rem; margin-bottom:.3rem; color:#0b0b0b; text-align:center; }
+  .stats { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
+  .stat-card { flex:1; min-width:120px; background:#ffe4b5; padding:1rem; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); text-align:center; color:#0b0b0b; font-weight:bold; }
+  .stat-card h3 { margin-bottom:.5rem; }
 
-    .task { padding:.4rem .8rem; margin-bottom:.3rem; border-radius:10px; color:white; font-size:.85rem; font-weight:bold; text-align:center; transition: transform 0.2s; }
-    .task.Softy { background:#6c757d; }
-    .task.GrindMode { background:#ff9800; }
-    .task.HardLine { background:#d32f2f; }
-    .task:hover { transform: scale(1.08); }
+  .calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:2rem; }
+  .day { min-height:80px; background:#ffdab9; border-radius:10px; padding:.3rem; display:flex; flex-direction:column; transition: transform 0.2s, box-shadow 0.2s; position:relative; }
+  .day:hover { transform:translateY(-2px); box-shadow:0 6px 12px rgba(0,0,0,0.25); }
+  .day-header { font-weight:bold; font-size:.9rem; margin-bottom:.3rem; color:#0b0b0b; }
+  .task { padding:.3rem .6rem; margin-bottom:.3rem; border-radius:8px; color:white; font-size:.8rem; cursor:pointer; font-weight:bold; transition: transform 0.2s; }
+  .task:hover { transform: scale(1.05); }
+  .Softy { background:#6c757d; }
+  .GrindMode { background:#ff9800; }
+  .HardLine { background:#d32f2f; }
 
-    .task-form { margin-bottom:2rem; background:#fff3e0; padding:1.2rem; border-radius:20px; box-shadow:0 6px 15px rgba(0,0,0,0.25); }
-    .task-form input, .task-form select, .task-form button { margin-top:.6rem; display:block; width:100%; padding:.7rem; border-radius:12px; border:1px solid #ccc; font-weight:bold; }
-    .task-form input, .task-form select { background:white; }
-    .task-form button { background:#ff4500; color:white; border:none; cursor:pointer; transition: background 0.2s; }
-    .task-form button:hover { background:#e63900; }
+  .task-form { margin-bottom:2rem; background:#fff3e0; padding:1rem; border-radius:15px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+  .task-form input, .task-form select, .task-form button { margin-top:.5rem; display:block; width:100%; padding:.6rem; border-radius:10px; border:1px solid #ccc; font-weight:bold; }
+  .task-form input, .task-form select { background:white; }
+  .task-form button { background:#ff4500; color:white; border:none; cursor:pointer; font-weight:bold; transition: background 0.2s; }
+  .task-form button:hover { background:#e63900; }
 
-    .tooltip { position:fixed; top:10px; right:10px; background:#0b0b0b; color:white; padding:.7rem 1rem; border-radius:10px; font-size:.9rem; display:none; z-index:1000; box-shadow:0 6px 12px rgba(0,0,0,0.35); }
-  </style>
+  .tooltip { position:fixed; top:10px; right:10px; background:#0b0b0b; color:white; padding:.6rem; border-radius:8px; font-size:.85rem; display:none; z-index:1000; box-shadow:0 4px 8px rgba(0,0,0,0.3); }
+
+  .day input { font-size:.75rem; padding:.2rem; margin-top:2px; border-radius:5px; border:none; width:100%; }
+  .day .saveTaskBtn { background:#ff4500; color:white; border:none; border-radius:5px; cursor:pointer; padding:.2rem; font-size:.7rem; margin-top:2px; width:100%; }
+</style>
 </head>
 <body>
 
@@ -51,8 +55,11 @@
   </div>
 </header>
 
+<div class="menu-overlay" id="menuOverlay"></div>
+
 <div class="menu-drawer" id="menuDrawer">
   <h2>Menu</h2>
+  <button id="drawerClose">Close</button>
   <button id="drawerLogout">Logout</button>
   <div>
     <h3>Account Settings</h3>
@@ -94,6 +101,8 @@ const logoutBtn = document.getElementById('logoutBtn');
 const drawerLogout = document.getElementById('drawerLogout');
 const menuBtn = document.getElementById('menuBtn');
 const menuDrawer = document.getElementById('menuDrawer');
+const menuOverlay = document.getElementById('menuOverlay');
+const drawerClose = document.getElementById('drawerClose');
 const notifToggle = document.getElementById('notifToggle');
 const addTaskBtn = document.getElementById('addTaskBtn');
 const taskTitle = document.getElementById('taskTitle');
@@ -105,18 +114,26 @@ const tooltip = document.getElementById('tooltip');
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let stats = { total:0, completed:0, missed:0, currentStreak:0, longestStreak:0 };
 
-menuBtn.addEventListener('click', ()=>{ menuDrawer.classList.toggle('open'); });
+// ===== Menu drawer toggle
+function openMenu(){ menuDrawer.classList.add('open'); menuOverlay.classList.add('show'); }
+function closeMenu(){ menuDrawer.classList.remove('open'); menuOverlay.classList.remove('show'); }
+
+menuBtn.addEventListener('click', ()=>openMenu());
+drawerClose.addEventListener('click', ()=>closeMenu());
+menuOverlay.addEventListener('click', ()=>closeMenu());
 logoutBtn.addEventListener('click', ()=>{ window.location.href='userlogin.html'; });
 drawerLogout.addEventListener('click', ()=>{ window.location.href='userlogin.html'; });
 
+// ===== Notifications
 function showNotification(message){
   if(notifToggle.checked && 'Notification' in window){
     if(Notification.permission==='granted'){
-      new Notification('HardLine Coach', { body:message });
+      new Notification('HardLine Coach',{body:message});
     } else if(Notification.permission!=='denied'){ Notification.requestPermission(); }
   }
 }
 
+// ===== Stats
 function updateStats() {
   const today = new Date().toISOString().split('T')[0];
   stats.total = tasks.length;
@@ -139,6 +156,7 @@ function calculateStreak(tasks){
   return streak;
 }
 
+// ===== Calendar render
 function renderCalendar() {
   calendar.innerHTML='';
   const start = new Date(); start.setDate(1);
@@ -148,12 +166,13 @@ function renderCalendar() {
   while(current <= end){
     const day = document.createElement('div');
     day.className='day';
-    day.dataset.date = current.toISOString().split('T')[0];
+    day.dataset.date=current.toISOString().split('T')[0];
     const header = document.createElement('div');
     header.className='day-header';
     header.textContent=current.toLocaleDateString(undefined,{day:'numeric',month:'short'});
     day.appendChild(header);
 
+    // Existing tasks
     tasks.filter(t=>t.deadline===day.dataset.date).forEach(t=>{
       const taskDiv=document.createElement('div');
       taskDiv.className=`task ${t.intensity}`;
@@ -162,7 +181,7 @@ function renderCalendar() {
       taskDiv.dataset.intensity=t.intensity;
       taskDiv.dataset.deadline=t.deadline;
       taskDiv.addEventListener('click', e=>{
-        t.completed = !t.completed;
+        t.completed=!t.completed;
         localStorage.setItem('tasks',JSON.stringify(tasks));
         updateStats();
         renderCalendar();
@@ -172,11 +191,28 @@ function renderCalendar() {
       day.appendChild(taskDiv);
     });
 
+    // Direct input for new task
+    const input = document.createElement('input');
+    input.placeholder='New task...';
+    input.addEventListener('keydown', e=>{
+      if(e.key==='Enter' && input.value.trim()){
+        const newTask={ title:input.value.trim(), deadline:day.dataset.date, intensity:taskIntensity.value, completed:false };
+        tasks.push(newTask);
+        localStorage.setItem('tasks',JSON.stringify(tasks));
+        input.value='';
+        updateStats();
+        renderCalendar();
+        showNotification(`${newTask.intensity} Coach: Task '${newTask.title}' added!`);
+      }
+    });
+    day.appendChild(input);
+
     calendar.appendChild(day);
     current.setDate(current.getDate()+1);
   }
 }
 
+// ===== Tooltip
 function showTooltip(task,e){
   const messages = {
     Softy:['Keep going, you got this!','Small steps count.','Do what you can, stay consistent.'],
@@ -191,13 +227,15 @@ function showTooltip(task,e){
   setTimeout(()=>tooltip.style.display='none',2000);
 }
 
+// ===== Add task button
 addTaskBtn.addEventListener('click',()=>{
-  if(!taskTitle.value || !taskDeadline.value) return alert('Please fill all fields');
+  if(!taskTitle.value||!taskDeadline.value) return alert('Please fill all fields');
   tasks.push({ title:taskTitle.value, deadline:taskDeadline.value, intensity:taskIntensity.value, completed:false });
   localStorage.setItem('tasks',JSON.stringify(tasks));
   taskTitle.value=''; taskDeadline.value=''; taskIntensity.value='Softy';
   updateStats();
   renderCalendar();
+  showNotification(`${taskIntensity.value} Coach: Task added!`);
 });
 
 updateStats();
@@ -206,5 +244,6 @@ renderCalendar();
 
 </body>
 </html>
+
 
 
