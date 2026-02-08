@@ -12,16 +12,7 @@
   <meta name="theme-color" content="#0b0b0b">
 </head>
 <body>
-  <!-- All your page content goes here -->
-
-  <!-- Register the service worker -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js");
-    }
-  </script>
-</body>
-</html>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
       <a href="/" class="logo">Metrix HardLine</a>
@@ -29,8 +20,9 @@
         <a href="#how-it-works">How it works</a>
         <a href="#pricing">Pricing</a>
         <a href="#who-its-for">Who it's for</a>
-        <a href="#faq">FAQ</a>
         <a href="https://buy.stripe.com/aFa5kC7X48rX2tE8HJ6Vq04" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">Get started</a>
+        <!-- Login button -->
+        <a href="login.html" class="btn btn-primary">Login</a>
       </nav>
       <button type="button" class="menu-toggle" aria-label="Open menu">
         <span></span><span></span><span></span>
@@ -38,6 +30,7 @@
     </div>
   </header>
 
+  <!-- Hero Section -->
   <main>
     <section class="hero">
       <div class="hero-bg"></div>
@@ -56,10 +49,13 @@
         <div class="hero-actions">
           <a href="https://buy.stripe.com/aFa5kC7X48rX2tE8HJ6Vq04" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Start now</a>
           <a href="#how-it-works" class="btn btn-outline">How it works</a>
+          <!-- Hero Login button -->
+          <a href="login.html" class="btn btn-primary hero-btn">Login</a>
         </div>
       </div>
     </section>
 
+    <!-- How it works -->
     <section id="how-it-works" class="how-it-works">
       <div class="container">
         <h2 class="section-title">How it works</h2>
@@ -83,6 +79,7 @@
       </div>
     </section>
 
+    <!-- Features Section -->
     <section id="features" class="features">
       <div class="container">
         <h2 class="section-title">What you get</h2>
@@ -117,6 +114,7 @@
       </div>
     </section>
 
+    <!-- Who it's for -->
     <section id="who-its-for" class="who-its-for">
       <div class="container narrow">
         <h2 class="section-title">Who this is for</h2>
@@ -133,6 +131,7 @@
       </div>
     </section>
 
+    <!-- Pricing Section -->
     <section id="pricing" class="plans">
       <div class="container">
         <h2 class="section-title">Pricing</h2>
@@ -158,6 +157,7 @@
       </div>
     </section>
 
+    <!-- FAQ Section -->
     <section id="faq" class="faq">
       <div class="container narrow">
         <h2 class="section-title">Frequently asked questions</h2>
@@ -179,6 +179,7 @@
     </section>
   </main>
 
+  <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-inner">
       <a href="/" class="logo">Metrix HardLine</a>
@@ -187,13 +188,21 @@
         <a href="#pricing">Pricing</a>
         <a href="#who-its-for">Who it's for</a>
         <a href="https://buy.stripe.com/aFa5kC7X48rX2tE8HJ6Vq04" target="_blank" rel="noopener noreferrer">Get started</a>
+        <a href="login.html">Login</a>
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
       </div>
-      <p class="footer-copy">© 2025 Metrix HardLine. All rights reserved.</p>
+      <p class="footer-copy">© 2026 Metrix HardLine. All rights reserved.</p>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="script.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  </script>
 </body>
 </html>
+
