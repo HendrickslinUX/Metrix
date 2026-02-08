@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrix HardLine — Admin Dashboard</title>
+  <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <h1>Welcome, Admin!</h1>
+    <p>This is the Metrix HardLine admin dashboard.</p>
+    
+    <ul>
+      <li>View users / subscribers (coming soon)</li>
+      <li>Monitor tasks and deadlines</li>
+      <li>Adjust app settings</li>
+    </ul>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    function logout() {
+      // Redirect back to admin login
+      window.location.href = "admin.html";
+    }
+  </script>
+</body>
+</html>
