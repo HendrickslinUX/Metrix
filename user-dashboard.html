@@ -4,207 +4,173 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Metrix HardLine — User Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* ----- General ----- */
-    body { font-family: 'DM Sans', sans-serif; margin:0; padding:0; background:#f8f9fa; }
-    header { background:#0b0b0b; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; }
-    header h1 { margin:0; font-size:1.2rem; }
-    header button { background:#ff4b5c; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; }
-    main { padding:20px; }
+    /* ====== Base Styles ====== */
+    body { font-family: 'DM Sans', sans-serif; background: #f8f9fa; margin:0; padding:0; color:#0b0b0b; }
+    header { background:#0b0b0b; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { font-size:1.4rem; margin:0; }
+    header button { background:#ff4b5c; color:white; border:none; padding:.5rem 1rem; border-radius:5px; cursor:pointer; }
+    main { padding:1rem; }
+    h2 { margin-top:0; }
 
-    /* ----- Task Form ----- */
-    .task-section { display:flex; flex-direction:column; gap:20px; }
-    .task-form { background:white; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-    .task-form h2 { margin-top:0; }
-    .task-form label { display:block; margin-top:10px; }
-    .task-form input, .task-form select { width:100%; padding:8px; margin-top:5px; border-radius:4px; border:1px solid #ccc; }
-    .task-form button { margin-top:15px; padding:10px 15px; border:none; border-radius:5px; background:#0b0b0b; color:white; cursor:pointer; }
+    /* ====== Stats ====== */
+    .stats { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
+    .stat-card { flex:1; min-width:120px; background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); text-align:center; }
+    .stat-card h3 { margin-bottom:.5rem; }
 
-    /* ----- Calendar ----- */
-    .calendar { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:20px; }
-    .month { background:white; border-radius:8px; box-shadow:0 0 5px rgba(0,0,0,0.1); padding:10px; }
-    .month h3 { margin-top:0; text-align:center; font-size:1rem; }
-    .days { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; font-size:0.8rem; }
-    .day { min-height:80px; background:#f4f4f4; border-radius:4px; position:relative; padding:2px; }
-    .day h4 { margin:0; font-size:0.7rem; }
-    .task-item { padding:2px 4px; border-radius:3px; font-size:0.75rem; color:white; margin-top:2px; cursor:pointer; }
-    .softy { background:#6c757d; }
-    .grindmode { background:#ff9800; }
-    .hardline { background:#d32f2f; }
+    /* ====== Calendar ====== */
+    .calendar { display:grid; grid-template-columns: repeat(7,1fr); gap:2px; margin-bottom:2rem; }
+    .day { min-height:80px; background:white; border-radius:5px; padding:.2rem; display:flex; flex-direction:column; }
+    .day-header { font-weight:bold; font-size:.9rem; margin-bottom:.2rem; }
+    .task { padding:.2rem .4rem; margin-bottom:.2rem; border-radius:5px; color:white; font-size:.8rem; cursor:pointer; }
+    .Softy { background:#6c757d; }
+    .GrindMode { background:#ff9800; }
+    .HardLine { background:#d32f2f; }
 
-    /* ----- Tooltip ----- */
-    .task-item:hover::after {
-      content: attr(data-msg);
-      position:absolute;
-      background:#333; color:white; padding:5px; border-radius:5px;
-      top:-35px; left:0; white-space:nowrap; z-index:100;
-      font-size:0.75rem;
-    }
+    /* ====== Task Form ====== */
+    .task-form { margin-bottom:2rem; background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+    .task-form input, .task-form select, .task-form button { margin-top:.5rem; display:block; width:100%; padding:.5rem; border-radius:5px; border:1px solid #ccc; }
+    .task-form button { background:#0d6efd; color:white; border:none; cursor:pointer; }
 
-    /* ----- Streaks & Stats ----- */
-    .stats { display:flex; gap:15px; margin-top:20px; }
-    .stat-card { flex:1; background:white; padding:10px; border-radius:5px; box-shadow:0 0 5px rgba(0,0,0,0.1); text-align:center; }
+    /* ====== Modal Tooltip ====== */
+    .tooltip { position:absolute; background:#0b0b0b; color:white; padding:.5rem; border-radius:5px; font-size:.8rem; display:none; z-index:1000; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Metrix HardLine Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
-  </header>
 
-  <main>
-    <section class="task-section">
-      <div class="task-form">
-        <h2>Create Task</h2>
-        <label for="taskName">Task Name:</label>
-        <input type="text" id="taskName" placeholder="Enter task name">
+<header>
+  <h1>Metrix HardLine Dashboard</h1>
+  <button id="logoutBtn">Logout</button>
+</header>
 
-        <label for="taskDeadline">Deadline (max 3 months from today):</label>
-        <input type="date" id="taskDeadline">
+<main>
+  <section class="stats">
+    <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
+    <div class="stat-card"><h3>Completed Tasks</h3><p id="completedTasks">0</p></div>
+    <div class="stat-card"><h3>Missed Tasks</h3><p id="missedTasks">0</p></div>
+    <div class="stat-card"><h3>Current Streak</h3><p id="currentStreak">0</p></div>
+    <div class="stat-card"><h3>Longest Streak</h3><p id="longestStreak">0</p></div>
+  </section>
 
-        <label for="taskIntensity">Coach Intensity:</label>
-        <select id="taskIntensity">
-          <option value="softy">Softy (Level 1)</option>
-          <option value="grindmode">GrindMode (Level 2)</option>
-          <option value="hardline">HardLine (Level 3)</option>
-        </select>
+  <section class="task-form">
+    <h2>Create Task</h2>
+    <input type="text" id="taskTitle" placeholder="Task Title" required>
+    <input type="date" id="taskDeadline" required>
+    <select id="taskIntensity">
+      <option value="Softy">Softy (Easy)</option>
+      <option value="GrindMode">GrindMode (Medium)</option>
+      <option value="HardLine">HardLine (Hard)</option>
+    </select>
+    <button id="addTaskBtn">Add Task</button>
+  </section>
 
-        <button id="addTaskBtn">Add Task</button>
-      </div>
+  <section class="calendar" id="calendar"></section>
 
-      <div class="stats">
-        <div class="stat-card">
-          <h4>Total Tasks</h4>
-          <p id="totalTasks">0</p>
-        </div>
-        <div class="stat-card">
-          <h4>Completed Tasks</h4>
-          <p id="completedTasks">0</p>
-        </div>
-        <div class="stat-card">
-          <h4>Missed Tasks</h4>
-          <p id="missedTasks">0</p>
-        </div>
-      </div>
+  <div class="tooltip" id="tooltip"></div>
+</main>
 
-      <div class="calendar-section">
-        <h2>Calendar (3 Years Max)</h2>
-        <div class="calendar" id="calendar"></div>
-      </div>
-    </section>
-  </main>
+<script>
+  // ====== Setup ======
+  const logoutBtn = document.getElementById('logoutBtn');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  const taskTitle = document.getElementById('taskTitle');
+  const taskDeadline = document.getElementById('taskDeadline');
+  const taskIntensity = document.getElementById('taskIntensity');
+  const calendar = document.getElementById('calendar');
+  const tooltip = document.getElementById('tooltip');
 
-  <script>
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      window.location.href = "userlogin.html";
-    });
+  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+  let stats = { total:0, completed:0, missed:0, currentStreak:0, longestStreak:0 };
 
-    // Tasks array
-    let tasks = JSON.parse(localStorage.getItem("userTasks")) || [];
+  logoutBtn.addEventListener('click', ()=>{ window.location.href='userlogin.html'; });
 
-    const calendarEl = document.getElementById("calendar");
-    const totalEl = document.getElementById("totalTasks");
-    const completedEl = document.getElementById("completedTasks");
-    const missedEl = document.getElementById("missedTasks");
-    const addTaskBtn = document.getElementById("addTaskBtn");
+  // ====== Helper Functions ======
+  function updateStats() {
+    const today = new Date().toISOString().split('T')[0];
+    stats.total = tasks.length;
+    stats.completed = tasks.filter(t=>t.completed).length;
+    stats.missed = tasks.filter(t=>!t.completed && t.deadline<today).length;
+    stats.currentStreak = calculateStreak(tasks);
+    stats.longestStreak = Math.max(stats.longestStreak, stats.currentStreak);
 
-    const coachMessages = {
-      softy: [
-        "Keep going! Small wins matter.",
-        "Nice effort! Stay consistent.",
-        "Remember your commitment!"
-      ],
-      grindmode: [
-        "Focus! Deadlines don't wait.",
-        "Push harder, you can do it!",
-        "No excuses, stay disciplined!"
-      ],
-      hardline: [
-        "Absolute commitment! No compromise!",
-        "Missed deadlines are unacceptable!",
-        "Discipline is non-negotiable!"
-      ]
-    };
+    document.getElementById('totalTasks').textContent = stats.total;
+    document.getElementById('completedTasks').textContent = stats.completed;
+    document.getElementById('missedTasks').textContent = stats.missed;
+    document.getElementById('currentStreak').textContent = stats.currentStreak;
+    document.getElementById('longestStreak').textContent = stats.longestStreak;
+  }
 
-    // Render calendar and tasks
-    function renderCalendar() {
-      calendarEl.innerHTML = "";
-      const today = new Date();
-      const startYear = today.getFullYear();
-      const startMonth = today.getMonth();
+  function calculateStreak(tasks){
+    const sorted = [...tasks].sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+    let streak = 0, maxStreak=0;
+    sorted.forEach(t=>{ if(t.completed) streak++; else streak=0; maxStreak=Math.max(maxStreak,streak); });
+    return streak;
+  }
 
-      for(let m=0; m<36; m++) { // 3 years
-        const monthDate = new Date(startYear, startMonth + m, 1);
-        const monthDiv = document.createElement("div");
-        monthDiv.classList.add("month");
-        monthDiv.innerHTML = `<h3>${monthDate.toLocaleString('default', {month:'short', year:'numeric'})}</h3>`;
-        const daysDiv = document.createElement("div");
-        daysDiv.classList.add("days");
+  function renderCalendar() {
+    calendar.innerHTML='';
+    const start = new Date();
+    start.setDate(1);
+    const end = new Date();
+    end.setMonth(start.getMonth()+12*3); // 3 year calendar
 
-        const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 0).getDate();
-        for(let d=1; d<=daysInMonth; d++){
-          const dayDiv = document.createElement("div");
-          dayDiv.classList.add("day");
-          dayDiv.innerHTML = `<h4>${d}</h4>`;
-
-          tasks.forEach(t => {
-            const tDate = new Date(t.deadline);
-            if(tDate.getFullYear()===monthDate.getFullYear() && tDate.getMonth()===monthDate.getMonth() && tDate.getDate()===d){
-              const taskEl = document.createElement("div");
-              taskEl.classList.add("task-item", t.intensity);
-              taskEl.textContent = t.name;
-              taskEl.setAttribute("data-msg", coachMessages[t.intensity][Math.floor(Math.random()*3)]);
-              dayDiv.appendChild(taskEl);
-            }
-          });
-
-          daysDiv.appendChild(dayDiv);
-        }
-
-        monthDiv.appendChild(daysDiv);
-        calendarEl.appendChild(monthDiv);
-      }
-
-      updateStats();
-    }
-
-    // Update statistics
-    function updateStats() {
-      totalEl.textContent = tasks.length;
-      const today = new Date();
-      let completed=0, missed=0;
-      tasks.forEach(t=>{
-        const tDate = new Date(t.deadline);
-        if(t.completed) completed++;
-        else if(tDate < today) missed++;
+    let current = new Date(start);
+    while(current <= end){
+      const day = document.createElement('div');
+      day.className='day';
+      day.dataset.date = current.toISOString().split('T')[0];
+      const header = document.createElement('div');
+      header.className='day-header';
+      header.textContent=current.toLocaleDateString(undefined,{day:'numeric',month:'short'});
+      day.appendChild(header);
+      tasks.filter(t=>t.deadline===day.dataset.date).forEach(t=>{
+        const taskDiv=document.createElement('div');
+        taskDiv.className=`task ${t.intensity}`;
+        taskDiv.textContent=t.title;
+        taskDiv.dataset.title=t.title;
+        taskDiv.dataset.intensity=t.intensity;
+        taskDiv.dataset.deadline=t.deadline;
+        taskDiv.addEventListener('click', e=>{
+          t.completed = !t.completed;
+          localStorage.setItem('tasks',JSON.stringify(tasks));
+          updateStats();
+          renderCalendar();
+          showTooltip(t,e);
+        });
+        day.appendChild(taskDiv);
       });
-      completedEl.textContent = completed;
-      missedEl.textContent = missed;
+      calendar.appendChild(day);
+      current.setDate(current.getDate()+1);
     }
+  }
 
-    // Add task
-    addTaskBtn.addEventListener("click", ()=>{
-      const name = document.getElementById("taskName").value.trim();
-      const deadline = document.getElementById("taskDeadline").value;
-      const intensity = document.getElementById("taskIntensity").value;
+  function showTooltip(task,e){
+    const messages = {
+      Softy:['Keep going, you got this!','Small steps count.','Do what you can, stay consistent.'],
+      GrindMode:['Focus! Deadlines are serious.','Grind hard! Stay on track.','No excuses, complete it now!'],
+      HardLine:['Absolute commitment required!','No negotiation, finish this task!','HardLine intensity: finish or face consequences!']
+    };
+    const arr=messages[task.intensity];
+    tooltip.textContent=arr[Math.floor(Math.random()*arr.length)];
+    tooltip.style.top=`${e.clientY+10}px`;
+    tooltip.style.left=`${e.clientX+10}px`;
+    tooltip.style.display='block';
+    setTimeout(()=>tooltip.style.display='none',2000);
+  }
 
-      if(!name || !deadline) return alert("Fill all fields");
-      const maxDate = new Date();
-      maxDate.setMonth(maxDate.getMonth()+3);
-      if(new Date(deadline)>maxDate) return alert("Deadline max 3 months from today");
-
-      tasks.push({ name, deadline, intensity, completed:false });
-      localStorage.setItem("userTasks", JSON.stringify(tasks));
-
-      document.getElementById("taskName").value="";
-      document.getElementById("taskDeadline").value="";
-
-      renderCalendar();
-    });
-
+  addTaskBtn.addEventListener('click',()=>{
+    if(!taskTitle.value || !taskDeadline.value) return alert('Please fill all fields');
+    tasks.push({ title:taskTitle.value, deadline:taskDeadline.value, intensity:taskIntensity.value, completed:false });
+    localStorage.setItem('tasks',JSON.stringify(tasks));
+    taskTitle.value=''; taskDeadline.value=''; taskIntensity.value='Softy';
+    updateStats();
     renderCalendar();
-  </script>
+  });
+
+  // ====== Initialize ======
+  updateStats();
+  renderCalendar();
+</script>
 </body>
 </html>
