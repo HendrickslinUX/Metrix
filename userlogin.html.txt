@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrix HardLine — User Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>User Login</h2>
+    <form id="userLoginForm">
+      <label for="username">Username or Email:</label>
+      <input type="text" id="username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+    <p id="errorMsg" style="color:red;"></p>
+    <p style="margin-top:10px;">Don't have an account? Contact the admin.</p>
+  </div>
+
+  <script>
+    // Example user credentials (replace with database/API later)
+    const users = [
+      { username: "student01", password: "pass123" },
+      { username: "student02", password: "password" },
+      { username: "student03", password: "hardline" }
+    ];
+
+    const form = document.getElementById("userLoginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const usernameInput = document.getElementById("username").value.trim();
+      const passwordInput = document.getElementById("password").value;
+
+      const user = users.find(u => u.username === usernameInput);
+
+      if(user && user.password === passwordInput) {
+        // Login successful → redirect to user dashboard
+        window.location.href = "dashboard.html"; // Create this next
+      } else {
+        errorMsg.textContent = "Invalid username or password";
+      }
+    });
+  </script>
+</body>
+</html>
