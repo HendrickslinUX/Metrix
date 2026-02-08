@@ -7,24 +7,87 @@
   <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body>
-  <div class="dashboard-container">
-    <h1>Welcome, Admin!</h1>
-    <p>This is the Metrix HardLine admin dashboard.</p>
-    
-    <ul>
-      <li>View users / subscribers (coming soon)</li>
-      <li>Monitor tasks and deadlines</li>
-      <li>Adjust app settings</li>
-    </ul>
+  <header>
+    <h1>Metrix HardLine Admin Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
 
-    <button onclick="logout()">Logout</button>
-  </div>
+  <main>
+    <!-- Task Statistics Section -->
+    <section class="stats">
+      <div class="stat-card">
+        <h3>Total Tasks</h3>
+        <p>120</p>
+      </div>
+      <div class="stat-card">
+        <h3>Completed Tasks</h3>
+        <p>95</p>
+      </div>
+      <div class="stat-card">
+        <h3>Missed Tasks</h3>
+        <p>25</p>
+      </div>
+    </section>
+
+    <!-- Users Section -->
+    <section class="users">
+      <h2>Users / Subscribers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Subscription</th>
+            <th>Last Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>student01</td>
+            <td>s01@email.com</td>
+            <td>Active</td>
+            <td>2026-02-05</td>
+            <td>
+              <button>View Tasks</button>
+              <button>Send Reminder</button>
+              <button>Remove</button>
+            </td>
+          </tr>
+          <tr>
+            <td>student02</td>
+            <td>s02@email.com</td>
+            <td>Expired</td>
+            <td>2026-02-03</td>
+            <td>
+              <button>View Tasks</button>
+              <button>Send Reminder</button>
+              <button>Remove</button>
+            </td>
+          </tr>
+          <tr>
+            <td>student03</td>
+            <td>s03@email.com</td>
+            <td>Active</td>
+            <td>2026-02-06</td>
+            <td>
+              <button>View Tasks</button>
+              <button>Send Reminder</button>
+              <button>Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
   <script>
-    function logout() {
-      // Redirect back to admin login
+    // Logout button redirects back to login page
+    document.getElementById("logoutBtn").addEventListener("click", () => {
       window.location.href = "admin.html";
-    }
+    });
   </script>
 </body>
 </html>
+
+
