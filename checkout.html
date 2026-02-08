@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout — METRIX</title>
+  <title>Checkout — Metrix HardLine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,10 +12,10 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <a href="index.html" class="logo">METRIX</a>
+      <a href="index.html" class="logo">Metrix HardLine</a>
       <nav class="nav">
-        <a href="index.html#features">Features</a>
-        <a href="index.html#plans">Plans</a>
+        <a href="index.html#how-it-works">How it works</a>
+        <a href="index.html#pricing">Pricing</a>
         <a href="index.html" class="btn btn-ghost">Back to home</a>
       </nav>
     </div>
@@ -24,42 +24,17 @@
   <div class="checkout-page">
     <div class="checkout-inner">
       <div class="checkout-main">
-        <h1>Complete your subscription</h1>
-        <p class="subtitle">Choose your plan and enter your payment details.</p>
+        <h1>Complete your commitment</h1>
+        <p class="subtitle">Enter your details. One plan. £8.99 per month.</p>
 
         <form class="checkout-form" id="checkout-form">
-          <div class="form-section">
-            <h3>Select plan</h3>
-            <div class="plan-selector" id="plan-selector">
-              <label class="plan-option" data-plan="freelance">
-                <span>
-                 <a href="https://buy.stripe.com/dRmeVc5OWaA53xI2jl6Vq01" class="plan-option" target="_self">
-  <span class="name">Freelance Plan</span>
-  <span class="desc">1 user · Up to 25 subscriptions</span>
-  <span class="price">£6.99 / month</span>
-</a
-             <label class="plan-option" data-plan="family">
-                <span>
-                  <span class="name">Family Plan</span>
-                  <span class="desc">Up to 5 users · Up to 75 subscriptions</span>
-                </span>
-                <span class="price">£14.99 / month</span>
-              </label>
-              <label class="plan-option" data-plan="small-business">
-                <span>
-                  <span class="name">Small Business Plan</span>
-                  <span class="desc">Up to 10 users · Up to 150 subscriptions</span>
-                </span>
-                <span class="price">£24.99 / month</span>
-              </label>
-            </div>
-          </div>
+          <input type="hidden" name="plan" value="hardline" />
 
           <div class="form-section">
             <h3>Contact</h3>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" name="email" placeholder="you@company.com" required />
+              <input type="email" id="email" name="email" placeholder="you@university.ac.uk" required />
             </div>
           </div>
 
@@ -104,14 +79,14 @@
         <h2>Order summary</h2>
         <div class="summary-plan">
           <div>
-            <strong id="summary-plan-name">Family Plan</strong>
-            <br /><span id="summary-plan-period" style="font-size: 0.875rem; color: var(--text-muted);">Monthly billing</span>
+            <strong id="summary-plan-name">Metrix HardLine</strong>
+            <br /><span id="summary-plan-period" style="font-size: 0.875rem; color: var(--text-muted);">Monthly billing. All features.</span>
           </div>
-          <a href="index.html#plans" class="change-link">Change</a>
+          <a href="index.html#pricing" class="change-link">Change</a>
         </div>
         <div class="summary-line">
           <span>Subtotal</span>
-          <span id="summary-subtotal">£14.99 / month</span>
+          <span id="summary-subtotal">£8.99 / month</span>
         </div>
         <div class="summary-line">
           <span>Tax (estimated)</span>
@@ -119,12 +94,12 @@
         </div>
         <div class="summary-line total">
           <span>Total</span>
-          <span id="summary-total">£14.99 / month</span>
+          <span id="summary-total">£8.99 / month</span>
         </div>
         <button type="submit" form="checkout-form" class="btn btn-primary">
-          Subscribe — <span id="summary-cta-total">£14.99 / month</span>
+          Subscribe — <span id="summary-cta-total">£8.99 / month</span>
         </button>
-        <p class="secure-note">🔒 Secure payment. Cancel anytime.</p>
+        <p class="secure-note">Secure payment. Cancel anytime.</p>
       </aside>
     </div>
   </div>
@@ -132,4 +107,3 @@
   <script src="checkout.js"></script>
 </body>
 </html>
-
