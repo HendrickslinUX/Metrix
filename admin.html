@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrix HardLine — Admin Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <form id="adminLoginForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" required>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" required>
+      
+      <button type="submit">Login</button>
+    </form>
+    <p id="errorMsg" style="color:red;"></p>
+  </div>
+
+  <script>
+    const adminUsername = "admin";  // change to your admin username
+    const adminPassword = "hardline123";  // change to your strong password
+
+    const form = document.getElementById("adminLoginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if(username === adminUsername && password === adminPassword) {
+        // login successful → redirect to admin dashboard
+        window.location.href = "admin-dashboard.html"; // create this page next
+      } else {
+        errorMsg.textContent = "Invalid username or password";
+      }
+    });
+  </script>
+</body>
+</html>
+
 
