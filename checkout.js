@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PRICE = 8.99;
+  var PRICE = 4.99;
   var display = '£' + PRICE.toFixed(2) + ' / month';
 
   document.getElementById('checkout-form').addEventListener('submit', function (e) {
