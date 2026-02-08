@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Metrix HardLine Admin Dashboard">
+    <title>Admin Dashboard - Metrix HardLine</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">Metrix HardLine</h1>
+            <div class="header-actions">
+                <span class="admin-badge">Admin Portal</span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-link active" onclick="showSection('dashboard')">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#users" class="nav-link" onclick="showSection('users')">
+                    <span class="nav-icon">👥</span>
+                    <span>Users</span>
+                </a>
+                <a href="#tasks" class="nav-link" onclick="showSection('tasks')">
+                    <span class="nav-icon">✓</span>
+                    <span>Tasks</span>
+                </a>
+                <a href="#settings" class="nav-link" onclick="showSection('settings')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section active">
+                <div class="section-header">
+                    <h2>Dashboard Overview</h2>
+                    <p class="section-subtitle">Monitor user activity and task performance</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">1,247</h3>
+                            <p class="stat-label">Total Tasks</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">✓</div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">892</h3>
+                            <p class="stat-label">Completed Tasks</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">⚠</div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">355</h3>
+                            <p class="stat-label">Missed Tasks</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info">👥</div>
+                        <div class="stat-content">
+                            <h3 class="stat-number">127</h3>
+                            <p class="stat-label">Active Users</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>User Management</h3>
+                        <button class="btn btn-primary" onclick="alert('Add user functionality coming soon')">+ Add User</button>
+                    </div>
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Subscription Status</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>john_smith</strong></td>
+                                <td>john.smith@university.ac.uk</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td>2 hours ago</td>
+                                <td class="actions">
+                                    <button class="btn-action btn-view" onclick="viewTasks('john_smith')">View Tasks</button>
+                                    <button class="btn-action btn-reminder" onclick="sendReminder('john_smith')">Send Reminder</button>
+                                    <button class="btn-action btn-remove" onclick="removeUser('john_smith')">Remove</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>emma_wilson</strong></td>
+                                <td>emma.wilson@student.cam.ac.uk</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td>5 hours ago</td>
+                                <td class="actions">
+                                    <button class="btn-action btn-view" onclick="viewTasks('emma_wilson')">View Tasks</button>
+                                    <button class="btn-action btn-reminder" onclick="sendReminder('emma_wilson')">Send Reminder</button>
+                                    <button class="btn-action btn-remove" onclick="removeUser('emma_wilson')">Remove</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>alex_chen</strong></td>
+                                <td>alex.chen@ox.ac.uk</td>
+                                <td><span class="badge badge-inactive">Inactive</span></td>
+                                <td>3 days ago</td>
+                                <td class="actions">
+                                    <button class="btn-action btn-view" onclick="viewTasks('alex_chen')">View Tasks</button>
+                                    <button class="btn-action btn-reminder" onclick="sendReminder('alex_chen')">Send Reminder</button>
+                                    <button class="btn-action btn-remove" onclick="removeUser('alex_chen')">Remove</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>sarah_martinez</strong></td>
+                                <td>sarah.m@imperial.ac.uk</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td>1 day ago</td>
+                                <td class="actions">
+                                    <button class="btn-action btn-view" onclick="viewTasks('sarah_martinez')">View Tasks</button>
+                                    <button class="btn-action btn-reminder" onclick="sendReminder('sarah_martinez')">Send Reminder</button>
+                                    <button class="btn-action btn-remove" onclick="removeUser('sarah_martinez')">Remove</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>david_brown</strong></td>
+                                <td>d.brown@ucl.ac.uk</td>
+                                <td><span class="badge badge-trial">Trial</span></td>
+                                <td>30 minutes ago</td>
+                                <td class="actions">
+                                    <button class="btn-action btn-view" onclick="viewTasks('david_brown')">View Tasks</button>
+                                    <button class="btn-action btn-reminder" onclick="sendReminder('david_brown')">Send Reminder</button>
+                                    <button class="btn-action btn-remove" onclick="removeUser('david_brown')">Remove</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>lisa_patel</strong></td>
+                                <td>lisa.patel@manchester.ac.uk</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td>6 hours ago</td>
+                                <td class="actions">
+                                    <button class="btn-action btn-view" onclick="viewTasks('lisa_patel')">View Tasks</button>
+                                    <button class="btn-action btn-reminder" onclick="sendReminder('lisa_patel')">Send Reminder</button>
+                                    <button class="btn-action btn-remove" onclick="removeUser('lisa_patel')">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Users Section (Placeholder) -->
+            <section id="users-section" class="section">
+                <div class="section-header">
+                    <h2>Users</h2>
+                    <p class="section-subtitle">Manage all platform users</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>User management interface coming soon.</p>
+                </div>
+            </section>
+
+            <!-- Tasks Section (Placeholder) -->
+            <section id="tasks-section" class="section">
+                <div class="section-header">
+                    <h2>Tasks</h2>
+                    <p class="section-subtitle">View and manage all tasks</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>Task management interface coming soon.</p>
+                </div>
+            </section>
+
+            <!-- Settings Section (Placeholder) -->
+            <section id="settings-section" class="section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                    <p class="section-subtitle">Configure platform settings</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>Settings interface coming soon.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'admin-login.html';
+            }
+        });
+
+        // Logout function
+        function logout() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            sessionStorage.removeItem('adminUsername');
+            window.location.href = 'admin-login.html';
+        }
+
+        // Navigation function
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Add active class to clicked nav link
+            event.currentTarget.classList.add('active');
+        }
+
+        // User action functions
+        function viewTasks(username) {
+            alert(`Viewing tasks for: ${username}\n\nThis feature will show all tasks assigned to this user.`);
+        }
+
+        function sendReminder(username) {
+            if (confirm(`Send accountability reminder to ${username}?`)) {
+                alert(`Reminder sent to ${username}. No exceptions.`);
+            }
+        }
+
+        function removeUser(username) {
+            if (confirm(`Are you sure you want to remove user: ${username}?\n\nThis action cannot be undone.`)) {
+                alert(`User ${username} has been removed from the system.`);
+                // In a real app, this would remove the row from the table
+            }
+        }
+    </script>
+</body>
+</html>
