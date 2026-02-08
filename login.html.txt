@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrix HardLine — Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Metrix HardLine Login</h2>
+
+    <form id="loginForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="errorMsg" style="color:red;"></p>
+  </div>
+
+  <script>
+    const adminUsername = "admin";
+    const adminPassword = "hardline123";
+
+    const form = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      // Check for admin login first
+      if (username === adminUsername && password === adminPassword) {
+        window.location.href = "admin-dashboard.html";
+        return;
+      }
+
+      // User login (mock example)
+      // TODO: Replace with real user database/Stripe check
+      if (username.startsWith("student") && password === "password123") {
+        // Redirect to user PWA dashboard
+        window.location.href = "user-dashboard.html";
+      } else {
+        errorMsg.textContent = "Invalid username or password";
+      }
+    });
+  </script>
+</body>
+</html>
