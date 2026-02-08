@@ -6,43 +6,62 @@
   <title>Metrix HardLine — User Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* ====== Base Styles ====== */
-    body { font-family: 'DM Sans', sans-serif; background: #f8f9fa; margin:0; padding:0; color:#0b0b0b; }
+    body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #ff7f50, #ff4500); margin:0; padding:0; color:#0b0b0b; }
     header { background:#0b0b0b; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
-    header h1 { font-size:1.4rem; margin:0; }
-    header button { background:#ff4b5c; color:white; border:none; padding:.5rem 1rem; border-radius:5px; cursor:pointer; }
-    main { padding:1rem; }
-    h2 { margin-top:0; }
+    header h1 { font-size:1.6rem; margin:0; }
+    header button { background:#ffd700; color:#0b0b0b; border:none; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; transition: background 0.2s; }
+    header button:hover { background:#e6c200; }
 
-    /* ====== Stats ====== */
+    .menu-drawer { position:fixed; top:0; right:-300px; width:300px; height:100%; background:#1a1a1a; color:white; padding:1rem; transition:right 0.3s; display:flex; flex-direction:column; z-index:100; }
+    .menu-drawer.open { right:0; }
+    .menu-drawer h2 { margin-top:0; margin-bottom:1rem; }
+    .menu-drawer button, .menu-drawer label { margin-bottom:1rem; font-weight:bold; }
+
     .stats { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
-    .stat-card { flex:1; min-width:120px; background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); text-align:center; }
-    .stat-card h3 { margin-bottom:.5rem; }
+    .stat-card { flex:1; min-width:120px; background:#ffe4b5; padding:1rem; border-radius:15px; box-shadow:0 6px 12px rgba(0,0,0,0.25); text-align:center; color:#0b0b0b; font-weight:bold; transition: transform 0.2s; }
+    .stat-card:hover { transform: translateY(-3px); }
 
-    /* ====== Calendar ====== */
-    .calendar { display:grid; grid-template-columns: repeat(7,1fr); gap:2px; margin-bottom:2rem; }
-    .day { min-height:80px; background:white; border-radius:5px; padding:.2rem; display:flex; flex-direction:column; }
-    .day-header { font-weight:bold; font-size:.9rem; margin-bottom:.2rem; }
-    .task { padding:.2rem .4rem; margin-bottom:.2rem; border-radius:5px; color:white; font-size:.8rem; cursor:pointer; }
-    .Softy { background:#6c757d; }
-    .GrindMode { background:#ff9800; }
-    .HardLine { background:#d32f2f; }
+    .calendar { display:grid; grid-template-columns: repeat(7,1fr); gap:6px; margin-bottom:2rem; }
+    .day { min-height:90px; border-radius:12px; padding:.5rem; display:flex; flex-direction:column; transition: transform 0.2s, box-shadow 0.2s; cursor:pointer; background:#ffdab9; }
+    .day:hover { transform: translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,0.3); }
+    .day-header { font-weight:bold; font-size:.9rem; margin-bottom:.3rem; color:#0b0b0b; text-align:center; }
 
-    /* ====== Task Form ====== */
-    .task-form { margin-bottom:2rem; background:white; padding:1rem; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-    .task-form input, .task-form select, .task-form button { margin-top:.5rem; display:block; width:100%; padding:.5rem; border-radius:5px; border:1px solid #ccc; }
-    .task-form button { background:#0d6efd; color:white; border:none; cursor:pointer; }
+    .task { padding:.4rem .8rem; margin-bottom:.3rem; border-radius:10px; color:white; font-size:.85rem; font-weight:bold; text-align:center; transition: transform 0.2s; }
+    .task.Softy { background:#6c757d; }
+    .task.GrindMode { background:#ff9800; }
+    .task.HardLine { background:#d32f2f; }
+    .task:hover { transform: scale(1.08); }
 
-    /* ====== Modal Tooltip ====== */
-    .tooltip { position:absolute; background:#0b0b0b; color:white; padding:.5rem; border-radius:5px; font-size:.8rem; display:none; z-index:1000; }
+    .task-form { margin-bottom:2rem; background:#fff3e0; padding:1.2rem; border-radius:20px; box-shadow:0 6px 15px rgba(0,0,0,0.25); }
+    .task-form input, .task-form select, .task-form button { margin-top:.6rem; display:block; width:100%; padding:.7rem; border-radius:12px; border:1px solid #ccc; font-weight:bold; }
+    .task-form input, .task-form select { background:white; }
+    .task-form button { background:#ff4500; color:white; border:none; cursor:pointer; transition: background 0.2s; }
+    .task-form button:hover { background:#e63900; }
+
+    .tooltip { position:fixed; top:10px; right:10px; background:#0b0b0b; color:white; padding:.7rem 1rem; border-radius:10px; font-size:.9rem; display:none; z-index:1000; box-shadow:0 6px 12px rgba(0,0,0,0.35); }
   </style>
 </head>
 <body>
 
 <header>
   <h1>Metrix HardLine Dashboard</h1>
-  <button id="logoutBtn">Logout</button>
+  <div>
+    <button id="menuBtn">Menu</button>
+    <button id="logoutBtn">Logout</button>
+  </div>
 </header>
+
+<div class="menu-drawer" id="menuDrawer">
+  <h2>Menu</h2>
+  <button id="drawerLogout">Logout</button>
+  <div>
+    <h3>Account Settings</h3>
+    <p><strong>Username:</strong> <span id="accUsername">user01</span></p>
+    <p><strong>Email:</strong> <span id="accEmail">user01@email.com</span></p>
+    <p><strong>Password:</strong> <span id="accPassword">••••••••</span></p>
+    <label><input type="checkbox" id="notifToggle" checked> Enable Coach Notifications</label>
+  </div>
+</div>
 
 <main>
   <section class="stats">
@@ -71,106 +90,121 @@
 </main>
 
 <script>
-  // ====== Setup ======
-  const logoutBtn = document.getElementById('logoutBtn');
-  const addTaskBtn = document.getElementById('addTaskBtn');
-  const taskTitle = document.getElementById('taskTitle');
-  const taskDeadline = document.getElementById('taskDeadline');
-  const taskIntensity = document.getElementById('taskIntensity');
-  const calendar = document.getElementById('calendar');
-  const tooltip = document.getElementById('tooltip');
+const logoutBtn = document.getElementById('logoutBtn');
+const drawerLogout = document.getElementById('drawerLogout');
+const menuBtn = document.getElementById('menuBtn');
+const menuDrawer = document.getElementById('menuDrawer');
+const notifToggle = document.getElementById('notifToggle');
+const addTaskBtn = document.getElementById('addTaskBtn');
+const taskTitle = document.getElementById('taskTitle');
+const taskDeadline = document.getElementById('taskDeadline');
+const taskIntensity = document.getElementById('taskIntensity');
+const calendar = document.getElementById('calendar');
+const tooltip = document.getElementById('tooltip');
 
-  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  let stats = { total:0, completed:0, missed:0, currentStreak:0, longestStreak:0 };
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let stats = { total:0, completed:0, missed:0, currentStreak:0, longestStreak:0 };
 
-  logoutBtn.addEventListener('click', ()=>{ window.location.href='userlogin.html'; });
+menuBtn.addEventListener('click', ()=>{ menuDrawer.classList.toggle('open'); });
+logoutBtn.addEventListener('click', ()=>{ window.location.href='userlogin.html'; });
+drawerLogout.addEventListener('click', ()=>{ window.location.href='userlogin.html'; });
 
-  // ====== Helper Functions ======
-  function updateStats() {
-    const today = new Date().toISOString().split('T')[0];
-    stats.total = tasks.length;
-    stats.completed = tasks.filter(t=>t.completed).length;
-    stats.missed = tasks.filter(t=>!t.completed && t.deadline<today).length;
-    stats.currentStreak = calculateStreak(tasks);
-    stats.longestStreak = Math.max(stats.longestStreak, stats.currentStreak);
-
-    document.getElementById('totalTasks').textContent = stats.total;
-    document.getElementById('completedTasks').textContent = stats.completed;
-    document.getElementById('missedTasks').textContent = stats.missed;
-    document.getElementById('currentStreak').textContent = stats.currentStreak;
-    document.getElementById('longestStreak').textContent = stats.longestStreak;
+function showNotification(message){
+  if(notifToggle.checked && 'Notification' in window){
+    if(Notification.permission==='granted'){
+      new Notification('HardLine Coach', { body:message });
+    } else if(Notification.permission!=='denied'){ Notification.requestPermission(); }
   }
+}
 
-  function calculateStreak(tasks){
-    const sorted = [...tasks].sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
-    let streak = 0, maxStreak=0;
-    sorted.forEach(t=>{ if(t.completed) streak++; else streak=0; maxStreak=Math.max(maxStreak,streak); });
-    return streak;
-  }
+function updateStats() {
+  const today = new Date().toISOString().split('T')[0];
+  stats.total = tasks.length;
+  stats.completed = tasks.filter(t=>t.completed).length;
+  stats.missed = tasks.filter(t=>!t.completed && t.deadline<today).length;
+  stats.currentStreak = calculateStreak(tasks);
+  stats.longestStreak = Math.max(stats.longestStreak, stats.currentStreak);
 
-  function renderCalendar() {
-    calendar.innerHTML='';
-    const start = new Date();
-    start.setDate(1);
-    const end = new Date();
-    end.setMonth(start.getMonth()+12*3); // 3 year calendar
+  document.getElementById('totalTasks').textContent = stats.total;
+  document.getElementById('completedTasks').textContent = stats.completed;
+  document.getElementById('missedTasks').textContent = stats.missed;
+  document.getElementById('currentStreak').textContent = stats.currentStreak;
+  document.getElementById('longestStreak').textContent = stats.longestStreak;
+}
 
-    let current = new Date(start);
-    while(current <= end){
-      const day = document.createElement('div');
-      day.className='day';
-      day.dataset.date = current.toISOString().split('T')[0];
-      const header = document.createElement('div');
-      header.className='day-header';
-      header.textContent=current.toLocaleDateString(undefined,{day:'numeric',month:'short'});
-      day.appendChild(header);
-      tasks.filter(t=>t.deadline===day.dataset.date).forEach(t=>{
-        const taskDiv=document.createElement('div');
-        taskDiv.className=`task ${t.intensity}`;
-        taskDiv.textContent=t.title;
-        taskDiv.dataset.title=t.title;
-        taskDiv.dataset.intensity=t.intensity;
-        taskDiv.dataset.deadline=t.deadline;
-        taskDiv.addEventListener('click', e=>{
-          t.completed = !t.completed;
-          localStorage.setItem('tasks',JSON.stringify(tasks));
-          updateStats();
-          renderCalendar();
-          showTooltip(t,e);
-        });
-        day.appendChild(taskDiv);
+function calculateStreak(tasks){
+  const sorted = [...tasks].sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+  let streak = 0, maxStreak=0;
+  sorted.forEach(t=>{ if(t.completed) streak++; else streak=0; maxStreak=Math.max(maxStreak,streak); });
+  return streak;
+}
+
+function renderCalendar() {
+  calendar.innerHTML='';
+  const start = new Date(); start.setDate(1);
+  const end = new Date(); end.setMonth(start.getMonth()+12*3);
+  let current = new Date(start);
+
+  while(current <= end){
+    const day = document.createElement('div');
+    day.className='day';
+    day.dataset.date = current.toISOString().split('T')[0];
+    const header = document.createElement('div');
+    header.className='day-header';
+    header.textContent=current.toLocaleDateString(undefined,{day:'numeric',month:'short'});
+    day.appendChild(header);
+
+    tasks.filter(t=>t.deadline===day.dataset.date).forEach(t=>{
+      const taskDiv=document.createElement('div');
+      taskDiv.className=`task ${t.intensity}`;
+      taskDiv.textContent=t.title;
+      taskDiv.dataset.title=t.title;
+      taskDiv.dataset.intensity=t.intensity;
+      taskDiv.dataset.deadline=t.deadline;
+      taskDiv.addEventListener('click', e=>{
+        t.completed = !t.completed;
+        localStorage.setItem('tasks',JSON.stringify(tasks));
+        updateStats();
+        renderCalendar();
+        showTooltip(t,e);
+        showNotification(`${t.intensity} Coach: Task '${t.title}' ${t.completed?'completed':'pending'}!`);
       });
-      calendar.appendChild(day);
-      current.setDate(current.getDate()+1);
-    }
+      day.appendChild(taskDiv);
+    });
+
+    calendar.appendChild(day);
+    current.setDate(current.getDate()+1);
   }
+}
 
-  function showTooltip(task,e){
-    const messages = {
-      Softy:['Keep going, you got this!','Small steps count.','Do what you can, stay consistent.'],
-      GrindMode:['Focus! Deadlines are serious.','Grind hard! Stay on track.','No excuses, complete it now!'],
-      HardLine:['Absolute commitment required!','No negotiation, finish this task!','HardLine intensity: finish or face consequences!']
-    };
-    const arr=messages[task.intensity];
-    tooltip.textContent=arr[Math.floor(Math.random()*arr.length)];
-    tooltip.style.top=`${e.clientY+10}px`;
-    tooltip.style.left=`${e.clientX+10}px`;
-    tooltip.style.display='block';
-    setTimeout(()=>tooltip.style.display='none',2000);
-  }
+function showTooltip(task,e){
+  const messages = {
+    Softy:['Keep going, you got this!','Small steps count.','Do what you can, stay consistent.'],
+    GrindMode:['Focus! Deadlines are serious.','Grind hard! Stay on track.','No excuses, complete it now!'],
+    HardLine:['Absolute commitment required!','No negotiation, finish this task!','HardLine intensity: finish or face consequences!']
+  };
+  const arr=messages[task.intensity];
+  tooltip.textContent=arr[Math.floor(Math.random()*arr.length)];
+  tooltip.style.top=`${e.clientY+10}px`;
+  tooltip.style.left=`${e.clientX+10}px`;
+  tooltip.style.display='block';
+  setTimeout(()=>tooltip.style.display='none',2000);
+}
 
-  addTaskBtn.addEventListener('click',()=>{
-    if(!taskTitle.value || !taskDeadline.value) return alert('Please fill all fields');
-    tasks.push({ title:taskTitle.value, deadline:taskDeadline.value, intensity:taskIntensity.value, completed:false });
-    localStorage.setItem('tasks',JSON.stringify(tasks));
-    taskTitle.value=''; taskDeadline.value=''; taskIntensity.value='Softy';
-    updateStats();
-    renderCalendar();
-  });
-
-  // ====== Initialize ======
+addTaskBtn.addEventListener('click',()=>{
+  if(!taskTitle.value || !taskDeadline.value) return alert('Please fill all fields');
+  tasks.push({ title:taskTitle.value, deadline:taskDeadline.value, intensity:taskIntensity.value, completed:false });
+  localStorage.setItem('tasks',JSON.stringify(tasks));
+  taskTitle.value=''; taskDeadline.value=''; taskIntensity.value='Softy';
   updateStats();
   renderCalendar();
+});
+
+updateStats();
+renderCalendar();
 </script>
+
 </body>
 </html>
+
+
