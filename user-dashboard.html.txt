@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrix HardLine — User Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ----- General ----- */
+    body { font-family: 'DM Sans', sans-serif; margin:0; padding:0; background:#f8f9fa; }
+    header { background:#0b0b0b; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { margin:0; font-size:1.2rem; }
+    header button { background:#ff4b5c; color:white; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; }
+    main { padding:20px; }
+
+    /* ----- Task Form ----- */
+    .task-section { display:flex; flex-direction:column; gap:20px; }
+    .task-form { background:white; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    .task-form h2 { margin-top:0; }
+    .task-form label { display:block; margin-top:10px; }
+    .task-form input, .task-form select { width:100%; padding:8px; margin-top:5px; border-radius:4px; border:1px solid #ccc; }
+    .task-form button { margin-top:15px; padding:10px 15px; border:none; border-radius:5px; background:#0b0b0b; color:white; cursor:pointer; }
+
+    /* ----- Calendar ----- */
+    .calendar { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:20px; }
+    .month { background:white; border-radius:8px; box-shadow:0 0 5px rgba(0,0,0,0.1); padding:10px; }
+    .month h3 { margin-top:0; text-align:center; font-size:1rem; }
+    .days { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; font-size:0.8rem; }
+    .day { min-height:80px; background:#f4f4f4; border-radius:4px; position:relative; padding:2px; }
+    .day h4 { margin:0; font-size:0.7rem; }
+    .task-item { padding:2px 4px; border-radius:3px; font-size:0.75rem; color:white; margin-top:2px; cursor:pointer; }
+    .softy { background:#6c757d; }
+    .grindmode { background:#ff9800; }
+    .hardline { background:#d32f2f; }
+
+    /* ----- Tooltip ----- */
+    .task-item:hover::after {
+      content: attr(data-msg);
+      position:absolute;
+      background:#333; color:white; padding:5px; border-radius:5px;
+      top:-35px; left:0; white-space:nowrap; z-index:100;
+      font-size:0.75rem;
+    }
+
+    /* ----- Streaks & Stats ----- */
+    .stats { display:flex; gap:15px; margin-top:20px; }
+    .stat-card { flex:1; background:white; padding:10px; border-radius:5px; box-shadow:0 0 5px rgba(0,0,0,0.1); text-align:center; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Metrix HardLine Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main>
+    <section class="task-section">
+      <div class="task-form">
+        <h2>Create Task</h2>
+        <label for="taskName">Task Name:</label>
+        <input type="text" id="taskName" placeholder="Enter task name">
+
+        <label for="taskDeadline">Deadline (max 3 months from today):</label>
+        <input type="date" id="taskDeadline">
+
+        <label for="taskIntensity">Coach Intensity:</label>
+        <select id="taskIntensity">
+          <option value="softy">Softy (Level 1)</option>
+          <option value="grindmode">GrindMode (Level 2)</option>
+          <option value="hardline">HardLine (Level 3)</option>
+        </select>
+
+        <button id="addTaskBtn">Add Task</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <h4>Total Tasks</h4>
+          <p id="totalTasks">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Completed Tasks</h4>
+          <p id="completedTasks">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Missed Tasks</h4>
+          <p id="missedTasks">0</p>
+        </div>
+      </div>
+
+      <div class="calendar-section">
+        <h2>Calendar (3 Years Max)</h2>
+        <div class="calendar" id="calendar"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      window.location.href = "userlogin.html";
+    });
+
+    // Tasks array
+    let tasks = JSON.parse(localStorage.getItem("userTasks")) || [];
+
+    const calendarEl = document.getElementById("calendar");
+    const totalEl = document.getElementById("totalTasks");
+    const completedEl = document.getElementById("completedTasks");
+    const missedEl = document.getElementById("missedTasks");
+    const addTaskBtn = document.getElementById("addTaskBtn");
+
+    const coachMessages = {
+      softy: [
+        "Keep going! Small wins matter.",
+        "Nice effort! Stay consistent.",
+        "Remember your commitment!"
+      ],
+      grindmode: [
+        "Focus! Deadlines don't wait.",
+        "Push harder, you can do it!",
+        "No excuses, stay disciplined!"
+      ],
+      hardline: [
+        "Absolute commitment! No compromise!",
+        "Missed deadlines are unacceptable!",
+        "Discipline is non-negotiable!"
+      ]
+    };
+
+    // Render calendar and tasks
+    function renderCalendar() {
+      calendarEl.innerHTML = "";
+      const today = new Date();
+      const startYear = today.getFullYear();
+      const startMonth = today.getMonth();
+
+      for(let m=0; m<36; m++) { // 3 years
+        const monthDate = new Date(startYear, startMonth + m, 1);
+        const monthDiv = document.createElement("div");
+        monthDiv.classList.add("month");
+        monthDiv.innerHTML = `<h3>${monthDate.toLocaleString('default', {month:'short', year:'numeric'})}</h3>`;
+        const daysDiv = document.createElement("div");
+        daysDiv.classList.add("days");
+
+        const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 0).getDate();
+        for(let d=1; d<=daysInMonth; d++){
+          const dayDiv = document.createElement("div");
+          dayDiv.classList.add("day");
+          dayDiv.innerHTML = `<h4>${d}</h4>`;
+
+          tasks.forEach(t => {
+            const tDate = new Date(t.deadline);
+            if(tDate.getFullYear()===monthDate.getFullYear() && tDate.getMonth()===monthDate.getMonth() && tDate.getDate()===d){
+              const taskEl = document.createElement("div");
+              taskEl.classList.add("task-item", t.intensity);
+              taskEl.textContent = t.name;
+              taskEl.setAttribute("data-msg", coachMessages[t.intensity][Math.floor(Math.random()*3)]);
+              dayDiv.appendChild(taskEl);
+            }
+          });
+
+          daysDiv.appendChild(dayDiv);
+        }
+
+        monthDiv.appendChild(daysDiv);
+        calendarEl.appendChild(monthDiv);
+      }
+
+      updateStats();
+    }
+
+    // Update statistics
+    function updateStats() {
+      totalEl.textContent = tasks.length;
+      const today = new Date();
+      let completed=0, missed=0;
+      tasks.forEach(t=>{
+        const tDate = new Date(t.deadline);
+        if(t.completed) completed++;
+        else if(tDate < today) missed++;
+      });
+      completedEl.textContent = completed;
+      missedEl.textContent = missed;
+    }
+
+    // Add task
+    addTaskBtn.addEventListener("click", ()=>{
+      const name = document.getElementById("taskName").value.trim();
+      const deadline = document.getElementById("taskDeadline").value;
+      const intensity = document.getElementById("taskIntensity").value;
+
+      if(!name || !deadline) return alert("Fill all fields");
+      const maxDate = new Date();
+      maxDate.setMonth(maxDate.getMonth()+3);
+      if(new Date(deadline)>maxDate) return alert("Deadline max 3 months from today");
+
+      tasks.push({ name, deadline, intensity, completed:false });
+      localStorage.setItem("userTasks", JSON.stringify(tasks));
+
+      document.getElementById("taskName").value="";
+      document.getElementById("taskDeadline").value="";
+
+      renderCalendar();
+    });
+
+    renderCalendar();
+  </script>
+</body>
+</html>
