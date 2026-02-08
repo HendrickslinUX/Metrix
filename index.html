@@ -12,6 +12,16 @@
   <meta name="theme-color" content="#0b0b0b">
 </head>
 <body>
+  <!-- All your page content goes here -->
+
+  <!-- Register the service worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  </script>
+</body>
+</html>
   <header class="site-header">
     <div class="header-inner">
       <a href="/" class="logo">Metrix HardLine</a>
