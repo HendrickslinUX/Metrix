@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Metrix HardLine — Dashboard</title>
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -31,7 +30,6 @@
       color: var(--text-main);
     }
 
-    /* ===== HEADER ===== */
     header {
       height: 64px;
       background: var(--bg-panel);
@@ -80,58 +78,76 @@
     }
 
     .stat-card h3 {
-      margin: 0;
       font-size: 0.75rem;
       color: var(--text-muted);
-      letter-spacing: 0.04em;
+      margin: 0;
     }
 
     .stat-card p {
       margin-top: 0.4rem;
-      font-size: 1.7rem;
+      font-size: 1.6rem;
       font-weight: 700;
     }
 
-    /* ===== TASK CREATOR ===== */
-    .task-form {
+    /* ===== TASK DROPDOWN ===== */
+    .task-builder {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 18px;
-      padding: 1.6rem;
-      margin-bottom: 2.5rem;
       max-width: 520px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
     }
 
-    .task-form h2 {
+    .task-header {
+      padding: 1.2rem 1.4rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .task-header h2 {
       font-family: 'Space Grotesk', sans-serif;
-      margin: 0 0 0.4rem;
+      margin: 0;
+      font-size: 1rem;
     }
 
-    .step-indicator {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-bottom: 1.2rem;
+    .caret {
+      transition: transform 0.3s ease;
     }
 
-    .task-step {
+    .task-builder.open .caret {
+      transform: rotate(180deg);
+    }
+
+    .task-content {
+      padding: 0 1.4rem 1.4rem;
       display: none;
     }
 
-    .task-step.active {
+    .task-builder.open .task-content {
       display: block;
     }
 
-    .task-form label {
+    .field {
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .field.visible {
       display: block;
+    }
+
+    label {
       font-size: 0.75rem;
       color: var(--text-muted);
+      display: block;
       margin-bottom: 0.4rem;
     }
 
-    .task-form input,
-    .task-form select {
+    input, select {
       width: 100%;
-      margin-bottom: 1rem;
       padding: 0.75rem;
       border-radius: 10px;
       border: 1px solid var(--border-subtle);
@@ -140,7 +156,8 @@
       font-weight: 600;
     }
 
-    .task-form button {
+    .commit-btn {
+      margin-top: 1.2rem;
       width: 100%;
       background: var(--accent);
       color: black;
@@ -149,12 +166,12 @@
       border-radius: 10px;
       font-weight: 700;
       cursor: pointer;
+      display: none;
     }
 
     /* ===== CALENDAR ===== */
     .calendar-wrapper {
       overflow-x: auto;
-      padding-bottom: 1rem;
     }
 
     .calendar {
@@ -202,52 +219,44 @@
 
 <main>
 
-  <!-- STATS -->
   <section class="stats">
-    <div class="stat-card">
-      <h3>TOTAL TASKS</h3>
-      <p id="totalTasks">0</p>
+    <div class="stat-card"><h3>TOTAL TASKS</h3><p id="totalTasks">0</p></div>
+    <div class="stat-card"><h3>COMPLETED</h3><p id="completedTasks">0</p></div>
+    <div class="stat-card"><h3>MISSED</h3><p id="missedTasks">0</p></div>
+  </section>
+
+  <!-- TASK BUILDER -->
+  <section class="task-builder" id="taskBuilder">
+    <div class="task-header" onclick="toggleBuilder()">
+      <h2>Create task</h2>
+      <span class="caret">⌄</span>
     </div>
-    <div class="stat-card">
-      <h3>COMPLETED</h3>
-      <p id="completedTasks">0</p>
-    </div>
-    <div class="stat-card">
-      <h3>MISSED</h3>
-      <p id="missedTasks">0</p>
+
+    <div class="task-content">
+      <div class="field visible" id="fieldTitle">
+        <label>Task name</label>
+        <input id="taskTitle">
+      </div>
+
+      <div class="field" id="fieldDate">
+        <label>Deadline</label>
+        <input id="taskDeadline" type="date">
+      </div>
+
+      <div class="field" id="fieldLevel">
+        <label>Intensity</label>
+        <select id="taskIntensity">
+          <option value="">Select level</option>
+          <option value="Softy">Softy</option>
+          <option value="GrindMode">GrindMode</option>
+          <option value="HardLine">HardLine</option>
+        </select>
+      </div>
+
+      <button class="commit-btn" id="commitBtn" onclick="addTask()">Commit task</button>
     </div>
   </section>
 
-  <!-- TASK CREATOR -->
-  <section class="task-form">
-    <h2>Create Task</h2>
-    <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
-
-    <div class="task-step active" id="step1">
-      <label>Task name</label>
-      <input id="taskTitle" placeholder="What must be done?">
-      <button onclick="goToStep(2)">Continue</button>
-    </div>
-
-    <div class="task-step" id="step2">
-      <label>Deadline</label>
-      <input id="taskDeadline" type="date">
-      <button onclick="goToStep(3)">Continue</button>
-    </div>
-
-    <div class="task-step" id="step3">
-      <label>Intensity level</label>
-      <select id="taskIntensity">
-        <option value="">Select level</option>
-        <option value="Softy">Softy — Low enforcement</option>
-        <option value="GrindMode">GrindMode — Serious</option>
-        <option value="HardLine">HardLine — No excuses</option>
-      </select>
-      <button onclick="commitTask()">Commit Task</button>
-    </div>
-  </section>
-
-  <!-- CALENDAR -->
   <div class="calendar-wrapper">
     <section class="calendar" id="calendar"></section>
   </div>
@@ -256,30 +265,30 @@
 
 <script>
   let tasks = [];
-  let currentStep = 1;
 
-  function goToStep(step) {
-    if (step === 2 && !taskTitle.value.trim()) {
-      alert("Task name required");
-      return;
-    }
-    if (step === 3 && !taskDeadline.value) {
-      alert("Deadline required");
-      return;
-    }
+  const builder = document.getElementById("taskBuilder");
+  const titleInput = document.getElementById("taskTitle");
+  const dateField = document.getElementById("fieldDate");
+  const levelField = document.getElementById("fieldLevel");
+  const commitBtn = document.getElementById("commitBtn");
 
-    document.querySelectorAll(".task-step").forEach(s => s.classList.remove("active"));
-    document.getElementById(`step${step}`).classList.add("active");
-    stepIndicator.textContent = `Step ${step} of 3`;
-    currentStep = step;
+  function toggleBuilder() {
+    builder.classList.toggle("open");
   }
 
-  function commitTask() {
-    if (!taskIntensity.value) {
-      alert("Select intensity level");
-      return;
-    }
+  titleInput.addEventListener("input", () => {
+    if (titleInput.value.trim()) dateField.classList.add("visible");
+  });
 
+  taskDeadline.addEventListener("change", () => {
+    levelField.classList.add("visible");
+  });
+
+  taskIntensity.addEventListener("change", () => {
+    if (taskIntensity.value) commitBtn.style.display = "block";
+  });
+
+  function addTask() {
     tasks.push({
       title: taskTitle.value,
       deadline: taskDeadline.value,
@@ -290,10 +299,9 @@
     taskTitle.value = "";
     taskDeadline.value = "";
     taskIntensity.value = "";
-
-    document.querySelectorAll(".task-step").forEach(s => s.classList.remove("active"));
-    document.getElementById("step1").classList.add("active");
-    stepIndicator.textContent = "Step 1 of 3";
+    dateField.classList.remove("visible");
+    levelField.classList.remove("visible");
+    commitBtn.style.display = "none";
 
     renderCalendar();
     updateStats();
@@ -339,4 +347,3 @@
 
 </body>
 </html>
-
