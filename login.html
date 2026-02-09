@@ -9,7 +9,8 @@
 
 <style>
 :root{
-  --bg-main:#0b0b0b;
+  --bg-gradient-start:#ff7a18;
+  --bg-gradient-end:#ffb347;
   --accent:#ff6a00;
   --text-main:#fff;
   --text-muted:#b5b5b5;
@@ -22,7 +23,7 @@
 body{
   margin:0;
   font-family:'DM Sans',sans-serif;
-  background:linear-gradient(135deg,#ff7a18,#ffb347);
+  background:linear-gradient(135deg,var(--bg-gradient-start),var(--bg-gradient-end));
   color:var(--text-main);
   display:flex;
   justify-content:center;
@@ -31,11 +32,11 @@ body{
 }
 
 .login-card{
-  background:var(--bg-main);
+  background:rgba(11,11,11,0.95);
   padding:2rem 2.5rem;
   border-radius:18px;
   width:320px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
   text-align:center;
 }
 
@@ -67,11 +68,12 @@ body{
   font-weight:700;
   cursor:pointer;
   margin-top:0.5rem;
-  transition:transform 0.2s;
+  transition:transform 0.2s, box-shadow 0.2s;
 }
 
 .login-card button:hover{
   transform:scale(1.03);
+  box-shadow:0 6px 15px rgba(0,0,0,0.3);
 }
 
 .login-card p{
@@ -103,7 +105,7 @@ function login(){
   const u=username.value.trim();
   const p=password.value.trim();
 
-  // ✅ Temporary dev user for testing
+  // Temporary dev user for testing
   const demoUser={username:"user01",password:"hardline123"};
 
   if(u===demoUser.username && p===demoUser.password){
