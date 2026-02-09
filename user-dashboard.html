@@ -3,24 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Metrix HardLine — User Dashboard</title>
+<title>Metrix HardLine — Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#0b0b0b;
-  --panel:#141414;
-  --card:#1b1b1b;
-  --border:rgba(255,255,255,0.08);
-  --text:#fff;
-  --muted:#b5b5b5;
+  --bg-main:#0b0b0b;
+  --bg-panel:#141414;
+  --bg-card:#1b1b1b;
+  --border-subtle:rgba(255,255,255,.08);
+  --text-main:#fff;
+  --text-muted:#b5b5b5;
   --accent:#ff6a00;
-  --today:#ff9800;
-  --overdue:#b71c1c;
   --softy:#6c757d;
   --grind:#ff9800;
-  --hard:#d32f2f;
+  --hardline:#d32f2f;
 }
 
 *{box-sizing:border-box}
@@ -28,15 +26,14 @@
 body{
   margin:0;
   font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  background:var(--bg-main);
+  color:var(--text-main);
 }
 
-/* HEADER */
 header{
   height:64px;
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
+  background:var(--bg-panel);
+  border-bottom:1px solid var(--border-subtle);
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -46,114 +43,123 @@ header{
 header h1{
   font-family:'Space Grotesk',sans-serif;
   font-size:1.1rem;
+  margin:0;
 }
 
 header button{
   background:none;
-  border:1px solid var(--border);
+  border:1px solid var(--border-subtle);
   color:white;
   padding:.45rem .9rem;
   border-radius:8px;
+  font-weight:600;
   cursor:pointer;
 }
 
-/* LAYOUT */
 main{
+  padding:1.5rem;
   max-width:1400px;
   margin:auto;
-  padding:1.5rem;
 }
 
-/* STATS */
+/* ===== STATS ===== */
 .stats{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:1rem;
-  margin-bottom:2rem;
+  margin-bottom:1.5rem;
 }
 
-.stat{
-  background:var(--card);
-  border:1px solid var(--border);
+.stat-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-subtle);
   border-radius:14px;
   padding:1.2rem;
 }
 
-.stat h3{
-  font-size:.8rem;
-  color:var(--muted);
+.stat-card h3{
   margin:0;
+  font-size:.85rem;
+  color:var(--text-muted);
 }
 
-.stat p{
-  margin:.4rem 0 0;
+.stat-card p{
+  margin-top:.4rem;
   font-size:1.6rem;
   font-weight:700;
 }
 
-/* TASK BUILDER */
-.task-builder{
-  background:var(--card);
-  border:1px solid var(--border);
+/* ===== COACH ===== */
+.coach-box{
+  background:#0f0f0f;
+  border:1px solid var(--border-subtle);
+  border-left:4px solid var(--accent);
+  border-radius:14px;
+  padding:1rem 1.2rem;
+  margin-bottom:1.5rem;
+}
+
+.coach-box.overdue{border-left-color:var(--hardline)}
+.coach-box.today{border-left-color:var(--grind)}
+.coach-box.clear{border-left-color:#2e7d32}
+
+.coach-box p{
+  margin:0;
+  font-weight:700;
+  font-size:.9rem;
+  line-height:1.45;
+}
+
+/* ===== TASK CREATOR (STEP) ===== */
+.task-form{
+  background:var(--bg-card);
+  border:1px solid var(--border-subtle);
   border-radius:16px;
   padding:1.5rem;
   max-width:520px;
   margin-bottom:2rem;
 }
 
-.task-step{
+.task-form h2{
+  font-family:'Space Grotesk',sans-serif;
+  margin:0 0 1rem 0;
+}
+
+.step{
   display:none;
 }
 
-.task-step.active{
+.step.active{
   display:block;
 }
 
-.task-builder input,select{
+.task-form input,
+.task-form select{
   width:100%;
-  margin-top:.8rem;
   padding:.7rem;
   border-radius:10px;
-  border:1px solid var(--border);
+  border:1px solid var(--border-subtle);
   background:#0f0f0f;
   color:white;
   font-weight:600;
+  margin-bottom:.8rem;
 }
 
-.task-builder button{
-  margin-top:1rem;
+.task-form button{
   width:100%;
   background:var(--accent);
   color:black;
   border:none;
-  padding:.8rem;
+  padding:.75rem;
   border-radius:10px;
-  font-weight:800;
+  font-weight:700;
   cursor:pointer;
 }
 
-/* CALENDAR */
-.calendar-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:1rem;
-}
-
-.calendar-header h2{
-  font-family:'Space Grotesk',sans-serif;
-}
-
-.calendar-header button{
-  background:none;
-  border:1px solid var(--border);
-  color:white;
-  padding:.4rem .7rem;
-  border-radius:8px;
-}
-
+/* ===== CALENDAR ===== */
 .calendar-wrapper{
   overflow-x:auto;
+  padding-bottom:1rem;
 }
 
 .calendar{
@@ -164,25 +170,16 @@ main{
 }
 
 .day{
-  background:var(--card);
-  border:1px solid var(--border);
+  background:var(--bg-card);
+  border:1px solid var(--border-subtle);
   border-radius:14px;
   padding:.6rem;
   min-height:140px;
-  cursor:pointer;
-}
-
-.day.today{
-  outline:2px solid var(--today);
-}
-
-.day.overdue{
-  border-color:var(--overdue);
 }
 
 .day-header{
   font-size:.75rem;
-  color:var(--muted);
+  color:var(--text-muted);
   margin-bottom:.4rem;
 }
 
@@ -192,15 +189,12 @@ main{
   font-size:.75rem;
   font-weight:700;
   margin-bottom:.3rem;
-}
-
-.task.overdue{
-  background:var(--overdue);
+  cursor:pointer;
 }
 
 .Softy{background:var(--softy)}
 .GrindMode{background:var(--grind);color:black}
-.HardLine{background:var(--hard)}
+.HardLine{background:var(--hardline)}
 </style>
 </head>
 
@@ -213,125 +207,136 @@ main{
 
 <main>
 
-<!-- STATS -->
 <section class="stats">
-  <div class="stat"><h3>Total Tasks</h3><p id="total">0</p></div>
-  <div class="stat"><h3>Completed</h3><p id="completed">0</p></div>
-  <div class="stat"><h3>Missed</h3><p id="missed">0</p></div>
+  <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
+  <div class="stat-card"><h3>Completed</h3><p id="completedTasks">0</p></div>
+  <div class="stat-card"><h3>Missed</h3><p id="missedTasks">0</p></div>
 </section>
 
-<!-- TASK BUILDER -->
-<section class="task-builder">
+<section class="coach-box clear" id="coachBox">
+  <p id="coachMessage"></p>
+</section>
+
+<section class="task-form">
   <h2>Create Task</h2>
 
-  <div class="task-step active" id="step1">
+  <div class="step active" id="step1">
     <input id="taskTitle" placeholder="Task name">
     <button onclick="nextStep(2)">Next</button>
   </div>
 
-  <div class="task-step" id="step2">
-    <input type="date" id="taskDate">
+  <div class="step" id="step2">
+    <input id="taskDeadline" type="date">
     <button onclick="nextStep(3)">Next</button>
   </div>
 
-  <div class="task-step" id="step3">
+  <div class="step" id="step3">
     <select id="taskIntensity">
       <option value="Softy">Softy</option>
       <option value="GrindMode">GrindMode</option>
       <option value="HardLine">HardLine</option>
     </select>
-    <button onclick="addTask()">Commit Task</button>
+    <button onclick="addTask()">Add Task</button>
   </div>
 </section>
 
-<!-- CALENDAR -->
-<section>
-  <div class="calendar-header">
-    <button onclick="changeMonth(-1)">◀</button>
-    <h2 id="monthLabel"></h2>
-    <button onclick="changeMonth(1)">▶</button>
-  </div>
-
-  <div class="calendar-wrapper">
-    <div class="calendar" id="calendar"></div>
-  </div>
-</section>
+<div class="calendar-wrapper">
+  <section class="calendar" id="calendar"></section>
+</div>
 
 </main>
 
 <script>
-let tasks = JSON.parse(localStorage.getItem("tasks")||"[]");
-let current = new Date();
+let tasks=[];
 
 function nextStep(n){
-  document.querySelectorAll(".task-step").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
   document.getElementById("step"+n).classList.add("active");
 }
 
 function addTask(){
-  if(!taskTitle.value||!taskDate.value)return alert("Missing info");
+  if(!taskTitle.value||!taskDeadline.value)return alert("Missing info");
   tasks.push({
     title:taskTitle.value,
-    date:taskDate.value,
+    deadline:taskDeadline.value,
     intensity:taskIntensity.value,
     completed:false
   });
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  taskTitle.value=""; taskDate.value="";
+  taskTitle.value="";
   nextStep(1);
-  render();
+  renderCalendar();
+  updateStats();
 }
 
-function changeMonth(dir){
-  current.setMonth(current.getMonth()+dir);
-  render();
-}
-
-function render(){
+function renderCalendar(){
   calendar.innerHTML="";
-  const year=current.getFullYear(),month=current.getMonth();
-  monthLabel.textContent=current.toLocaleString("default",{month:"long",year:"numeric"});
-
-  const start=new Date(year,month,1);
-  const end=new Date(year,month+1,0);
   const today=new Date().toISOString().split("T")[0];
-
-  for(let d=1;d<=end.getDate();d++){
-    const date=new Date(year,month,d);
-    const iso=date.toISOString().split("T")[0];
+  for(let i=0;i<30;i++){
+    const d=new Date();
+    d.setDate(d.getDate()+i);
+    const date=d.toISOString().split("T")[0];
     const day=document.createElement("div");
     day.className="day";
-    if(iso===today)day.classList.add("today");
-    if(iso<today)day.classList.add("overdue");
-
-    day.innerHTML=`<div class="day-header">${date.toDateString()}</div>`;
-    day.onclick=()=>{taskDate.value=iso;nextStep(2)}
-
-    tasks.filter(t=>t.date===iso).forEach(t=>{
+    day.innerHTML=`<div class="day-header">${date}</div>`;
+    tasks.filter(t=>t.deadline===date).forEach(t=>{
       const el=document.createElement("div");
-      el.className=`task ${t.intensity} ${!t.completed&&iso<today?"overdue":""}`;
+      el.className=`task ${t.intensity}`;
       el.textContent=t.title;
-      el.onclick=e=>{
-        e.stopPropagation();
-        if(iso<today&&!t.completed)return;
-        t.completed=!t.completed;
-        localStorage.setItem("tasks",JSON.stringify(tasks));
-        render();
-      };
+      el.onclick=()=>{t.completed=!t.completed;renderCalendar();updateStats();}
       day.appendChild(el);
     });
-
     calendar.appendChild(day);
   }
-
-  total.textContent=tasks.length;
-  completed.textContent=tasks.filter(t=>t.completed).length;
-  missed.textContent=tasks.filter(t=>!t.completed && t.date<today).length;
+  updateCoach();
 }
 
-render();
+function updateStats(){
+  totalTasks.textContent=tasks.length;
+  completedTasks.textContent=tasks.filter(t=>t.completed).length;
+  missedTasks.textContent=tasks.filter(t=>!t.completed).length;
+}
+
+function getTimePhase(){
+  const h=new Date().getHours();
+  if(h>=5&&h<12)return"morning";
+  if(h>=12&&h<18)return"afternoon";
+  if(h>=18&&h<23)return"evening";
+  return"late";
+}
+
+function updateCoach(){
+  const today=new Date().toISOString().split("T")[0];
+  const phase=getTimePhase();
+  const overdue=tasks.filter(t=>!t.completed&&t.deadline<today);
+  const dueToday=tasks.filter(t=>!t.completed&&t.deadline===today);
+  coachBox.className="coach-box";
+
+  if(overdue.length){
+    coachBox.classList.add("overdue");
+    coachMessage.textContent=
+      phase==="late"
+      ?"You’re ending the day with failures unresolved. Fix it tomorrow."
+      :"Overdue tasks detected. Discipline is compromised.";
+    return;
+  }
+
+  if(dueToday.length){
+    coachBox.classList.add("today");
+    coachMessage.textContent=
+      phase==="evening"
+      ?"Evening window closing. Finish today’s work."
+      :"Tasks are due today. Pressure is active.";
+    return;
+  }
+
+  coachBox.classList.add("clear");
+  coachMessage.textContent="System stable. Maintain discipline.";
+}
+
+renderCalendar();
 </script>
 
 </body>
 </html>
+
 
