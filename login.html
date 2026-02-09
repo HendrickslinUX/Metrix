@@ -9,9 +9,9 @@
 
 <style>
 :root{
-  --bg-gradient-start:#2e1450;  /* Dark purple */
-  --bg-gradient-end:#5b2a80;    /* Lighter purple */
-  --accent:#401d65;             /* Main accent */
+  --bg-gradient-start:#2e1450;
+  --bg-gradient-end:#5b2a80;
+  --accent:#401d65;
   --text-main:#fff;
   --text-muted:#b5b5b5;
   --input-bg:#1b1b1b;
@@ -23,28 +23,61 @@
 body{
   margin:0;
   font-family:'DM Sans',sans-serif;
-  background:linear-gradient(135deg,var(--bg-gradient-start),var(--bg-gradient-end));
   color:var(--text-main);
   display:flex;
   justify-content:center;
   align-items:center;
   height:100vh;
+  overflow:hidden;
+
+  /* Animated gradient background */
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
 
+@keyframes gradientShift{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* ===== LOGIN CARD ===== */
 .login-card{
+  position:relative;
   background:rgba(11,11,11,0.95);
   padding:2rem 2.5rem;
   border-radius:18px;
   width:320px;
   box-shadow:0 10px 30px rgba(0,0,0,0.5);
-  text-align:center;
+
+  /* Glow behind the card */
+}
+.login-card::before{
+  content:"";
+  position:absolute;
+  top:-10px; left:-10px; right:-10px; bottom:-10px;
+  background:linear-gradient(45deg,var(--accent),#ff6a99,#401d65,#8b3fff);
+  border-radius:20px;
+  filter:blur(30px);
+  opacity:0.6;
+  z-index:-1;
+  animation: glowPulse 3s ease-in-out infinite alternate;
 }
 
+@keyframes glowPulse{
+  0%{opacity:0.5; transform:scale(1);}
+  50%{opacity:0.7; transform:scale(1.03);}
+  100%{opacity:0.5; transform:scale(1);}
+}
+
+/* Card content */
 .login-card h1{
   font-family:'Space Grotesk',sans-serif;
   margin-bottom:1.5rem;
   font-size:1.6rem;
   color:var(--accent);
+  text-shadow:0 2px 6px rgba(0,0,0,0.3);
 }
 
 .login-card input{
