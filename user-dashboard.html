@@ -19,6 +19,7 @@
     --softy: #6c757d;
     --grind: #401d65; /* match login color */
     --hardline: #d32f2f;
+    --overdue-outline: #d32f2f;
   }
 
   * { box-sizing: border-box; }
@@ -166,6 +167,7 @@
     z-index:1000; box-shadow:0 4px 8px rgba(0,0,0,0.3);
   }
 
+  .overdue { outline: 2px solid var(--overdue-outline); }
 </style>
 </head>
 
@@ -267,7 +269,7 @@
     step3.classList.remove('active'); step1.classList.add('active');
     document.getElementById('taskTitle').value='';
     document.getElementById('taskDeadline').value='';
-    renderCalendar(); updateStats();
+    renderCalendar(); updateStats(); showCoachMessages();
   };
 
   // ==================== CALENDAR LOGIC ====================
@@ -287,10 +289,15 @@
     calendar.innerHTML='';
     const start = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
     const end = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 0);
+    const today = new Date();
     for(let d=start.getDate(); d<=end.getDate(); d++){
       const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
       const dateStr = dayDate.toISOString().split('T')[0];
-      const day = document.createElement('div'); day.className='day';
+      const day = document.createElement('div'); 
+      day.className='day';
+      if(dayDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())){
+        day.classList.add('overdue');
+      }
       day.innerHTML=`<div class="day-header">${dateStr}</div>`;
       tasks.filter(t=>t.deadline===dateStr).forEach(t=>{
         const tEl=document.createElement('div');
@@ -298,7 +305,7 @@
         tEl.textContent=t.title;
         tEl.onclick=()=>{
           t.completed = !t.completed;
-          updateStats(); renderCalendar();
+          updateStats(); renderCalendar(); showCoachMessages();
         };
         day.appendChild(tEl);
       });
@@ -313,9 +320,28 @@
     document.getElementById('missedTasks').textContent=tasks.filter(t=>!t.completed).length;
   }
 
+  // ==================== COACH MESSAGING ====================
+  const tooltip = document.getElementById('tooltip');
+  function showCoachMessages(){
+    const todayStr = new Date().toISOString().split('T')[0];
+    let messages = [];
+    tasks.forEach(t=>{
+      if(!t.completed){
+        if(t.deadline === todayStr) messages.push(`Task "${t.title}" is due today!`);
+        else if(t.deadline < todayStr) messages.push(`Task "${t.title}" is overdue!`);
+      }
+    });
+    if(messages.length>0){
+      tooltip.innerHTML = messages.join('<br>');
+      tooltip.style.display='block';
+    } else {
+      tooltip.style.display='none';
+    }
+  }
+
   renderCalendar();
+  showCoachMessages();
 </script>
 </body>
 </html>
-
 
