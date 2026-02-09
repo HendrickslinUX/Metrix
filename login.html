@@ -1,55 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Metrix HardLine — Login</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Metrix HardLine — Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg-main:#0b0b0b;
+  --accent:#ff6a00;
+  --text-main:#fff;
+  --text-muted:#b5b5b5;
+  --input-bg:#1b1b1b;
+  --input-border:rgba(255,255,255,.1);
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(135deg,#ff7a18,#ffb347);
+  color:var(--text-main);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.login-card{
+  background:var(--bg-main);
+  padding:2rem 2.5rem;
+  border-radius:18px;
+  width:320px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  text-align:center;
+}
+
+.login-card h1{
+  font-family:'Space Grotesk',sans-serif;
+  margin-bottom:1.5rem;
+  font-size:1.6rem;
+  color:var(--accent);
+}
+
+.login-card input{
+  width:100%;
+  padding:.75rem;
+  margin-bottom:1rem;
+  border-radius:10px;
+  border:1px solid var(--input-border);
+  background:var(--input-bg);
+  color:white;
+  font-weight:600;
+}
+
+.login-card button{
+  width:100%;
+  padding:.8rem;
+  border:none;
+  border-radius:10px;
+  background:var(--accent);
+  color:black;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:0.5rem;
+  transition:transform 0.2s;
+}
+
+.login-card button:hover{
+  transform:scale(1.03);
+}
+
+.login-card p{
+  margin-top:1rem;
+  font-size:.85rem;
+  color:var(--text-muted);
+}
+
+.login-card a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:600;
+}
+</style>
 </head>
+
 <body>
-  <div class="login-container">
-    <h2>Metrix HardLine Login</h2>
 
-    <form id="loginForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" required>
+<div class="login-card">
+  <h1>Metrix HardLine</h1>
+  <input id="username" placeholder="Username" type="text">
+  <input id="password" placeholder="Password" type="password">
+  <button onclick="login()">Login</button>
+  <p>Don't have an account? <a href="#">Sign up</a></p>
+</div>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" required>
+<script>
+function login(){
+  const u=username.value.trim();
+  const p=password.value.trim();
 
-      <button type="submit">Login</button>
-    </form>
+  // ✅ Temporary dev user for testing
+  const demoUser={username:"user01",password:"hardline123"};
 
-    <p id="errorMsg" style="color:red;"></p>
-  </div>
+  if(u===demoUser.username && p===demoUser.password){
+    localStorage.setItem("loggedInUser",JSON.stringify(demoUser));
+    window.location.href="user-dashboard.html";
+  } else{
+    alert("Wrong username or password");
+  }
+}
+</script>
 
-  <script>
-    const adminUsername = "admin";
-    const adminPassword = "hardline123";
-
-    const form = document.getElementById("loginForm");
-    const errorMsg = document.getElementById("errorMsg");
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-
-      // Check for admin login first
-      if (username === adminUsername && password === adminPassword) {
-        window.location.href = "admin-dashboard.html";
-        return;
-      }
-
-      // User login (mock example)
-      // TODO: Replace with real user database/Stripe check
-      if (username.startsWith("student") && password === "password123") {
-        // Redirect to user PWA dashboard
-        window.location.href = "user-dashboard.html";
-      } else {
-        errorMsg.textContent = "Invalid username or password";
-      }
-    });
-  </script>
 </body>
 </html>
