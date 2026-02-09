@@ -10,12 +10,12 @@
 
 <style>
   :root {
-    --bg-main: linear-gradient(135deg, #ff7a18, #ffb347);
-    --bg-panel: #0b0b0b;
-    --bg-card: rgba(255,255,255,0.1);
+    --bg-main: #0b0b0b; /* main site background */
+    --bg-panel: #141414; /* top bar / panels */
+    --bg-card: #1b1b1b; /* cards / calendar days */
     --text-main: #ffffff;
     --text-muted: #b5b5b5;
-    --accent: #ff6a00;
+    --accent: #ff9800; /* buttons and highlights */
     --softy: #6c757d;
     --grind: #ff9800;
     --hardline: #d32f2f;
@@ -44,7 +44,7 @@
   header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin:0; }
   header button {
     background: var(--accent);
-    color: black;
+    color:black;
     border:none;
     padding:0.45rem 1rem;
     border-radius:8px;
@@ -69,7 +69,16 @@
   }
   .menu-drawer.open { right:0; }
   .menu-drawer h2 { margin-top:0; }
-  .menu-drawer button { margin-top:1rem; background:#ff5722; padding:.7rem; border:none; border-radius:8px; cursor:pointer; color:white; font-weight:bold; }
+  .menu-drawer button {
+    margin-top:1rem;
+    background: var(--accent);
+    padding:.7rem;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:black;
+    font-weight:bold;
+  }
 
   /* ===== MAIN ===== */
   main { padding:1.5rem; max-width:1400px; margin:auto; }
@@ -149,7 +158,6 @@
   .GrindMode { background: var(--grind); color:black; }
   .HardLine { background: var(--hardline); }
 
-  /* ===== TOOLTIP ===== */
   .tooltip {
     position:fixed; top:10px; right:10px;
     background:#0b0b0b; color:white;
@@ -306,5 +314,4 @@
 </script>
 </body>
 </html>
-
 
