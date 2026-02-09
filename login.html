@@ -30,7 +30,6 @@ body{
   height:100vh;
   overflow:hidden;
 
-  /* Animated gradient background */
   background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
@@ -42,7 +41,6 @@ body{
   100%{background-position:0% 50%;}
 }
 
-/* ===== LOGIN CARD ===== */
 .login-card{
   position:relative;
   background:rgba(11,11,11,0.95);
@@ -50,9 +48,8 @@ body{
   border-radius:18px;
   width:320px;
   box-shadow:0 10px 30px rgba(0,0,0,0.5);
-
-  /* Glow behind the card */
 }
+
 .login-card::before{
   content:"";
   position:absolute;
@@ -71,7 +68,6 @@ body{
   100%{opacity:0.5; transform:scale(1);}
 }
 
-/* Card content */
 .login-card h1{
   font-family:'Space Grotesk',sans-serif;
   margin-bottom:1.5rem;
@@ -102,23 +98,37 @@ body{
   cursor:pointer;
   margin-top:0.5rem;
   transition:transform 0.2s, box-shadow 0.2s;
+  animation: buttonGlow 2s ease-in-out infinite alternate;
 }
 
 .login-card button:hover{
-  transform:scale(1.03);
-  box-shadow:0 6px 15px rgba(0,0,0,0.3);
+  transform:scale(1.05);
+  box-shadow:0 0 20px var(--accent);
 }
 
-.login-card p{
+@keyframes buttonGlow{
+  0%{box-shadow:0 0 5px var(--accent);}
+  50%{box-shadow:0 0 15px var(--accent);}
+  100%{box-shadow:0 0 5px var(--accent);}
+}
+
+.return-btn{
+  width:100%;
   margin-top:1rem;
-  font-size:.85rem;
-  color:var(--text-muted);
+  padding:.7rem;
+  border:1px solid var(--accent);
+  border-radius:10px;
+  background:transparent;
+  color:var(--accent);
+  font-weight:600;
+  cursor:pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: buttonGlow 2s ease-in-out infinite alternate;
 }
 
-.login-card a{
-  color:var(--accent);
-  text-decoration:none;
-  font-weight:600;
+.return-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px var(--accent);
 }
 </style>
 </head>
@@ -130,7 +140,7 @@ body{
   <input id="username" placeholder="Username" type="text">
   <input id="password" placeholder="Password" type="password">
   <button onclick="login()">Login</button>
-  <p>Don't have an account? <a href="#">Sign up</a></p>
+  <button class="return-btn" onclick="goBack()">Return</button>
 </div>
 
 <script>
@@ -147,6 +157,10 @@ function login(){
   } else{
     alert("Wrong username or password");
   }
+}
+
+function goBack(){
+  window.location.href="index.html"; // Change this to your website main page URL
 }
 </script>
 
