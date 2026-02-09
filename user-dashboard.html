@@ -1,323 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Metrix HardLine — Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Metrix HardLine — User Dashboard</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    :root {
-      --bg-main: #401d65; /* Updated to login page color */
-      --bg-panel: #1f1442;
-      --bg-card: #2a1f5b;
-      --border-subtle: rgba(255,255,255,0.08);
-      --text-main: #ffffff;
-      --text-muted: #b5b5b5;
-      --accent: #a76cff;
-      --softy: #6c757d;
-      --grind: #ff9800;
-      --hardline: #d32f2f;
-    }
+<style>
+  :root {
+    --bg-main: #0b0b0b;
+    --bg-panel: #141414;
+    --bg-card: #1b1b1b;
+    --text-main: #ffffff;
+    --text-muted: #b5b5b5;
+    --accent: #401d65; /* login page color */
+    --softy: #6c757d;
+    --grind: #401d65; /* match login color */
+    --hardline: #d32f2f;
+  }
 
-    * { box-sizing: border-box; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
 
-    body {
-      margin: 0;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg-main);
-      color: var(--text-main);
-    }
+  /* ===== TOP BAR ===== */
+  header {
+    height: 64px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+  }
 
-    header {
-      height: 64px;
-      background: var(--bg-panel);
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-    }
+  header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin:0; }
+  header button {
+    background: var(--accent);
+    color:white;
+    border:none;
+    padding:0.45rem 1rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
 
-    header h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
-      margin: 0;
-    }
+  /* ===== MENU DRAWER ===== */
+  .menu-drawer {
+    position: fixed;
+    top:0;
+    right:-300px;
+    width:300px;
+    height:100%;
+    background:#111;
+    color:white;
+    padding:1.5rem;
+    transition: right 0.3s ease;
+    z-index:1000;
+    display:flex;
+    flex-direction:column;
+  }
+  .menu-drawer.open { right:0; }
+  .menu-drawer h2 { margin-top:0; }
+  .menu-drawer button {
+    margin-top:1rem;
+    background: var(--accent);
+    padding:.7rem;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:white;
+    font-weight:bold;
+  }
 
-    header button {
-      background: none;
-      border: 1px solid var(--border-subtle);
-      color: white;
-      padding: 0.45rem 0.9rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+  /* ===== MAIN ===== */
+  main { padding:1.5rem; max-width:1400px; margin:auto; }
 
-    main {
-      padding: 1.5rem;
-      max-width: 1400px;
-      margin: auto;
-    }
+  /* ===== STATS ===== */
+  .stats {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap:1rem;
+    margin-bottom:2rem;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border-radius:14px;
+    padding:1.2rem;
+    text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,0.3);
+  }
+  .stat-card h3 { margin:0; font-size:0.85rem; color:var(--text-muted); }
+  .stat-card p { margin-top:0.4rem; font-size:1.6rem; font-weight:700; }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
+  /* ===== TASK CREATOR (STEP-BY-STEP) ===== */
+  .task-form {
+    background: var(--bg-card);
+    border-radius:16px;
+    padding:1.5rem;
+    margin-bottom:2rem;
+    max-width:520px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+  }
+  .task-form h2 { font-family:'Space Grotesk',sans-serif; margin:0 0 1rem 0; }
 
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 1.2rem;
-    }
+  .task-step { display:none; flex-direction:column; gap:.6rem; margin-bottom:1rem; }
+  .task-step.active { display:flex; }
 
-    .stat-card h3 {
-      margin: 0;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
+  .task-form input, .task-form select {
+    width:100%;
+    padding:.7rem;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:#0f0f0f;
+    color:white;
+    font-weight:600;
+  }
 
-    .stat-card p {
-      margin-top: 0.4rem;
-      font-size: 1.6rem;
-      font-weight: 700;
-    }
+  .task-form button { width:100%; background: var(--accent); color:white; border:none; padding:.75rem; border-radius:10px; font-weight:700; cursor:pointer; }
 
-    .task-form {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      max-width: 520px;
-    }
+  /* ===== CALENDAR ===== */
+  .calendar-controls { display:flex; justify-content:space-between; margin-bottom:.5rem; max-width:1100px; }
+  .calendar-controls button { background: var(--accent); border:none; color:white; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; }
 
-    .task-form h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      margin-top: 0;
-      margin-bottom: 1rem;
-    }
+  .calendar-wrapper { overflow-x:auto; padding-bottom:1rem; }
+  .calendar {
+    display:grid;
+    grid-template-columns: repeat(7,minmax(160px,1fr));
+    gap:10px;
+    min-width:1100px;
+  }
+  .day {
+    background: var(--bg-card);
+    border-radius:14px;
+    padding:.6rem;
+    min-height:140px;
+    position:relative;
+  }
+  .day-header { font-size:.75rem; color:var(--text-muted); margin-bottom:.4rem; }
 
-    .task-form input,
-    .task-form select {
-      width: 100%;
-      margin-bottom: 0.8rem;
-      padding: 0.7rem;
-      border-radius: 10px;
-      border: 1px solid var(--border-subtle);
-      background: #0f0f0f;
-      color: white;
-      font-weight: 600;
-    }
+  .task {
+    padding:.35rem .6rem;
+    border-radius:8px;
+    font-size:.75rem;
+    font-weight:700;
+    margin-bottom:.3rem;
+    cursor:pointer;
+  }
+  .Softy { background: var(--softy); }
+  .GrindMode { background: var(--grind); }
+  .HardLine { background: var(--hardline); }
 
-    .task-form button {
-      width: 100%;
-      background: var(--accent);
-      color: black;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+  .tooltip {
+    position:fixed; top:10px; right:10px;
+    background:#0b0b0b; color:white;
+    padding:.6rem; border-radius:8px;
+    font-size:.85rem; display:none;
+    z-index:1000; box-shadow:0 4px 8px rgba(0,0,0,0.3);
+  }
 
-    .calendar-wrapper {
-      overflow-x: auto;
-      padding-bottom: 1rem;
-    }
-
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(160px, 1fr));
-      gap: 10px;
-      min-width: 1100px;
-    }
-
-    .day {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 0.6rem;
-      min-height: 140px;
-      position: relative;
-    }
-
-    .day.overdue {
-      border: 2px solid var(--hardline);
-    }
-
-    .day-header {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-
-    .task {
-      padding: 0.35rem 0.6rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 0.3rem;
-      cursor: pointer;
-    }
-
-    .Softy { background: var(--softy); }
-    .GrindMode { background: var(--grind); color: black; }
-    .HardLine { background: var(--hardline); }
-
-    /* Notifications */
-    #coachMessages {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      max-width: 260px;
-      z-index: 1000;
-    }
-
-    .coach-msg {
-      background: var(--bg-card);
-      border-left: 5px solid var(--accent);
-      padding: 0.7rem;
-      margin-bottom: 0.6rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
 <header>
   <h1>Metrix HardLine</h1>
-  <button onclick="location.href='userlogin.html'">Logout</button>
+  <button id="menuBtn">Menu</button>
 </header>
+
+<div class="menu-drawer" id="menuDrawer">
+  <h2>Menu</h2>
+  <p><strong>Username:</strong> user01</p>
+  <p><strong>Email:</strong> user01@email.com</p>
+  <button id="closeMenu">Close Menu</button>
+  <button id="drawerLogout">Logout</button>
+</div>
 
 <main>
 
+  <!-- Stats -->
   <section class="stats">
     <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
     <div class="stat-card"><h3>Completed</h3><p id="completedTasks">0</p></div>
     <div class="stat-card"><h3>Missed</h3><p id="missedTasks">0</p></div>
   </section>
 
+  <!-- Task Creator -->
   <section class="task-form">
     <h2>Create Task</h2>
-    <input id="taskTitle" placeholder="Task title">
-    <input id="taskDeadline" type="date">
-    <select id="taskIntensity">
-      <option value="Softy">Softy</option>
-      <option value="GrindMode">GrindMode</option>
-      <option value="HardLine">HardLine</option>
-    </select>
-    <button onclick="addTask()">Add Task</button>
+    <div class="task-step step1 active">
+      <input id="taskTitle" placeholder="Task title" />
+      <button id="step1Next">Next →</button>
+    </div>
+    <div class="task-step step2">
+      <input id="taskDeadline" type="date"/>
+      <button id="step2Next">Next →</button>
+    </div>
+    <div class="task-step step3">
+      <select id="taskIntensity">
+        <option value="Softy">Softy</option>
+        <option value="GrindMode">GrindMode</option>
+        <option value="HardLine">HardLine</option>
+      </select>
+      <button id="addTaskBtn">Add Task</button>
+    </div>
   </section>
 
+  <!-- Calendar Controls -->
+  <div class="calendar-controls">
+    <button id="prevMonth">← Prev</button>
+    <button id="nextMonth">Next →</button>
+  </div>
+
+  <!-- Calendar -->
   <div class="calendar-wrapper">
     <section class="calendar" id="calendar"></section>
   </div>
 
 </main>
 
-<div id="coachMessages"></div>
+<div class="tooltip" id="tooltip"></div>
 
 <script>
+  // ==================== MENU LOGIC ====================
+  const menuBtn = document.getElementById('menuBtn');
+  const menuDrawer = document.getElementById('menuDrawer');
+  const closeMenu = document.getElementById('closeMenu');
+  const drawerLogout = document.getElementById('drawerLogout');
+
+  menuBtn.onclick = ()=> menuDrawer.classList.add('open');
+  closeMenu.onclick = ()=> menuDrawer.classList.remove('open');
+  drawerLogout.onclick = ()=> window.location.href='userlogin.html';
+
+  // ==================== TASK CREATION STEP-BY-STEP ====================
+  const step1 = document.querySelector('.step1');
+  const step2 = document.querySelector('.step2');
+  const step3 = document.querySelector('.step3');
+  const step1Next = document.getElementById('step1Next');
+  const step2Next = document.getElementById('step2Next');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+
   let tasks = [];
 
-  function addTask() {
-    if (!taskTitle.value || !taskDeadline.value) return alert("Fill all fields");
-    tasks.push({
-      title: taskTitle.value,
-      deadline: taskDeadline.value,
-      intensity: taskIntensity.value,
-      completed: false
-    });
-    taskTitle.value = "";
+  step1Next.onclick = ()=>{
+    if(!document.getElementById('taskTitle').value) return alert("Enter task title");
+    step1.classList.remove('active'); step2.classList.add('active');
+  };
+  step2Next.onclick = ()=>{
+    if(!document.getElementById('taskDeadline').value) return alert("Select date");
+    step2.classList.remove('active'); step3.classList.add('active');
+  };
+  addTaskBtn.onclick = ()=>{
+    const title = document.getElementById('taskTitle').value;
+    const deadline = document.getElementById('taskDeadline').value;
+    const intensity = document.getElementById('taskIntensity').value;
+    if(!title||!deadline) return;
+    tasks.push({title, deadline, intensity, completed:false});
+    step3.classList.remove('active'); step1.classList.add('active');
+    document.getElementById('taskTitle').value='';
+    document.getElementById('taskDeadline').value='';
+    renderCalendar(); updateStats();
+  };
+
+  // ==================== CALENDAR LOGIC ====================
+  const calendar = document.getElementById('calendar');
+  let currentMonth = new Date();
+
+  document.getElementById('prevMonth').onclick = ()=>{
+    currentMonth.setMonth(currentMonth.getMonth()-1);
     renderCalendar();
-    updateStats();
-    checkCoachMessages();
-  }
+  };
+  document.getElementById('nextMonth').onclick = ()=>{
+    currentMonth.setMonth(currentMonth.getMonth()+1);
+    renderCalendar();
+  };
 
-  function renderCalendar() {
-    calendar.innerHTML = "";
-    const start = new Date();
-    for (let i = 0; i < 30; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      const dateStr = d.toISOString().split("T")[0];
-
-      const day = document.createElement("div");
-      day.className = "day";
-      day.innerHTML = `<div class="day-header">${dateStr}</div>`;
-
-      const today = new Date().toISOString().split("T")[0];
-
-      // Overdue highlighting
-      tasks.filter(t => t.deadline === dateStr && !t.completed && dateStr < today)
-           .forEach(() => day.classList.add("overdue"));
-
-      tasks.filter(t => t.deadline === dateStr).forEach(t => {
-        const el = document.createElement("div");
-        el.className = `task ${t.intensity}`;
-        el.textContent = t.title;
-        el.onclick = () => {
+  function renderCalendar(){
+    calendar.innerHTML='';
+    const start = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    const end = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 0);
+    for(let d=start.getDate(); d<=end.getDate(); d++){
+      const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
+      const dateStr = dayDate.toISOString().split('T')[0];
+      const day = document.createElement('div'); day.className='day';
+      day.innerHTML=`<div class="day-header">${dateStr}</div>`;
+      tasks.filter(t=>t.deadline===dateStr).forEach(t=>{
+        const tEl=document.createElement('div');
+        tEl.className=`task ${t.intensity}`;
+        tEl.textContent=t.title;
+        tEl.onclick=()=>{
           t.completed = !t.completed;
-          renderCalendar();
-          updateStats();
-          checkCoachMessages();
+          updateStats(); renderCalendar();
         };
-        day.appendChild(el);
+        day.appendChild(tEl);
       });
-
       calendar.appendChild(day);
     }
   }
 
-  function updateStats() {
-    totalTasks.textContent = tasks.length;
-    completedTasks.textContent = tasks.filter(t => t.completed).length;
-    missedTasks.textContent = tasks.filter(t => !t.completed && t.deadline < new Date().toISOString().split("T")[0]).length;
-  }
-
-  function checkCoachMessages() {
-    const container = document.getElementById("coachMessages");
-    container.innerHTML = "";
-    const today = new Date().toISOString().split("T")[0];
-
-    tasks.forEach(t => {
-      if (!t.completed) {
-        const msg = document.createElement("div");
-        msg.className = "coach-msg";
-        const deadline = new Date(t.deadline);
-        const now = new Date();
-        const daysOverdue = Math.floor((now - deadline)/(1000*60*60*24));
-
-        if (t.deadline === today) {
-          msg.textContent = `[Due Today] Coach: "${t.title}" must be completed today!`;
-        } else if (daysOverdue > 0) {
-          let tone = "";
-          if (daysOverdue >= 5) tone = "HardLine: finish immediately!";
-          else if (daysOverdue >= 3) tone = "GrindMode: get it done!";
-          else tone = "Softy: don't forget this task!";
-          msg.textContent = `[Overdue] ${tone} Task: "${t.title}" (${daysOverdue} days overdue)`;
-        }
-
-        if (msg.textContent) container.appendChild(msg);
-      }
-    });
+  // ==================== STATS ====================
+  function updateStats(){
+    document.getElementById('totalTasks').textContent=tasks.length;
+    document.getElementById('completedTasks').textContent=tasks.filter(t=>t.completed).length;
+    document.getElementById('missedTasks').textContent=tasks.filter(t=>!t.completed).length;
   }
 
   renderCalendar();
-  updateStats();
-  checkCoachMessages();
 </script>
-
 </body>
 </html>
 
