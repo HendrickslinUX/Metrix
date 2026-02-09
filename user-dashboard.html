@@ -10,14 +10,14 @@
 
 <style>
   :root {
-    --bg-main: #0b0b0b; /* main site background */
-    --bg-panel: #141414; /* top bar / panels */
-    --bg-card: #1b1b1b; /* cards / calendar days */
+    --bg-main: #0b0b0b;
+    --bg-panel: #141414;
+    --bg-card: #1b1b1b;
     --text-main: #ffffff;
     --text-muted: #b5b5b5;
-    --accent: #ff9800; /* buttons and highlights */
+    --accent: #401d65; /* login page color */
     --softy: #6c757d;
-    --grind: #ff9800;
+    --grind: #401d65; /* match login color */
     --hardline: #d32f2f;
   }
 
@@ -44,7 +44,7 @@
   header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin:0; }
   header button {
     background: var(--accent);
-    color:black;
+    color:white;
     border:none;
     padding:0.45rem 1rem;
     border-radius:8px;
@@ -76,7 +76,7 @@
     border:none;
     border-radius:8px;
     cursor:pointer;
-    color:black;
+    color:white;
     font-weight:bold;
   }
 
@@ -124,11 +124,11 @@
     font-weight:600;
   }
 
-  .task-form button { width:100%; background: var(--accent); color:black; border:none; padding:.75rem; border-radius:10px; font-weight:700; cursor:pointer; }
+  .task-form button { width:100%; background: var(--accent); color:white; border:none; padding:.75rem; border-radius:10px; font-weight:700; cursor:pointer; }
 
   /* ===== CALENDAR ===== */
   .calendar-controls { display:flex; justify-content:space-between; margin-bottom:.5rem; max-width:1100px; }
-  .calendar-controls button { background: var(--accent); border:none; color:black; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; }
+  .calendar-controls button { background: var(--accent); border:none; color:white; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; }
 
   .calendar-wrapper { overflow-x:auto; padding-bottom:1rem; }
   .calendar {
@@ -155,7 +155,7 @@
     cursor:pointer;
   }
   .Softy { background: var(--softy); }
-  .GrindMode { background: var(--grind); color:black; }
+  .GrindMode { background: var(--grind); }
   .HardLine { background: var(--hardline); }
 
   .tooltip {
@@ -180,6 +180,7 @@
   <h2>Menu</h2>
   <p><strong>Username:</strong> user01</p>
   <p><strong>Email:</strong> user01@email.com</p>
+  <button id="closeMenu">Close Menu</button>
   <button id="drawerLogout">Logout</button>
 </div>
 
@@ -232,9 +233,11 @@
   // ==================== MENU LOGIC ====================
   const menuBtn = document.getElementById('menuBtn');
   const menuDrawer = document.getElementById('menuDrawer');
+  const closeMenu = document.getElementById('closeMenu');
   const drawerLogout = document.getElementById('drawerLogout');
 
-  menuBtn.onclick = ()=> menuDrawer.classList.toggle('open');
+  menuBtn.onclick = ()=> menuDrawer.classList.add('open');
+  closeMenu.onclick = ()=> menuDrawer.classList.remove('open');
   drawerLogout.onclick = ()=> window.location.href='userlogin.html';
 
   // ==================== TASK CREATION STEP-BY-STEP ====================
@@ -314,4 +317,5 @@
 </script>
 </body>
 </html>
+
 
