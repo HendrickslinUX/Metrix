@@ -1,133 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Metrix HardLine — User Dashboard</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-main: linear-gradient(135deg, #ff7a18, #ffb347);
+    --bg-panel: #0b0b0b;
+    --bg-card: rgba(255,255,255,0.1);
+    --text-main: #ffffff;
+    --text-muted: #b5b5b5;
+    --accent: #ff6a00;
+    --softy: #6c757d;
+    --grind: #ff9800;
+    --hardline: #d32f2f;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
+
+  /* ===== TOP BAR ===== */
+  header {
+    height: 64px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+  }
+
+  header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin:0; }
+  header button {
+    background: var(--accent);
+    color: black;
+    border:none;
+    padding:0.45rem 1rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
+
+  /* ===== MENU DRAWER ===== */
+  .menu-drawer {
+    position: fixed;
+    top:0;
+    right:-300px;
+    width:300px;
+    height:100%;
+    background:#111;
+    color:white;
+    padding:1.5rem;
+    transition: right 0.3s ease;
+    z-index:1000;
+    display:flex;
+    flex-direction:column;
+  }
+  .menu-drawer.open { right:0; }
+  .menu-drawer h2 { margin-top:0; }
+  .menu-drawer button { margin-top:1rem; background:#ff5722; padding:.7rem; border:none; border-radius:8px; cursor:pointer; color:white; font-weight:bold; }
+
+  /* ===== MAIN ===== */
+  main { padding:1.5rem; max-width:1400px; margin:auto; }
+
+  /* ===== STATS ===== */
+  .stats {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+    gap:1rem;
+    margin-bottom:2rem;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border-radius:14px;
+    padding:1.2rem;
+    text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,0.3);
+  }
+  .stat-card h3 { margin:0; font-size:0.85rem; color:var(--text-muted); }
+  .stat-card p { margin-top:0.4rem; font-size:1.6rem; font-weight:700; }
+
+  /* ===== TASK CREATOR (STEP-BY-STEP) ===== */
+  .task-form {
+    background: var(--bg-card);
+    border-radius:16px;
+    padding:1.5rem;
+    margin-bottom:2rem;
+    max-width:520px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+  }
+  .task-form h2 { font-family:'Space Grotesk',sans-serif; margin:0 0 1rem 0; }
+
+  .task-step { display:none; flex-direction:column; gap:.6rem; margin-bottom:1rem; }
+  .task-step.active { display:flex; }
+
+  .task-form input, .task-form select {
+    width:100%;
+    padding:.7rem;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:#0f0f0f;
+    color:white;
+    font-weight:600;
+  }
+
+  .task-form button { width:100%; background: var(--accent); color:black; border:none; padding:.75rem; border-radius:10px; font-weight:700; cursor:pointer; }
+
+  /* ===== CALENDAR ===== */
+  .calendar-controls { display:flex; justify-content:space-between; margin-bottom:.5rem; max-width:1100px; }
+  .calendar-controls button { background: var(--accent); border:none; color:black; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; }
+
+  .calendar-wrapper { overflow-x:auto; padding-bottom:1rem; }
+  .calendar {
+    display:grid;
+    grid-template-columns: repeat(7,minmax(160px,1fr));
+    gap:10px;
+    min-width:1100px;
+  }
+  .day {
+    background: var(--bg-card);
+    border-radius:14px;
+    padding:.6rem;
+    min-height:140px;
+    position:relative;
+  }
+  .day-header { font-size:.75rem; color:var(--text-muted); margin-bottom:.4rem; }
+
+  .task {
+    padding:.35rem .6rem;
+    border-radius:8px;
+    font-size:.75rem;
+    font-weight:700;
+    margin-bottom:.3rem;
+    cursor:pointer;
+  }
+  .Softy { background: var(--softy); }
+  .GrindMode { background: var(--grind); color:black; }
+  .HardLine { background: var(--hardline); }
+
+  /* ===== TOOLTIP ===== */
+  .tooltip {
+    position:fixed; top:10px; right:10px;
+    background:#0b0b0b; color:white;
+    padding:.6rem; border-radius:8px;
+    font-size:.85rem; display:none;
+    z-index:1000; box-shadow:0 4px 8px rgba(0,0,0,0.3);
+  }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Metrix HardLine</h1>
+  <button id="menuBtn">Menu</button>
+</header>
+
+<div class="menu-drawer" id="menuDrawer">
+  <h2>Menu</h2>
+  <p><strong>Username:</strong> user01</p>
+  <p><strong>Email:</strong> user01@email.com</p>
+  <button id="drawerLogout">Logout</button>
+</div>
+
 <main>
 
+  <!-- Stats -->
   <section class="stats">
     <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
     <div class="stat-card"><h3>Completed</h3><p id="completedTasks">0</p></div>
     <div class="stat-card"><h3>Missed</h3><p id="missedTasks">0</p></div>
   </section>
 
+  <!-- Task Creator -->
   <section class="task-form">
     <h2>Create Task</h2>
-
-    <!-- Step 1: Task Name -->
-    <input id="taskTitle" class="task-step active" placeholder="Task title" />
-
-    <!-- Step 2: Deadline -->
-    <input id="taskDeadline" class="task-step" type="date" />
-
-    <!-- Step 3: Intensity -->
-    <select id="taskIntensity" class="task-step">
-      <option value="Softy">Softy</option>
-      <option value="GrindMode">GrindMode</option>
-      <option value="HardLine">HardLine</option>
-    </select>
-
-    <!-- Step 4: Add Task Button -->
-    <button id="addTaskBtn" class="task-step">Add Task</button>
+    <div class="task-step step1 active">
+      <input id="taskTitle" placeholder="Task title" />
+      <button id="step1Next">Next →</button>
+    </div>
+    <div class="task-step step2">
+      <input id="taskDeadline" type="date"/>
+      <button id="step2Next">Next →</button>
+    </div>
+    <div class="task-step step3">
+      <select id="taskIntensity">
+        <option value="Softy">Softy</option>
+        <option value="GrindMode">GrindMode</option>
+        <option value="HardLine">HardLine</option>
+      </select>
+      <button id="addTaskBtn">Add Task</button>
+    </div>
   </section>
 
+  <!-- Calendar Controls -->
+  <div class="calendar-controls">
+    <button id="prevMonth">← Prev</button>
+    <button id="nextMonth">Next →</button>
+  </div>
+
+  <!-- Calendar -->
   <div class="calendar-wrapper">
-    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-      <button id="prevMonthBtn" style="background:var(--accent); color:black; border:none; border-radius:6px; padding:0.5rem;">&#8592; Previous</button>
-      <button id="nextMonthBtn" style="background:var(--accent); color:black; border:none; border-radius:6px; padding:0.5rem;">Next &#8594;</button>
-    </div>
     <section class="calendar" id="calendar"></section>
   </div>
 
 </main>
 
+<div class="tooltip" id="tooltip"></div>
+
 <script>
-  // ===== TASK STEP LOGIC =====
-  const taskTitle = document.getElementById('taskTitle');
-  const taskDeadline = document.getElementById('taskDeadline');
-  const taskIntensity = document.getElementById('taskIntensity');
+  // ==================== MENU LOGIC ====================
+  const menuBtn = document.getElementById('menuBtn');
+  const menuDrawer = document.getElementById('menuDrawer');
+  const drawerLogout = document.getElementById('drawerLogout');
+
+  menuBtn.onclick = ()=> menuDrawer.classList.toggle('open');
+  drawerLogout.onclick = ()=> window.location.href='userlogin.html';
+
+  // ==================== TASK CREATION STEP-BY-STEP ====================
+  const step1 = document.querySelector('.step1');
+  const step2 = document.querySelector('.step2');
+  const step3 = document.querySelector('.step3');
+  const step1Next = document.getElementById('step1Next');
+  const step2Next = document.getElementById('step2Next');
   const addTaskBtn = document.getElementById('addTaskBtn');
-  const steps = [taskTitle, taskDeadline, taskIntensity, addTaskBtn];
 
-  steps.forEach((el, i) => {
-    if(i < steps.length - 1) {
-      el.addEventListener('input', () => steps[i+1].classList.add('active'));
-    }
-  });
-
-  // ===== TASKS & CALENDAR =====
   let tasks = [];
-  let currentMonthOffset = 0;
 
-  addTaskBtn.addEventListener('click', () => {
-    if(!taskTitle.value || !taskDeadline.value) return alert("Fill all fields");
+  step1Next.onclick = ()=>{
+    if(!document.getElementById('taskTitle').value) return alert("Enter task title");
+    step1.classList.remove('active'); step2.classList.add('active');
+  };
+  step2Next.onclick = ()=>{
+    if(!document.getElementById('taskDeadline').value) return alert("Select date");
+    step2.classList.remove('active'); step3.classList.add('active');
+  };
+  addTaskBtn.onclick = ()=>{
+    const title = document.getElementById('taskTitle').value;
+    const deadline = document.getElementById('taskDeadline').value;
+    const intensity = document.getElementById('taskIntensity').value;
+    if(!title||!deadline) return;
+    tasks.push({title, deadline, intensity, completed:false});
+    step3.classList.remove('active'); step1.classList.add('active');
+    document.getElementById('taskTitle').value='';
+    document.getElementById('taskDeadline').value='';
+    renderCalendar(); updateStats();
+  };
 
-    tasks.push({
-      title: taskTitle.value,
-      deadline: taskDeadline.value,
-      intensity: taskIntensity.value,
-      completed: false
-    });
-
-    // Reset steps
-    steps.forEach(el => el.classList.remove('active'));
-    taskTitle.classList.add('active');
-    taskTitle.value = '';
-    taskDeadline.value = '';
-    taskIntensity.value = 'Softy';
-
-    renderCalendar();
-    updateStats();
-  });
-
+  // ==================== CALENDAR LOGIC ====================
   const calendar = document.getElementById('calendar');
-  const prevMonthBtn = document.getElementById('prevMonthBtn');
-  const nextMonthBtn = document.getElementById('nextMonthBtn');
+  let currentMonth = new Date();
 
-  prevMonthBtn.addEventListener('click', () => { currentMonthOffset--; renderCalendar(); });
-  nextMonthBtn.addEventListener('click', () => { currentMonthOffset++; renderCalendar(); });
+  document.getElementById('prevMonth').onclick = ()=>{
+    currentMonth.setMonth(currentMonth.getMonth()-1);
+    renderCalendar();
+  };
+  document.getElementById('nextMonth').onclick = ()=>{
+    currentMonth.setMonth(currentMonth.getMonth()+1);
+    renderCalendar();
+  };
 
-  function renderCalendar() {
-    calendar.innerHTML = '';
-    const todayISO = new Date().toISOString().split("T")[0];
-
-    let start = new Date();
-    start.setMonth(start.getMonth() + currentMonthOffset);
-    start.setDate(1);
-
-    const daysInMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
-
-    for(let i=1;i<=daysInMonth;i++){
-      const d = new Date(start.getFullYear(), start.getMonth(), i);
-      const dateStr = d.toISOString().split("T")[0];
-
-      const day = document.createElement('div');
-      day.className = "day";
-
-      if(dateStr === todayISO) day.classList.add('today');
-      const overdue = tasks.filter(t=>!t.completed && t.deadline < todayISO && t.deadline === dateStr);
-      if(overdue.length > 0) day.classList.add('overdue');
-
-      day.innerHTML = `<div class="day-header">${dateStr}</div>`;
-
-      tasks.filter(t => t.deadline === dateStr).forEach(t => {
-        const el = document.createElement('div');
-        el.className = `task ${t.intensity}`;
-        el.textContent = t.title;
-        el.onclick = () => {
+  function renderCalendar(){
+    calendar.innerHTML='';
+    const start = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    const end = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 0);
+    for(let d=start.getDate(); d<=end.getDate(); d++){
+      const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
+      const dateStr = dayDate.toISOString().split('T')[0];
+      const day = document.createElement('div'); day.className='day';
+      day.innerHTML=`<div class="day-header">${dateStr}</div>`;
+      tasks.filter(t=>t.deadline===dateStr).forEach(t=>{
+        const tEl=document.createElement('div');
+        tEl.className=`task ${t.intensity}`;
+        tEl.textContent=t.title;
+        tEl.onclick=()=>{
           t.completed = !t.completed;
-          renderCalendar();
-          updateStats();
+          updateStats(); renderCalendar();
         };
-        day.appendChild(el);
+        day.appendChild(tEl);
       });
-
       calendar.appendChild(day);
     }
   }
 
-  function updateStats() {
-    totalTasks.textContent = tasks.length;
-    completedTasks.textContent = tasks.filter(t=>t.completed).length;
-    missedTasks.textContent = tasks.filter(t=>!t.completed).length;
+  // ==================== STATS ====================
+  function updateStats(){
+    document.getElementById('totalTasks').textContent=tasks.length;
+    document.getElementById('completedTasks').textContent=tasks.filter(t=>t.completed).length;
+    document.getElementById('missedTasks').textContent=tasks.filter(t=>!t.completed).length;
   }
 
   renderCalendar();
 </script>
+</body>
+</html>
 
 
