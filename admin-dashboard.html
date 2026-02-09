@@ -1,119 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Metrix HardLine — Admin Dashboard</title>
-  <link rel="stylesheet" href="admin-styles.css">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #401d65;
+      --bg-panel: #4a2580;
+      --bg-card: #512a99;
+      --border-subtle: rgba(255,255,255,0.08);
+      --text-main: #ffffff;
+      --text-muted: #d3cce6;
+      --accent: #ff6a00;
+      --softy: #6c757d;
+      --grind: #ff9800;
+      --hardline: #d32f2f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+    }
+
+    header {
+      height: 64px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+    }
+
+    header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    header button {
+      background: var(--accent);
+      border: none;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      color: black;
+      transition: transform 0.2s;
+    }
+
+    header button:hover {
+      transform: scale(1.05);
+    }
+
+    main {
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    /* ===== STATS ===== */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    .stat-card h3 {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .stat-card p {
+      margin-top: 0.4rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    /* ===== USER TABLE ===== */
+    .users-panel {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(255,255,255,0.15);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(255,255,255,0.05);
+    }
+
+    tr:hover td {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ===== TASK OVERSIGHT ===== */
+    .tasks-panel {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      background: var(--accent);
+      color: black;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* ===== FILTERS ===== */
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filters select {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: none;
+      background: #6130b0;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
+
 <body>
-  <header>
-    <h1>Metrix HardLine Admin Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
-  </header>
 
-  <main>
-    <!-- Task Statistics Section -->
-    <section class="stats">
-      <div class="stat-card">
-        <h3>Total Tasks</h3>
-        <p>120</p>
-      </div>
-      <div class="stat-card">
-        <h3>Completed Tasks</h3>
-        <p>95</p>
-      </div>
-      <div class="stat-card">
-        <h3>Missed Tasks</h3>
-        <p>25</p>
-      </div>
-    </section>
+<header>
+  <h1>Admin Dashboard</h1>
+  <button onclick="location.href='adminlogin.html'">Logout</button>
+</header>
 
-    <!-- Users Section -->
-    <section class="users">
-      <h2>Users / Subscribers</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Subscription</th>
-            <th>Last Active</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>student01</td>
-            <td>s01@email.com</td>
-            <td>Active</td>
-            <td>2026-02-05</td>
-            <td>
-              <button>View Tasks</button>
-              <button>Send Reminder</button>
-              <button>Remove</button>
-            </td>
-          </tr>
-          <tr>
-            <td>student02</td>
-            <td>s02@email.com</td>
-            <td>Expired</td>
-            <td>2026-02-03</td>
-            <td>
-              <button>View Tasks</button>
-              <button>Send Reminder</button>
-              <button>Remove</button>
-            </td>
-          </tr>
-          <tr>
-            <td>student03</td>
-            <td>s03@email.com</td>
-            <td>Active</td>
-            <td>2026-02-06</td>
-            <td>
-              <button>View Tasks</button>
-              <button>Send Reminder</button>
-              <button>Remove</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
+<main>
 
-  <!-- Dashboard Script -->
-  <script>
-    // Logout button
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      window.location.href = "admin.html";
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat-card"><h3>Total Users</h3><p id="totalUsers">0</p></div>
+    <div class="stat-card"><h3>Active Tasks</h3><p id="activeTasks">0</p></div>
+    <div class="stat-card"><h3>Overdue Tasks</h3><p id="overdueTasks">0</p></div>
+    <div class="stat-card"><h3>Completed Tasks</h3><p id="completedTasks">0</p></div>
+  </section>
+
+  <!-- User Table -->
+  <section class="users-panel">
+    <h2>Users</h2>
+    <div class="filters">
+      <select id="filterStatus">
+        <option value="all">All Users</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Registered</th>
+          <th>Tasks Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamic rows -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Tasks Overview -->
+  <section class="tasks-panel">
+    <h2>All Tasks</h2>
+    <table id="tasksTable">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Task</th>
+          <th>Deadline</th>
+          <th>Intensity</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamic task rows -->
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 Metrix HardLine. All rights reserved.
+</footer>
+
+<script>
+  // Demo Data for preview
+  const users = [
+    { username: "user01", email: "user01@email.com", registered: "2026-01-01", tasks: 5 },
+    { username: "user02", email: "user02@email.com", registered: "2026-01-05", tasks: 3 },
+  ];
+
+  const tasks = [
+    { user: "user01", title: "Finish report", deadline: "2026-02-10", intensity: "HardLine", completed: false },
+    { user: "user02", title: "Read chapter 3", deadline: "2026-02-09", intensity: "GrindMode", completed: true },
+  ];
+
+  const usersTable = document.getElementById("usersTable").querySelector("tbody");
+  const tasksTable = document.getElementById("tasksTable").querySelector("tbody");
+
+  function renderUsers() {
+    usersTable.innerHTML = "";
+    users.forEach(u => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${u.username}</td><td>${u.email}</td><td>${u.registered}</td><td>${u.tasks}</td>`;
+      usersTable.appendChild(row);
+    });
+    document.getElementById("totalUsers").textContent = users.length;
+  }
+
+  function renderTasks() {
+    tasksTable.innerHTML = "";
+    let active = 0, overdue = 0, completed = 0;
+    const today = new Date().toISOString().split("T")[0];
+
+    tasks.forEach(t => {
+      const status = t.completed ? "Completed" : (t.deadline < today ? "Overdue" : "Active");
+      if(!t.completed) active++;
+      if(t.deadline < today && !t.completed) overdue++;
+      if(t.completed) completed++;
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${t.user}</td><td>${t.title}</td><td>${t.deadline}</td><td>${t.intensity}</td><td>${status}</td>`;
+      tasksTable.appendChild(row);
     });
 
-    // Table button actions
-    const table = document.querySelector("table tbody");
+    document.getElementById("activeTasks").textContent = active;
+    document.getElementById("overdueTasks").textContent = overdue;
+    document.getElementById("completedTasks").textContent = completed;
+  }
 
-    table.addEventListener("click", (e) => {
-      const target = e.target;
-      const row = target.closest("tr");
-      const username = row ? row.cells[0].textContent : "";
+  renderUsers();
+  renderTasks();
+</script>
 
-      if (target.textContent === "View Tasks") {
-        alert(`Tasks for ${username}:\n- Task 1: Completed\n- Task 2: Missed\n- Task 3: Pending`);
-      }
-
-      if (target.textContent === "Send Reminder") {
-        alert(`Reminder sent to ${username}!`);
-      }
-
-      if (target.textContent === "Remove") {
-        if (confirm(`Are you sure you want to remove ${username}?`)) {
-          row.remove();
-          alert(`${username} has been removed.`);
-        }
-      }
-    });
-  </script>
 </body>
 </html>
-
-
-
