@@ -29,7 +29,6 @@ body{
   align-items:center;
   height:100vh;
   overflow:hidden;
-
   background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
@@ -53,7 +52,7 @@ body{
 .login-card::before{
   content:"";
   position:absolute;
-  top:-10px; left:-10px; right:-10px; bottom:-10px;
+  inset:-10px;
   background:linear-gradient(45deg,var(--accent),#ff6a99,#401d65,#8b3fff);
   border-radius:20px;
   filter:blur(30px);
@@ -123,7 +122,6 @@ body{
   font-weight:600;
   cursor:pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  animation: buttonGlow 2s ease-in-out infinite alternate;
 }
 
 .return-btn:hover{
@@ -137,33 +135,56 @@ body{
 
 <div class="login-card">
   <h1>Metrix HardLine</h1>
-  <input id="username" placeholder="Username" type="text">
+
+  <!-- Firebase uses EMAIL + PASSWORD -->
+  <input id="email" placeholder="Email" type="email">
   <input id="password" placeholder="Password" type="password">
+
   <button onclick="login()">Login</button>
   <button class="return-btn" onclick="goBack()">Return</button>
 </div>
 
 <script>
-function login(){
-  const u=username.value.trim();
-  const p=password.value.trim();
-
-  // Temporary dev user for testing
-  const demoUser={username:"user01",password:"hardline123"};
-
-  if(u===demoUser.username && p===demoUser.password){
-    localStorage.setItem("loggedInUser",JSON.stringify(demoUser));
-    window.location.href="user-dashboard.html";
-  } else{
-    alert("Wrong username or password");
-  }
-}
-
 function goBack(){
-  window.location.href="index.html"; // Change this to your website main page URL
+  window.location.href="index.html";
 }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
+    authDomain: "metrix-hardline.firebaseapp.com",
+    projectId: "metrix-hardline",
+    storageBucket: "metrix-hardline.firebasestorage.app",
+    messagingSenderId: "899994703104",
+    appId: "1:899994703104:web:2979fe39d1c3c169ee4fe5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.login = function () {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (!email || !pass) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, pass)
+      .then((userCred) => {
+        localStorage.setItem("uid", userCred.user.uid);
+        window.location.href = "user-dashboard.html";
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
 </script>
 
 </body>
 </html>
-
