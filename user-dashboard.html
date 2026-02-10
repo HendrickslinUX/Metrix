@@ -175,7 +175,7 @@
   .day.overdue { border: 2px solid red; }
 
   /* ===== COACH MESSAGING SYSTEM - NEW STYLES ===== */
-  
+
   /* Coach Panel */
   .coach-panel {
     position: fixed;
@@ -191,7 +191,7 @@
     flex-direction: column;
     border: 1px solid rgba(255,255,255,0.1);
   }
-  
+
   .coach-panel-header {
     padding: 1rem;
     border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -199,13 +199,13 @@
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .coach-panel-header h3 {
     margin: 0;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1rem;
   }
-  
+
   .coach-panel-toggle {
     background: var(--accent);
     border: none;
@@ -216,7 +216,7 @@
     font-size: 0.85rem;
     font-weight: 600;
   }
-  
+
   .coach-messages {
     flex: 1;
     overflow-y: auto;
@@ -225,19 +225,19 @@
     flex-direction: column;
     gap: 0.8rem;
   }
-  
+
   .coach-message {
     background: var(--bg-card);
     padding: 0.8rem;
     border-radius: 10px;
     border-left: 3px solid;
   }
-  
+
   .coach-message.level-low { border-left-color: #4caf50; }
   .coach-message.level-medium { border-left-color: #ff9800; }
   .coach-message.level-high { border-left-color: #ff5722; }
   .coach-message.level-extreme { border-left-color: #d32f2f; }
-  
+
   .coach-message-header {
     display: flex;
     justify-content: space-between;
@@ -245,19 +245,19 @@
     font-size: 0.75rem;
     color: var(--text-muted);
   }
-  
+
   .coach-message-body {
     font-size: 0.85rem;
     line-height: 1.4;
   }
-  
+
   .coach-message-task {
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-top: 0.4rem;
     font-style: italic;
   }
-  
+
   /* Popup Notification */
   .coach-popup {
     position: fixed;
@@ -272,35 +272,35 @@
     animation: slideIn 0.3s ease;
     border-left: 4px solid;
   }
-  
+
   .coach-popup.level-low { border-left-color: #4caf50; }
   .coach-popup.level-medium { border-left-color: #ff9800; }
   .coach-popup.level-high { border-left-color: #ff5722; }
   .coach-popup.level-extreme { border-left-color: #d32f2f; }
-  
+
   @keyframes slideIn {
     from { transform: translateX(400px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
   }
-  
+
   .coach-popup-header {
     font-weight: 700;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
   }
-  
+
   .coach-popup-body {
     font-size: 0.85rem;
     line-height: 1.4;
     margin-bottom: 0.5rem;
   }
-  
+
   .coach-popup-task {
     font-size: 0.75rem;
     color: var(--text-muted);
     font-style: italic;
   }
-  
+
   /* Mobile Alert (Banner Style) */
   .coach-mobile-alert {
     position: fixed;
@@ -313,12 +313,12 @@
     animation: slideDown 0.4s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
-  
+
   @keyframes slideDown {
     from { transform: translateY(-100%); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
   }
-  
+
   .coach-mobile-alert-content {
     max-width: 1400px;
     margin: auto;
@@ -327,7 +327,7 @@
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .coach-mobile-alert-close {
     background: rgba(255,255,255,0.2);
     border: none;
@@ -337,7 +337,7 @@
     cursor: pointer;
     font-size: 0.75rem;
   }
-  
+
   /* Responsive adjustments for coach panel */
   @media (max-width: 768px) {
     .coach-panel {
@@ -346,7 +346,7 @@
       right: 20px;
       max-height: 400px;
     }
-    
+
     .coach-popup {
       width: calc(100% - 40px);
       left: 20px;
@@ -436,7 +436,8 @@
 
   menuBtn.onclick = ()=> menuDrawer.classList.add('open');
   closeMenu.onclick = ()=> menuDrawer.classList.remove('open');
-  drawerLogout.onclick = ()=> window.location.href='userlogin.html';
+  // IMPORTANT: logout is wired below via Firebase. Keep this call:
+  drawerLogout.onclick = ()=> window.logout();
 
   // ==================== TASK CREATION STEP-BY-STEP ====================
   const step1 = document.querySelector('.step1');
@@ -545,12 +546,12 @@
   renderCalendar();
 
   // ==================== COACH MESSAGING SYSTEM - NEW CODE ====================
-  
+
   // Coach Panel Toggle
   const coachPanel = document.getElementById('coachPanel');
   const coachPanelToggle = document.getElementById('coachPanelToggle');
   let coachPanelMinimized = false;
-  
+
   coachPanelToggle.onclick = ()=> {
     coachPanelMinimized = !coachPanelMinimized;
     if(coachPanelMinimized) {
@@ -563,7 +564,7 @@
       document.getElementById('coachMessages').style.display = 'flex';
     }
   };
-  
+
   // Phrase Library - 100 unique phrases per urgency level
   const COACH_PHRASES = {
     low: [
@@ -596,77 +597,7 @@
       "You're building something great. {task} is part of it.",
       "Let's knock {task} out while you're in the zone!",
       "The journey to success includes {task}.",
-      "You've got the skills. Apply them to {task}!",
-      "Every step matters. Take one toward {task}.",
-      "Let's turn potential into results with {task}!",
-      "You're stronger than you think! Tackle {task} now.",
-      "Success is built daily. Start with {task}.",
-      "Let's keep your streak going with {task}!",
-      "You're on a roll! Don't stop at {task}.",
-      "Feeling good? Put that energy into {task}!",
-      "Let's make progress on {task} while the day is young.",
-      "You deserve to feel accomplished. Finish {task}!",
-      "Greatness awaits! Begin with {task}.",
-      "Let's turn your vision into reality with {task}.",
-      "You've got what it takes to complete {task}.",
-      "Make today productive by working on {task}!",
-      "Let's build momentum with {task} right now.",
-      "You're doing amazing! Keep it up with {task}.",
-      "Ready to feel accomplished? Start {task} today.",
-      "Your commitment is admirable! Show it with {task}.",
-      "Let's make {task} your focus for the next hour.",
-      "You're creating your future. {task} is a building block.",
-      "Stay ahead of the game by working on {task}.",
-      "Let's transform {task} from pending to done!",
-      "You've got this opportunity. Seize it with {task}!",
-      "Consistency is key. Work on {task} today.",
-      "Let's celebrate progress! Start with {task}.",
-      "You're making waves! Keep going with {task}.",
-      "The path to success runs through {task}.",
-      "You're on track! Maintain it with {task}.",
-      "Let's make {task} your priority right now.",
-      "You're capable of excellence. Prove it with {task}!",
-      "Ready to feel amazing? Complete {task} today.",
-      "Your potential is unlimited! Channel it into {task}.",
-      "Let's turn intention into action with {task}!",
-      "You're building something beautiful. {task} is next.",
-      "Stay focused on {task} and watch magic happen.",
-      "You've got the power to finish {task} today!",
-      "Let's make {task} your success story.",
-      "You're worth the effort! Invest in {task} now.",
-      "Progress is calling! Answer with {task}.",
-      "Let's keep the energy high by working on {task}.",
-      "You're creating momentum. {task} keeps it going!",
-      "Ready for a win? {task} is your ticket.",
-      "Let's make today memorable with {task}!",
-      "You're capable of incredible things. Show it with {task}.",
-      "The best version of you works on {task} today.",
-      "Let's turn {task} into your next accomplishment!",
-      "You've got time and talent. Use both on {task}.",
-      "Stay inspired! Work on {task} while you're motivated.",
-      "You're building your legacy. {task} is part of it.",
-      "Let's make {task} happen before the day ends!",
-      "You're on a journey to greatness. {task} is a step.",
-      "Ready to excel? Focus on {task} right now.",
-      "You've got the discipline. Apply it to {task}!",
-      "Let's make {task} your achievement today.",
-      "You're unstoppable! Prove it with {task}.",
-      "Progress feels good. Experience it by doing {task}!",
-      "Let's turn {task} into a victory lap.",
-      "You're worthy of success. Earn it with {task}!",
-      "The time is now for {task}. Let's go!",
-      "You've got vision. Realize it through {task}.",
-      "Let's make {task} the highlight of your day!",
-      "You're building confidence. {task} strengthens it.",
-      "Ready to dominate? Start with {task}.",
-      "Let's transform {task} into completed!",
-      "You've got determination. Direct it at {task}.",
-      "Stay awesome by working on {task} today!",
-      "You're creating your reality. {task} shapes it.",
-      "Let's make {task} your power move!",
-      "You've got this moment. Use it for {task}.",
-      "Ready to be proud? Complete {task} now.",
-      "Let's turn {task} into your winning moment!"
+      "You've got the skills. Apply them to {task}!"
     ],
     medium: [
       "Time to focus! {task} needs your attention today.",
@@ -678,372 +609,69 @@
       "You committed to {task}. Let's honor that commitment.",
       "It's time to deliver on {task}. You've got this!",
       "Let's turn words into action with {task} today.",
-      "{task} is calling for your immediate attention.",
-      "You know what needs to be done: {task}. Let's go!",
-      "Time to step up! {task} can't wait any longer.",
-      "Let's get {task} moving. Procrastination ends now.",
-      "Your success depends on {task}. Make it happen!",
-      "No excuses today. {task} needs completion.",
-      "Let's prove your dedication with {task} right now.",
-      "Time is valuable. Invest it in {task} today!",
-      "{task} is your responsibility. Time to own it.",
-      "Let's eliminate distractions and focus on {task}.",
-      "You made a commitment to {task}. Keep your word!",
-      "The clock is ticking on {task}. Take action now!",
-      "Let's demonstrate discipline with {task} today.",
-      "Your goals demand action on {task}. Deliver!",
-      "Time to be accountable for {task}. No more waiting.",
-      "Let's turn pressure into performance with {task}!",
-      "{task} requires your best effort today. Give it!",
-      "No room for hesitation. {task} needs you now.",
-      "Let's show what you're made of with {task}!",
-      "Your credibility depends on completing {task}.",
-      "Time to focus all energy on {task}. Let's move!",
-      "Let's convert intention into results with {task}.",
-      "{task} won't wait. Neither should you!",
-      "Time to demonstrate commitment through {task}.",
-      "Let's make {task} your statement of dedication.",
-      "Your performance on {task} matters. Make it count!",
-      "No more putting off {task}. Today is the day!",
-      "Let's turn {task} into proof of your capability.",
-      "Time is running short on {task}. Act now!",
-      "Let's show discipline by completing {task} today.",
-      "{task} is your opportunity to demonstrate reliability.",
-      "Time to deliver results with {task}. No excuses!",
-      "Let's make {task} your focus until it's done.",
-      "Your reputation rides on {task}. Take it seriously!",
-      "Time to convert talk into action with {task}.",
-      "Let's prove your worth through {task} today!",
-      "{task} demands immediate attention. Provide it!",
-      "No more delays on {task}. Time to execute!",
-      "Let's demonstrate professionalism with {task} now.",
-      "Your commitment to {task} needs to show today.",
-      "Time to get uncomfortable and tackle {task}!",
-      "Let's make {task} your priority above all else.",
-      "{task} is your test. Pass it with action today!",
-      "Time to show real dedication with {task}.",
-      "Let's turn {task} into evidence of your work ethic.",
-      "Your goals require {task} completion. Deliver now!",
-      "No more excuses for {task}. Time to perform!",
-      "Let's demonstrate integrity by finishing {task}.",
-      "{task} is waiting for your full commitment today.",
-      "Time to be reliable. Complete {task} now!",
-      "Let's make {task} your accountability moment.",
-      "Your success story includes {task}. Write it today!",
-      "No more postponing {task}. Action is required!",
-      "Let's show determination through {task} completion.",
-      "{task} needs your undivided attention right now.",
-      "Time to step up and own {task} completely!",
-      "Let's turn {task} into your credibility builder.",
-      "Your word matters. Honor it with {task} today!",
-      "No shortcuts on {task}. Time to do the work!",
-      "Let's demonstrate excellence through {task} now.",
-      "{task} is your opportunity to prove yourself.",
-      "Time to be accountable. Finish {task} today!",
-      "Let's make {task} your focus until completion.",
-      "Your dedication shows through {task}. Demonstrate it!",
-      "No more waiting on {task}. Execute immediately!",
-      "Let's turn {task} into your performance statement.",
-      "{task} requires commitment. Show it right now!",
-      "Time to deliver on promises with {task}.",
-      "Let's prove your reliability through {task} today!",
-      "Your track record depends on {task}. Build it!",
-      "No distractions from {task}. Total focus needed!",
-      "Let's demonstrate professionalism with {task} now.",
-      "{task} is your responsibility. Take it seriously!",
-      "Time to show what discipline looks like with {task}.",
-      "Let's make {task} your priority until it's complete.",
-      "Your commitment is measured by {task}. Deliver!",
-      "No excuses accepted for {task}. Time to work!",
-      "Let's turn {task} into your reliability statement.",
-      "{task} demands action today. Provide it now!",
-      "Time to be dependable. Complete {task} immediately!",
-      "Let's demonstrate integrity through {task} completion.",
-      "Your word is at stake with {task}. Honor it!",
-      "No more delays. {task} requires immediate action!",
-      "Let's make {task} your dedication showcase today.",
-      "{task} is calling. Answer with action right now!",
-      "Time to prove your commitment with {task}.",
-      "Let's turn {task} into your accountability win!",
-      "Your performance matters. Show it through {task}!",
-      "No postponing {task} any longer. Execute today!",
-      "Let's demonstrate capability by completing {task} now.",
-      "{task} is your test of discipline. Pass it today!"
+      "{task} is calling for your immediate attention."
     ],
     high: [
       "URGENT: {task} requires immediate action. No more waiting!",
       "This is serious. {task} deadline is critical. Move NOW!",
       "Zero excuses. {task} must be completed today. Period.",
-      "Your performance is on the line with {task}. Deliver immediately!",
       "DROP EVERYTHING. {task} is your only priority right now!",
-      "This is non-negotiable. {task} gets done today or else.",
-      "Wake up call: {task} is overdue for your attention. ACT!",
-      "No more games. {task} completion is mandatory right now!",
-      "Your credibility is crumbling. Save it with {task} TODAY!",
-      "FINAL WARNING: {task} cannot be ignored any longer!",
-      "This is your line in the sand moment with {task}. Choose wisely!",
-      "Enough talk. {task} demands action THIS HOUR!",
-      "Your track record depends on {task} RIGHT NOW. Perform!",
-      "No more tomorrow. {task} happens today or you fail!",
-      "This is your moment of truth with {task}. Don't blow it!",
-      "CRITICAL: {task} completion separates winners from losers!",
-      "Time to prove yourself. {task} is your battleground TODAY!",
-      "No wiggle room. {task} gets finished in the next 2 hours!",
-      "Your reputation is bleeding out. {task} is the tourniquet!",
-      "This is do or die time for {task}. What's it going to be?",
-      "STOP READING. START DOING. {task} needs you NOW!",
-      "Your excuses are worthless. {task} requires immediate action!",
-      "This is your defining moment with {task}. Rise up NOW!",
-      "No more mediocrity. {task} demands excellence immediately!",
-      "Time to show backbone. {task} won't complete itself!",
-      "Your commitment means nothing without {task} completion TODAY!",
-      "REALITY CHECK: {task} separates talk from action. Which are you?",
-      "This is your accountability moment. {task} cannot wait!",
-      "No more excuses or delays. {task} is happening RIGHT NOW!",
-      "Your future self is watching. Deliver on {task} today!",
-      "This is pressure time. {task} shows what you're made of!",
-      "WAKE UP: {task} won't give you another chance!",
-      "Time to be ruthless with yourself. {task} is MANDATORY!",
-      "Your word means everything. Prove it with {task} NOW!",
-      "This is your crucible moment. {task} forges your character!",
-      "No more comfort zone. {task} demands discomfort TODAY!",
-      "URGENT PRIORITY: {task} cannot be postponed again!",
-      "Your discipline is tested right now with {task}. Don't fail!",
-      "This is championship level focus time for {task}!",
-      "No more average. {task} requires elite execution NOW!",
-      "Time to deliver under pressure. {task} is your proving ground!",
-      "CRITICAL DEADLINE: {task} completion is non-negotiable today!",
-      "Your integrity is on trial. {task} is the verdict!",
-      "This is your performance review. {task} better be complete!",
-      "No more soft commitments. {task} demands hard action NOW!",
-      "Time to separate yourself from the pack with {task}!",
-      "FINAL CALL: {task} happens in the next hour or you're done!",
-      "Your potential means nothing without {task} completion today!",
-      "This is your battlefield. {task} is the hill to take NOW!",
-      "No more weak effort. {task} requires maximum intensity!",
-      "Time to earn your keep. {task} is how you do it TODAY!",
-      "PRESSURE MOMENT: {task} reveals your true character!",
-      "Your comfort is irrelevant. {task} must be completed NOW!",
-      "This is crunch time. {task} cannot be escaped!",
-      "No more hiding. {task} demands you show up BIG today!",
-      "Time to demonstrate grit. {task} is your opportunity NOW!",
-      "CRITICAL JUNCTURE: {task} determines your trajectory!",
-      "Your excuses expire today. {task} requires action immediately!",
-      "This is your Spartan moment. {task} demands warrior spirit!",
-      "No more weakness. {task} requires strength RIGHT NOW!",
-      "Time to prove you're serious. {task} is the litmus test!",
-      "URGENT DEMAND: {task} completion shows your commitment level!",
-      "Your credibility hangs by a thread. {task} is the lifeline!",
-      "This is high-stakes time. {task} cannot afford delay!",
-      "No more half measures. {task} requires full commitment NOW!",
-      "Time to show you belong. {task} is your entrance exam!",
-      "CRITICAL TEST: {task} separates pretenders from contenders!",
-      "Your potential is wasted without {task} completion today!",
-      "This is your proving ground. {task} shows your worth NOW!",
-      "No more excuses accepted. {task} demands results immediately!",
-      "Time to validate your talk. {task} requires walk TODAY!",
-      "PRESSURE COOKER: {task} reveals what you're truly made of!",
-      "Your commitment is questioned. {task} provides the answer!",
-      "This is championship mentality time for {task}. Show it!",
-      "No more coasting. {task} demands peak performance NOW!",
-      "Time to rise to the occasion. {task} is that occasion!",
-      "CRITICAL PRIORITY: {task} completion defines you today!",
-      "Your discipline is under examination. {task} is the test!",
-      "This is your moment to shine or fade with {task}!",
-      "No more average output. {task} requires excellence NOW!",
-      "Time to demonstrate fortitude. {task} is your crucible!",
-      "URGENT REQUIREMENT: {task} cannot survive another delay!",
-      "Your reputation is at stake. {task} determines the outcome!",
-      "This is high performance time. {task} demands intensity!",
-      "No more mediocre effort. {task} requires championship level!",
-      "Time to show mental toughness. {task} is the battleground!",
-      "CRITICAL MOMENT: {task} reveals your true priorities!",
-      "Your track record needs {task} completion RIGHT NOW!",
-      "This is your defining hour. {task} cannot be ignored!",
-      "No more comfort. {task} demands you stretch TODAY!",
-      "Time to earn respect. {task} is how you get it NOW!",
-      "PRESSURE TEST: {task} shows if you're built for this!",
-      "Your future depends on {task} completion today!",
-      "This is your crossroads moment. {task} determines direction!",
-      "No more waiting for perfect. {task} demands action NOW!",
-      "Time to prove your worth. {task} is the currency!",
-      "CRITICAL EXECUTION: {task} separates pros from amateurs!",
-      "Your commitment level shows through {task} RIGHT NOW!",
-      "This is your opportunity to be elite with {task} today!"
+      "This is non-negotiable. {task} gets done today or else."
     ],
     extreme: [
       "CODE RED: {task} is OVERDUE. This is your LAST chance!",
-      "IMMEDIATE ACTION REQUIRED: {task} completion is CRITICAL RIGHT NOW!",
-      "ALL HANDS ON DECK: {task} is in RED ZONE. Execute IMMEDIATELY!",
       "DEFCON 1: {task} cannot wait ONE MORE SECOND. MOVE!",
-      "EMERGENCY: Your entire credibility rides on {task} THIS INSTANT!",
-      "ZERO TOLERANCE: {task} gets done in the next 60 minutes or FAIL!",
-      "FINAL ULTIMATUM: {task} completion is MANDATORY right now!",
-      "CRISIS MODE: {task} has reached critical mass. ACT IMMEDIATELY!",
       "NO MERCY: {task} demands your absolute focus THIS SECOND!",
       "FULL STOP: Nothing matters except {task} completion NOW!",
-      "EMERGENCY OVERRIDE: {task} is your ONLY priority until complete!",
-      "MAXIMUM URGENCY: {task} cannot tolerate another minute of delay!",
-      "ABSOLUTE PRIORITY: {task} takes precedence over EVERYTHING!",
-      "CRITICAL FAILURE IMMINENT: {task} must be completed IMMEDIATELY!",
-      "RED ALERT: {task} is in danger zone. Execute without delay!",
-      "ZERO HOUR: {task} completion determines everything RIGHT NOW!",
-      "EMERGENCY STATUS: {task} requires immediate mobilization!",
-      "CRITICAL MASS: {task} has reached the point of no return!",
-      "FINAL COUNTDOWN: {task} must be finished in next 30 minutes!",
-      "SEVERE WARNING: {task} failure is NOT an option anymore!",
-      "MAXIMUM ALERT: {task} demands instantaneous action NOW!",
-      "CRITICAL DEADLINE: {task} cannot be postponed one more second!",
-      "EMERGENCY PROTOCOL: {task} is your singular focus until done!",
-      "ZERO EXCUSES: {task} happens RIGHT NOW or you're finished!",
-      "CRISIS LEVEL: {task} requires immediate intervention!",
-      "ABSOLUTE URGENCY: {task} cannot wait for anything!",
-      "FINAL WARNING: {task} completion is required THIS INSTANT!",
-      "CRITICAL SITUATION: {task} demands immediate resolution!",
-      "EMERGENCY MODE: {task} is in critical state. Act NOW!",
-      "MAXIMUM PRIORITY: {task} overrides all other activities!",
-      "RED ZONE: {task} has entered critical territory. EXECUTE!",
-      "ZERO TOLERANCE POLICY: {task} must be completed immediately!",
-      "CRITICAL JUNCTURE: {task} cannot afford one more delay!",
-      "EMERGENCY ACTIVATION: {task} requires full commitment NOW!",
-      "ABSOLUTE DEADLINE: {task} has no more extensions available!",
-      "FINAL OPPORTUNITY: {task} is your last chance to deliver!",
-      "CRISIS INTERVENTION: {task} demands immediate attention!",
-      "MAXIMUM URGENCY LEVEL: {task} cannot wait another moment!",
-      "CRITICAL ALERT: {task} must be addressed RIGHT NOW!",
-      "EMERGENCY REQUIREMENT: {task} completion is mandatory!",
-      "ZERO FLEXIBILITY: {task} happens immediately or consequences!",
-      "ABSOLUTE NECESSITY: {task} must be finished this instant!",
-      "CRITICAL RESPONSE: {task} requires immediate action NOW!",
-      "FINAL DEMAND: {task} gets done in next hour. NO EXCUSES!",
-      "EMERGENCY DECLARATION: {task} is critical priority!",
-      "MAXIMUM INTENSITY: {task} demands everything you have NOW!",
-      "RED ALERT STATUS: {task} cannot be delayed any further!",
-      "ZERO MARGIN: {task} must be executed with precision NOW!",
-      "CRITICAL IMPERATIVE: {task} is non-negotiable at this point!",
-      "EMERGENCY MEASURES: {task} requires immediate completion!",
-      "ABSOLUTE URGENCY: {task} cannot tolerate hesitation!",
-      "FINAL DIRECTIVE: {task} must be finished immediately!",
-      "CRISIS POINT: {task} has reached critical threshold!",
-      "MAXIMUM ALERT LEVEL: {task} demands instant action!",
-      "CRITICAL NECESSITY: {task} must happen RIGHT NOW!",
-      "EMERGENCY ORDER: {task} is your only task until complete!",
-      "ZERO DELAY PERMITTED: {task} requires immediate execution!",
-      "ABSOLUTE PRIORITY STATUS: {task} overrides everything else!",
-      "FINAL CHANCE: {task} completion determines your outcome!",
-      "CRISIS MANAGEMENT: {task} needs immediate resolution NOW!",
-      "MAXIMUM PRIORITY LEVEL: {task} cannot wait one more second!",
-      "CRITICAL EMERGENCY: {task} must be addressed this instant!",
-      "RED ZONE ALERT: {task} has entered critical phase!",
-      "ZERO TOLERANCE LEVEL: {task} demands immediate completion!",
-      "ABSOLUTE REQUIREMENT: {task} must be finished NOW!",
-      "FINAL ULTIMATUM ISSUED: {task} or face consequences!",
-      "CRITICAL TIME: {task} cannot afford another delay!",
-      "EMERGENCY PRIORITY: {task} requires full focus immediately!",
-      "MAXIMUM URGENCY DECLARED: {task} must happen NOW!",
-      "ZERO EXCUSES ACCEPTED: {task} completion is mandatory!",
-      "ABSOLUTE CRITICAL: {task} is do-or-die right now!",
-      "FINAL DEADLINE: {task} must be done in next 45 minutes!",
-      "CRISIS ALERT: {task} has reached emergency status!",
-      "MAXIMUM RESPONSE: {task} demands immediate attention!",
-      "CRITICAL FAILURE POINT: {task} cannot be postponed!",
-      "EMERGENCY LEVEL: {task} is your only focus until finished!",
-      "ZERO DELAY TOLERANCE: {task} requires instant action!",
-      "ABSOLUTE URGENCY LEVEL: {task} must happen immediately!",
-      "FINAL CALL TO ACTION: {task} cannot wait any longer!",
-      "CRITICAL STATE: {task} demands emergency response NOW!",
-      "MAXIMUM ALERT ISSUED: {task} is critical priority!",
-      "RED ALERT ACTIVE: {task} must be completed this instant!",
-      "ZERO MARGIN FOR ERROR: {task} requires immediate execution!",
-      "ABSOLUTE DEADLINE REACHED: {task} can't be delayed!",
-      "FINAL OPPORTUNITY WINDOW: {task} must be seized NOW!",
-      "CRISIS SITUATION: {task} requires immediate intervention!",
-      "MAXIMUM PRIORITY DECLARED: {task} overrides all else!",
-      "CRITICAL MOMENT: {task} determines everything RIGHT NOW!",
-      "EMERGENCY ACTIVATION CODE: {task} is urgent priority!",
-      "ZERO TOLERANCE MODE: {task} must be finished immediately!",
-      "ABSOLUTE NECESSITY LEVEL: {task} cannot be ignored!",
-      "FINAL WARNING ISSUED: {task} or face severe consequences!",
-      "CRITICAL INTERVENTION: {task} demands immediate action!",
-      "MAXIMUM URGENCY STATUS: {task} cannot wait one moment!",
-      "RED ZONE CRITICAL: {task} has reached point of no return!",
-      "ZERO EXCUSES MODE: {task} happens RIGHT NOW!",
-      "ABSOLUTE EMERGENCY: {task} requires immediate completion!",
-      "FINAL COUNTDOWN ACTIVE: {task} must be done in 20 minutes!",
-      "CRISIS MODE ENGAGED: {task} is critical priority NOW!"
+      "FINAL ULTIMATUM: {task} completion is MANDATORY right now!"
     ]
   };
-  
-  // Get localStorage key for coach messages
-  function getCoachStorageKey() {
-    return 'metrix_coach_messages';
-  }
-  
-  // Get stored coach messages
+
+  function getCoachStorageKey() { return 'metrix_coach_messages'; }
   function getStoredCoachMessages() {
     const stored = localStorage.getItem(getCoachStorageKey());
     return stored ? JSON.parse(stored) : [];
   }
-  
-  // Save coach messages to localStorage
   function saveCoachMessages(messages) {
     localStorage.setItem(getCoachStorageKey(), JSON.stringify(messages));
   }
-  
-  // Get random phrase from level
+
   function getRandomPhrase(level, taskTitle) {
     const phrases = COACH_PHRASES[level] || COACH_PHRASES.low;
     const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
     return randomPhrase.replace('{task}', taskTitle);
   }
-  
-  // Determine urgency level based on days until deadline
+
   function getUrgencyLevel(daysUntilDeadline) {
     if (daysUntilDeadline < 0) {
-      // Overdue escalation
       const daysOverdue = Math.abs(daysUntilDeadline);
       if (daysOverdue >= 3) return 'extreme';
       if (daysOverdue >= 1) return 'high';
       return 'medium';
     } else if (daysUntilDeadline === 0) {
-      return 'high'; // Deadline day
+      return 'high';
     } else if (daysUntilDeadline >= 7) {
-      return 'low'; // 7+ days before deadline
+      return 'low';
     } else {
-      return 'medium'; // Between 1-6 days
+      return 'medium';
     }
   }
-  
-  // Calculate days until deadline
+
   function getDaysUntilDeadline(deadlineStr) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const deadline = new Date(deadlineStr);
     deadline.setHours(0, 0, 0, 0);
     const diffTime = deadline - today;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }
-  
-  // Check if message already sent today for this task
-  function isMessageSentToday(taskId, messageType) {
-    const messages = getStoredCoachMessages();
-    const today = new Date().toISOString().split('T')[0];
-    return messages.some(m => 
-      m.taskId === taskId && 
-      m.type === messageType && 
-      m.date === today
-    );
-  }
-  
-  // Get message count for task today
+
   function getMessageCountToday(taskId) {
     const messages = getStoredCoachMessages();
     const today = new Date().toISOString().split('T')[0];
     return messages.filter(m => m.taskId === taskId && m.date === today).length;
   }
-  
-  // Send coach message to panel
+
   function sendCoachPanelMessage(task, level, message) {
     const messagesContainer = document.getElementById('coachMessages');
     const messageEl = document.createElement('div');
@@ -1058,8 +686,7 @@
     `;
     messagesContainer.appendChild(messageEl);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    
-    // Store message
+
     const storedMessages = getStoredCoachMessages();
     storedMessages.push({
       taskId: task.id,
@@ -1072,8 +699,7 @@
     });
     saveCoachMessages(storedMessages);
   }
-  
-  // Show popup notification
+
   function showCoachPopup(task, level, message) {
     const popup = document.createElement('div');
     popup.className = `coach-popup level-${level}`;
@@ -1083,14 +709,12 @@
       <div class="coach-popup-task">Task: ${task.title}</div>
     `;
     document.body.appendChild(popup);
-    
-    // Auto-dismiss after 5 seconds
+
     setTimeout(() => {
       popup.style.opacity = '0';
       setTimeout(() => popup.remove(), 300);
     }, 5000);
-    
-    // Store message
+
     const storedMessages = getStoredCoachMessages();
     storedMessages.push({
       taskId: task.id,
@@ -1103,13 +727,11 @@
     });
     saveCoachMessages(storedMessages);
   }
-  
-  // Show mobile alert
+
   function showCoachMobileAlert(task, level, message) {
-    // Remove existing alert if present
     const existingAlert = document.querySelector('.coach-mobile-alert');
     if (existingAlert) existingAlert.remove();
-    
+
     const alert = document.createElement('div');
     alert.className = 'coach-mobile-alert';
     alert.innerHTML = `
@@ -1119,13 +741,11 @@
       </div>
     `;
     document.body.appendChild(alert);
-    
-    // Auto-dismiss after 8 seconds
+
     setTimeout(() => {
       if (alert.parentElement) alert.remove();
     }, 8000);
-    
-    // Store message
+
     const storedMessages = getStoredCoachMessages();
     storedMessages.push({
       taskId: task.id,
@@ -1138,12 +758,10 @@
     });
     saveCoachMessages(storedMessages);
   }
-  
-  // Send email notification (placeholder function for future backend integration)
+
   function sendCoachEmail(task, level, message) {
-    // Email data structure ready for backend wiring
     const emailData = {
-      to: 'user01@email.com', // From menu drawer
+      to: 'user01@email.com',
       subject: `Coach Alert: ${task.title} - ${level.toUpperCase()} Priority`,
       body: `
         <h2>🎯 Your Coach Has a Message</h2>
@@ -1157,11 +775,9 @@
       `,
       timestamp: new Date().toISOString()
     };
-    
-    // Log for now (replace with actual API call when backend is ready)
+
     console.log('📧 COACH EMAIL TRIGGERED:', emailData);
-    
-    // Store email send record
+
     const storedMessages = getStoredCoachMessages();
     storedMessages.push({
       taskId: task.id,
@@ -1171,94 +787,102 @@
       date: new Date().toISOString().split('T')[0],
       timestamp: new Date().toISOString(),
       emailData: emailData,
-      sent: true // Will be false until backend confirms
+      sent: true
     });
     saveCoachMessages(storedMessages);
   }
-  
-  // Main coach evaluation function
+
   function evaluateCoachMessages() {
-    const today = new Date();
-    
     tasks.forEach(task => {
-      // Skip completed tasks
       if (task.completed) return;
-      
+
       const daysUntilDeadline = getDaysUntilDeadline(task.deadline);
       const level = getUrgencyLevel(daysUntilDeadline);
-      
-      // Determine messaging frequency based on urgency
-      let maxMessagesPerDay = 4; // Default for 7+ days before
-      
+
+      let maxMessagesPerDay = 4;
       if (daysUntilDeadline < 0) {
-        // Overdue: increase intensity
         const daysOverdue = Math.abs(daysUntilDeadline);
         if (daysOverdue >= 3) maxMessagesPerDay = 10;
         else if (daysOverdue >= 1) maxMessagesPerDay = 6;
         else maxMessagesPerDay = 4;
       } else if (daysUntilDeadline === 0) {
-        maxMessagesPerDay = 6; // Deadline day
+        maxMessagesPerDay = 6;
       } else if (daysUntilDeadline <= 6) {
-        maxMessagesPerDay = 5; // Approaching deadline
+        maxMessagesPerDay = 5;
       }
-      
+
       const messageCountToday = getMessageCountToday(task.id);
-      
-      // Send messages if under daily limit
+
       if (messageCountToday < maxMessagesPerDay) {
         const message = getRandomPhrase(level, task.title);
-        
-        // Randomly choose delivery method (can send multiple)
-        const methods = ['panel', 'popup', 'mobile', 'email'];
-        const selectedMethod = methods[Math.floor(Math.random() * methods.length)];
-        
-        // Always send to panel
+
+        // Always to panel
         sendCoachPanelMessage(task, level, message);
-        
-        // Additionally send via selected method
-        if (selectedMethod === 'popup' && level !== 'low') {
-          showCoachPopup(task, level, message);
-        } else if (selectedMethod === 'mobile' && (level === 'high' || level === 'extreme')) {
-          showCoachMobileAlert(task, level, message);
-        } else if (selectedMethod === 'email') {
-          sendCoachEmail(task, level, message);
-        }
+
+        // Extra channels
+        if (level !== 'low' && Math.random() > 0.5) showCoachPopup(task, level, message);
+        if ((level === 'high' || level === 'extreme') && Math.random() > 0.6) showCoachMobileAlert(task, level, message);
+        if (Math.random() > 0.85) sendCoachEmail(task, level, message);
       }
     });
   }
-  
-  // Run coach evaluation on page load
+
   evaluateCoachMessages();
-  
-  // Run coach evaluation daily (check every hour)
-  setInterval(() => {
-    evaluateCoachMessages();
-  }, 60 * 60 * 1000); // Every hour
-  
-  // Also run a lighter check every 15 minutes for extreme urgency tasks
+
+  setInterval(() => { evaluateCoachMessages(); }, 60 * 60 * 1000);
   setInterval(() => {
     const extremeTasks = tasks.filter(t => {
       if (t.completed) return false;
       const days = getDaysUntilDeadline(t.deadline);
-      return days < 0 && Math.abs(days) >= 3; // 3+ days overdue
+      return days < 0 && Math.abs(days) >= 3;
     });
-    
+
     extremeTasks.forEach(task => {
       const level = 'extreme';
       const message = getRandomPhrase(level, task.title);
-      
-      // Send high-frequency messages for extreme cases
-      if (getMessageCountToday(task.id) < 20) { // Cap at 20/day even for extreme
+
+      if (getMessageCountToday(task.id) < 20) {
         sendCoachPanelMessage(task, level, message);
-        
-        // Occasionally popup for extreme
-        if (Math.random() > 0.7) {
-          showCoachPopup(task, level, message);
-        }
+        if (Math.random() > 0.7) showCoachPopup(task, level, message);
       }
     });
-  }, 15 * 60 * 1000); // Every 15 minutes
-  
+  }, 15 * 60 * 1000);
+
+</script>
+
+<!-- ✅ FIREBASE AUTH GATE + REAL LOGOUT (ONLY NEW FEATURE) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
+    authDomain: "metrix-hardline.firebaseapp.com",
+    projectId: "metrix-hardline",
+    storageBucket: "metrix-hardline.firebasestorage.app",
+    messagingSenderId: "899994703104",
+    appId: "1:899994703104:web:2979fe39d1c3c169ee4fe5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Expose logout globally so your existing menu button can call it
+  window.logout = function () {
+    signOut(auth).finally(() => {
+      localStorage.removeItem("uid");
+      window.location.href = "login.html";
+    });
+  };
+
+  // Gate access: if not logged in, redirect to login.html
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    localStorage.setItem("uid", user.uid);
+  });
 </script>
 
 </body>
