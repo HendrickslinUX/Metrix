@@ -62,7 +62,7 @@ export default async function handler(req, res) {
   try {
     initFirebaseAdmin();
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    const stripe = new Stripe(process.env.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, {
       apiVersion: "2024-06-20",
     });
 
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       event = stripe.webhooks.constructEvent(
         rawBody,
         sig,
-        process.env.STRIPE_WEBHOOK_SECRET
+        process.env.whsec_RvuVdQzdr8Sd2aPVrdh0j0uUBLhWecBc
       );
     } catch (err) {
       return res.status(400).send(`Webhook signature error: ${err.message}`);
