@@ -1,24 +1,25 @@
 // /api/stripe-webhook.js
-
 import Stripe from "stripe";
 import admin from "firebase-admin";
 
-// ---------- Helpers: read raw body ----------
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on("data", (chunk) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks)));
-    req.on("error", reject);
+    try {
+      const chunks = [];
+      req.on("data", (chunk) => chunks.push(chunk));
+      req.on("end", () => resolve(Buffer.concat(chunks)));
+      req.on("error", reject);
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 
-// ---------- Firebase Admin Init ----------
 function initFirebaseAdmin() {
   if (admin.apps.length) return;
 
   const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_B64;
-  if (!b64) throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_B64");
+  if (!b64) throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_B64 env var");
 
   const json = Buffer.from(b64, "base64").toString("utf8");
   const serviceAccount = JSON.parse(json);
@@ -28,7 +29,6 @@ function initFirebaseAdmin() {
   });
 }
 
-// ---------- Email Sender (Resend) ----------
 async function sendEmailViaResend({ to, subject, html }) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM;
@@ -46,48 +46,42 @@ async function sendEmailViaResend({ to, subject, html }) {
   });
 
   if (!resp.ok) {
-    const text = await resp.text();
-    throw new Error(`Resend error: ${resp.status} ${text}`);
+    const txt = await resp.text();
+    throw new Error(`Resend failed: ${resp.status} ${txt}`);
   }
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).send("Method Not Allowed");
-  }
+  if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
   try {
     initFirebaseAdmin();
 
-    // 🔐 NEVER hardcode this
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
-    });
+    const stripeSecret = process.env.STRIPE_SECRET_KEY;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!stripeSecret) throw new Error("Missing STRIPE_SECRET_KEY env var");
+    if (!webhookSecret) throw new Error("Missing STRIPE_WEBHOOK_SECRET env var");
+
+    const stripe = new Stripe(stripeSecret, { apiVersion: "2024-06-20" });
 
     const sig = req.headers["stripe-signature"];
-    if (!sig) {
-      return res.status(400).send("Missing stripe-signature header");
-    }
+    if (!sig) return res.status(400).send("Missing stripe-signature header");
 
     const rawBody = await readRawBody(req);
 
     let event;
     try {
-      event = stripe.webhooks.constructEvent(
-        rawBody,
-        sig,
-        process.env.STRIPE_WEBHOOK_SECRET
-      );
+      event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
     } catch (err) {
       return res.status(400).send(`Webhook signature error: ${err.message}`);
     }
 
-    // ✅ Only handle successful checkout
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
-      if (session.payment_status !== "paid") {
-        return res.status(200).json({ ignored: "not_paid" });
+      if (session.payment_status && session.payment_status !== "paid") {
+        return res.status(200).json({ received: true, ignored: "not_paid" });
       }
 
       const email =
@@ -96,10 +90,10 @@ export default async function handler(req, res) {
         session.metadata?.email;
 
       if (!email) {
-        return res.status(200).json({ ignored: "no_email" });
+        return res.status(200).json({ received: true, ignored: "no_email" });
       }
 
-      // 1️⃣ Create or fetch Firebase user
+      // Create or fetch Firebase Auth user
       let userRecord;
       try {
         userRecord = await admin.auth().getUserByEmail(email);
@@ -107,51 +101,46 @@ export default async function handler(req, res) {
         userRecord = await admin.auth().createUser({ email });
       }
 
-      // 2️⃣ Generate password setup link
+      // Generate password setup link (password reset link)
       const link = await admin.auth().generatePasswordResetLink(email);
 
-      // 3️⃣ Save user subscription info
-      await admin
-        .firestore()
-        .collection("users")
-        .doc(userRecord.uid)
-        .set(
-          {
-            email,
-            subscriptionActive: true,
-            stripeCustomerId: session.customer || null,
+      // Store subscription info
+      await admin.firestore().collection("users").doc(userRecord.uid).set(
+        {
+          email,
+          uid: userRecord.uid,
+          subscriptionActive: true,
+          stripe: {
+            checkoutSessionId: session.id,
+            customerId: session.customer || null,
             subscriptionId: session.subscription || null,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
           },
-          { merge: true }
-        );
+        },
+        { merge: true }
+      );
 
-      // 4️⃣ Send password setup email
+      // Email link
+      const subject = "Set your Metrix HardLine password";
       const html = `
-        <div style="font-family:Arial,sans-serif">
+        <div style="font-family:Arial,sans-serif;line-height:1.5">
           <h2>Metrix HardLine</h2>
-          <p>Your payment was successful.</p>
-          <p>Click below to create your password:</p>
-          <a href="${link}"
-             style="display:inline-block;padding:12px 16px;background:#401d65;color:#fff;border-radius:8px;text-decoration:none;font-weight:bold">
-             Set Your Password
-          </a>
-          <p style="font-size:12px;color:#666">
-            If you did not purchase Metrix HardLine, ignore this email.
+          <p>Your subscription is active. Set your password using the button below:</p>
+          <p>
+            <a href="${link}" style="display:inline-block;padding:12px 16px;background:#401d65;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">
+              Set Password
+            </a>
           </p>
+          <p style="color:#666;font-size:12px">If you didn’t purchase Metrix HardLine, ignore this email.</p>
         </div>
       `;
 
-      await sendEmailViaResend({
-        to: email,
-        subject: "Set your Metrix HardLine password",
-        html,
-      });
+      await sendEmailViaResend({ to: email, subject, html });
     }
 
     return res.status(200).json({ received: true });
-  } catch (err) {
-    console.error("Webhook error:", err);
-    return res.status(500).send("Server error");
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send(e?.message || "Server error");
   }
 }
