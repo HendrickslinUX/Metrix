@@ -1,0 +1,9 @@
+{
+  "name": "metrix-hardline",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^12.1.1",
+    "stripe": "^14.25.0"
+  }
+}
