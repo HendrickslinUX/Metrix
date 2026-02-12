@@ -447,7 +447,8 @@
   const step2Next = document.getElementById('step2Next');
   const addTaskBtn = document.getElementById('addTaskBtn');
 
-  let tasks = [];
+  // ✅ ONLY CHANGE: make tasks accessible for Firestore load/save
+  let tasks = window.tasks = [];
 
   step1Next.onclick = ()=> {
     if(!document.getElementById('taskTitle').value) return alert("Enter task title");
@@ -462,7 +463,12 @@
     const deadline = document.getElementById('taskDeadline').value;
     const intensity = document.getElementById('taskIntensity').value;
     if(!title||!deadline) return;
-    tasks.push({title, deadline, intensity, completed:false, id: Date.now().toString()}); // Added unique ID for coach tracking
+
+    // ✅ ONLY CHANGE: save created task to Firestore too
+    const newTask = {title, deadline, intensity, completed:false, id: Date.now().toString()}; // Added unique ID for coach tracking
+    tasks.push(newTask);
+    if (window._saveTask) window._saveTask(newTask);
+
     step3.classList.remove('active'); step1.classList.add('active');
     document.getElementById('taskTitle').value='';
     document.getElementById('taskDeadline').value='';
@@ -506,6 +512,10 @@
         tEl.textContent=t.title;
         tEl.onclick=()=>{
           t.completed = !t.completed;
+
+          // ✅ ONLY CHANGE: persist completion toggle
+          if (window._setTaskCompleted) window._setTaskCompleted(t.id, t.completed);
+
           updateStats(); renderCalendar(); showNotifications();
           evaluateCoachMessages(); // NEW: Re-evaluate when task is completed
         };
@@ -688,7 +698,7 @@
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     const storedMessages = getStoredCoachMessages();
-    storedMessages.push({
+    const payload = {
       taskId: task.id,
       type: 'panel',
       level: level,
@@ -696,8 +706,14 @@
       date: new Date().toISOString().split('T')[0],
       timestamp: new Date().toISOString(),
       read: false
-    });
+    };
+    storedMessages.push(payload);
     saveCoachMessages(storedMessages);
+
+    // ✅ ONLY CHANGE: persist coach panel messages to Firestore too (sync mobile/desktop)
+    if (window._persistCoachMessage) {
+      window._persistCoachMessage({ ...payload, taskTitle: task.title });
+    }
   }
 
   function showCoachPopup(task, level, message) {
@@ -850,10 +866,23 @@
 
 </script>
 
-<!-- ✅ FIREBASE AUTH GATE + REAL LOGOUT (ONLY NEW FEATURE) -->
+<!-- ✅ FIREBASE AUTH GATE + REAL LOGOUT + FIRESTORE PERSISTENCE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    updateDoc,
+    getDocs,
+    query,
+    orderBy,
+    limit,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
@@ -866,6 +895,89 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // --------- Task persistence helpers ---------
+  async function loadTasks(uid) {
+    const snap = await getDocs(collection(db, "users", uid, "tasks"));
+    const loaded = [];
+    snap.forEach(d => loaded.push(d.data()));
+
+    // Replace in-memory tasks array (used by your existing UI)
+    window.tasks.length = 0;
+    loaded.forEach(t => window.tasks.push(t));
+  }
+
+  async function saveTask(uid, task) {
+    // Use task.id as Firestore doc id for stable updates
+    await setDoc(doc(db, "users", uid, "tasks", task.id), task, { merge: true });
+  }
+
+  async function setTaskCompleted(uid, taskId, completed) {
+    await updateDoc(doc(db, "users", uid, "tasks", taskId), { completed });
+  }
+
+  // Expose tiny hooks to your existing script (no UI changes)
+  window._saveTask = (task) => {
+    const uid = localStorage.getItem("uid");
+    if (!uid) return;
+    return saveTask(uid, task);
+  };
+  window._setTaskCompleted = (taskId, completed) => {
+    const uid = localStorage.getItem("uid");
+    if (!uid) return;
+    return setTaskCompleted(uid, taskId, completed);
+  };
+
+  // --------- Coach message persistence helpers ---------
+  async function loadCoachMessages(uid) {
+    const q = query(
+      collection(db, "users", uid, "coachMessages"),
+      orderBy("timestamp"),
+      limit(200)
+    );
+    const snap = await getDocs(q);
+    const msgs = [];
+    snap.forEach(d => msgs.push(d.data()));
+
+    // Keep your existing logic working (it reads from localStorage)
+    localStorage.setItem("metrix_coach_messages", JSON.stringify(msgs));
+
+    // Render panel messages into existing UI (no UI changes)
+    const container = document.getElementById("coachMessages");
+    if (container) {
+      container.innerHTML = "";
+      msgs.forEach(m => {
+        if (m.type !== "panel") return;
+        const messageEl = document.createElement('div');
+        messageEl.className = `coach-message level-${m.level}`;
+        messageEl.innerHTML = `
+          <div class="coach-message-header">
+            <span>🎯 Coach</span>
+            <span>${new Date(m.timestamp || Date.now()).toLocaleTimeString()}</span>
+          </div>
+          <div class="coach-message-body">${m.message}</div>
+          <div class="coach-message-task">Re: ${m.taskTitle || ""}</div>
+        `;
+        container.appendChild(messageEl);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  async function persistCoachMessage(uid, msg) {
+    await addDoc(collection(db, "users", uid, "coachMessages"), {
+      ...msg,
+      createdAt: serverTimestamp()
+    });
+  }
+
+  window._persistCoachMessage = (msg) => {
+    const uid = localStorage.getItem("uid");
+    if (!uid) return;
+    // fire-and-forget to avoid changing UX
+    persistCoachMessage(uid, msg).catch(() => {});
+  };
 
   // Expose logout globally so your existing menu button can call it
   window.logout = function () {
@@ -876,16 +988,25 @@
   };
 
   // Gate access: if not logged in, redirect to login.html
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (!user) {
       window.location.href = "login.html";
       return;
     }
+
     localStorage.setItem("uid", user.uid);
 
-    // ✅ ONLY CHANGE: show the real logged-in email in the menu
+    // Show real logged-in email in the menu
     const emailEl = document.getElementById("menuEmail");
     if (emailEl) emailEl.textContent = user.email || "";
+
+    // ✅ Load persisted user data
+    await loadTasks(user.uid);
+    await loadCoachMessages(user.uid);
+
+    // Re-render using your existing functions (no UI changes)
+    if (typeof window.renderCalendar === "function") window.renderCalendar();
+    if (typeof window.updateStats === "function") window.updateStats();
   });
 </script>
 
