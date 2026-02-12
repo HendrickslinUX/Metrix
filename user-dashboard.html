@@ -39,6 +39,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 1.5rem;
+    position: relative;
+    z-index: 1200;
   }
   header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin:0; }
   header button {
@@ -50,6 +52,61 @@
     cursor:pointer;
     font-weight:600;
   }
+
+  /* ✅ NEW: Slide-down task action bar */
+  .task-action-bar {
+    position: fixed;
+    top: 64px; /* under header */
+    left: 0;
+    right: 0;
+    background: #111;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transform: translateY(-120%);
+    transition: transform 0.25s ease;
+    z-index: 1100;
+    padding: 0.75rem 1rem;
+  }
+  .task-action-bar.open { transform: translateY(0); }
+
+  .task-action-row {
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .task-action-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: white;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .task-action-meta {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    white-space: nowrap;
+  }
+  .task-action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .task-action-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.55rem 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    color: white;
+  }
+  .task-action-btn.done { background: #2e7d32; }
+  .task-action-btn.failed { background: #d32f2f; }
+  .task-action-btn.close { background: var(--accent); }
 
   /* ===== MENU DRAWER ===== */
   .menu-drawer {
@@ -157,16 +214,14 @@
   .GrindMode { background: var(--grind); }
   .HardLine { background: var(--hardline); }
 
-  /* ✅ NEW: completed task visual state (no layout change) */
-  .task.completed {
-    opacity: 0.55;
-    text-decoration: line-through;
-  }
+  /* ✅ NEW: task status colors */
+  .task.done { background: #2e7d32 !important; }
+  .task.failed { background: #d32f2f !important; }
 
   .tooltip {
     position: fixed;
     top: 10px;
-    left: 10px; /* moved to avoid menu overlap */
+    left: 10px;
     background: #0b0b0b;
     color: white;
     padding: .6rem;
@@ -182,7 +237,6 @@
 
   /* ===== COACH MESSAGING SYSTEM - NEW STYLES ===== */
 
-  /* Coach Panel */
   .coach-panel {
     position: fixed;
     bottom: 20px;
@@ -264,7 +318,6 @@
     font-style: italic;
   }
 
-  /* Popup Notification */
   .coach-popup {
     position: fixed;
     top: 80px;
@@ -307,7 +360,6 @@
     font-style: italic;
   }
 
-  /* Mobile Alert (Banner Style) */
   .coach-mobile-alert {
     position: fixed;
     top: 64px;
@@ -344,7 +396,6 @@
     font-size: 0.75rem;
   }
 
-  /* Responsive adjustments for coach panel */
   @media (max-width: 768px) {
     .coach-panel {
       width: calc(100% - 40px);
@@ -369,6 +420,19 @@
   <button id="menuBtn">Menu</button>
 </header>
 
+<!-- ✅ NEW: slide-down task action bar -->
+<div class="task-action-bar" id="taskActionBar">
+  <div class="task-action-row">
+    <div class="task-action-title" id="taskActionTitle">Task</div>
+    <div class="task-action-meta" id="taskActionMeta">Due:</div>
+    <div class="task-action-buttons">
+      <button class="task-action-btn done" id="taskDoneBtn">Task Done</button>
+      <button class="task-action-btn failed" id="taskFailedBtn">I Failed</button>
+      <button class="task-action-btn close" id="taskCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
+
 <div class="menu-drawer" id="menuDrawer">
   <h2>Menu</h2>
   <p><strong>Username:</strong> user01</p>
@@ -379,14 +443,12 @@
 
 <main>
 
-  <!-- Stats -->
   <section class="stats">
     <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
     <div class="stat-card"><h3>Completed</h3><p id="completedTasks">0</p></div>
     <div class="stat-card"><h3>Missed</h3><p id="missedTasks">0</p></div>
   </section>
 
-  <!-- Task Creator -->
   <section class="task-form">
     <h2>Create Task</h2>
     <div class="task-step step1 active">
@@ -407,13 +469,11 @@
     </div>
   </section>
 
-  <!-- Calendar Controls -->
   <div class="calendar-controls">
     <button id="prevMonth">← Prev</button>
     <button id="nextMonth">Next →</button>
   </div>
 
-  <!-- Calendar -->
   <div class="calendar-wrapper">
     <section class="calendar" id="calendar"></section>
   </div>
@@ -422,15 +482,12 @@
 
 <div class="tooltip" id="tooltip"></div>
 
-<!-- COACH MESSAGING SYSTEM - NEW UI ELEMENTS -->
 <div class="coach-panel" id="coachPanel">
   <div class="coach-panel-header">
     <h3>🎯 Your Coach</h3>
     <button class="coach-panel-toggle" id="coachPanelToggle">Minimize</button>
   </div>
-  <div class="coach-messages" id="coachMessages">
-    <!-- Messages will be dynamically inserted here -->
-  </div>
+  <div class="coach-messages" id="coachMessages"></div>
 </div>
 
 <script>
@@ -442,7 +499,6 @@
 
   menuBtn.onclick = ()=> menuDrawer.classList.add('open');
   closeMenu.onclick = ()=> menuDrawer.classList.remove('open');
-  // IMPORTANT: logout is wired below via Firebase. Keep this call:
   drawerLogout.onclick = ()=> window.logout();
 
   // ==================== TASK CREATION STEP-BY-STEP ====================
@@ -453,7 +509,6 @@
   const step2Next = document.getElementById('step2Next');
   const addTaskBtn = document.getElementById('addTaskBtn');
 
-  // ✅ ONLY CHANGE: make tasks accessible for Firestore load/save
   let tasks = window.tasks = [];
 
   step1Next.onclick = ()=> {
@@ -470,8 +525,15 @@
     const intensity = document.getElementById('taskIntensity').value;
     if(!title||!deadline) return;
 
-    // ✅ ONLY CHANGE: save created task to Firestore too
-    const newTask = {title, deadline, intensity, completed:false, id: Date.now().toString()}; // Added unique ID for coach tracking
+    const newTask = {
+      title,
+      deadline,
+      intensity,
+      completed:false,
+      failed:false,
+      status:"open",
+      id: Date.now().toString()
+    };
     tasks.push(newTask);
     if (window._saveTask) window._saveTask(newTask);
 
@@ -481,11 +543,68 @@
     renderCalendar();
     updateStats();
     showNotifications();
-    evaluateCoachMessages(); // NEW: Trigger coach evaluation when task is created
-
-    // ✅ NEW: prompt overdue completion check (won’t prompt unless overdue)
+    evaluateCoachMessages();
     checkOverdueCompletionPrompts();
   };
+
+  // ==================== TASK ACTION BAR (NEW) ====================
+  let selectedTaskId = null;
+
+  const taskActionBar = document.getElementById("taskActionBar");
+  const taskActionTitle = document.getElementById("taskActionTitle");
+  const taskActionMeta = document.getElementById("taskActionMeta");
+  const taskDoneBtn = document.getElementById("taskDoneBtn");
+  const taskFailedBtn = document.getElementById("taskFailedBtn");
+  const taskCloseBtn = document.getElementById("taskCloseBtn");
+
+  function openTaskBar(task) {
+    selectedTaskId = task.id;
+    taskActionTitle.textContent = task.title || "Task";
+    taskActionMeta.textContent = `Due: ${task.deadline || ""}`;
+    taskActionBar.classList.add("open");
+
+    // ✅ Notification permission request can only be done from user gesture.
+    // Clicking a task counts as a gesture, so we gently request once.
+    if (window._maybeInitPushFromGesture) window._maybeInitPushFromGesture();
+  }
+
+  function closeTaskBar() {
+    selectedTaskId = null;
+    taskActionBar.classList.remove("open");
+  }
+
+  taskCloseBtn.onclick = closeTaskBar;
+
+  function applyTaskStatus(status) {
+    if (!selectedTaskId) return;
+    const t = tasks.find(x => x.id === selectedTaskId);
+    if (!t) return;
+
+    if (status === "done") {
+      t.completed = true;
+      t.failed = false;
+      t.status = "done";
+    } else if (status === "failed") {
+      t.failed = true;
+      t.completed = false;
+      t.status = "failed";
+    }
+
+    if (window._updateTaskFields) {
+      window._updateTaskFields(t.id, { completed: t.completed, failed: !!t.failed, status: t.status });
+    } else if (window._setTaskCompleted) {
+      window._setTaskCompleted(t.id, t.completed);
+    }
+
+    updateStats();
+    renderCalendar();
+    showNotifications();
+    evaluateCoachMessages();
+    closeTaskBar();
+  }
+
+  taskDoneBtn.onclick = () => applyTaskStatus("done");
+  taskFailedBtn.onclick = () => applyTaskStatus("failed");
 
   // ==================== CALENDAR LOGIC ====================
   const calendar = document.getElementById('calendar');
@@ -500,18 +619,17 @@
     renderCalendar();
   };
 
-  // ✅ NEW: overdue prompt helper (works on mobile + desktop)
+  // ✅ Overdue prompt: now maps Yes->Done, No->Failed
   function checkOverdueCompletionPrompts() {
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // ask max once per task per day (per device)
     const promptedKey = "metrix_overdue_prompted";
     const prompted = JSON.parse(localStorage.getItem(promptedKey) || "{}");
 
     tasks.forEach((t) => {
-      if (t.completed) return;
+      if (t.completed || t.failed) return;
       if (!t.deadline) return;
-      if (t.deadline >= todayStr) return; // not past due
+      if (t.deadline >= todayStr) return;
 
       const k = `${t.id}_${todayStr}`;
       if (prompted[k]) return;
@@ -520,24 +638,27 @@
       localStorage.setItem(promptedKey, JSON.stringify(prompted));
 
       const msg =
-        `Task past due:\n\n"${t.title}"\nDue: ${t.deadline}\n\nDid you complete this task?`;
+        `Task past due:\n\n"${t.title}"\nDue: ${t.deadline}\n\nDid you complete this task?\n\nOK = Task Done\nCancel = I Failed`;
 
-      // native confirm is the most reliable popup across desktop + mobile
       const didComplete = window.confirm(msg);
 
       if (didComplete) {
-        t.completed = true;
-        if (window._setTaskCompleted) window._setTaskCompleted(t.id, true);
-
-        updateStats();
-        renderCalendar();
-        showNotifications();
-        evaluateCoachMessages();
+        t.completed = true; t.failed = false; t.status = "done";
+        if (window._updateTaskFields) window._updateTaskFields(t.id, { completed: true, failed: false, status: "done" });
+        else if (window._setTaskCompleted) window._setTaskCompleted(t.id, true);
+      } else {
+        t.failed = true; t.completed = false; t.status = "failed";
+        if (window._updateTaskFields) window._updateTaskFields(t.id, { completed: false, failed: true, status: "failed" });
+        else if (window._setTaskCompleted) window._setTaskCompleted(t.id, false);
       }
+
+      updateStats();
+      renderCalendar();
+      showNotifications();
+      evaluateCoachMessages();
     });
   }
 
-  // expose so module script can call it after Firestore loads
   window.checkOverdueCompletionPrompts = checkOverdueCompletionPrompts;
 
   function renderCalendar(){
@@ -551,27 +672,19 @@
       const dateStr = dayDate.toISOString().split('T')[0];
 
       const day = document.createElement('div'); day.className='day';
-      if(dateStr < todayStr) day.classList.add('overdue'); // red outline for past dates
+      if(dateStr < todayStr) day.classList.add('overdue');
 
       day.innerHTML=`<div class="day-header">${dateStr}</div>`;
 
       tasks.filter(t=>t.deadline===dateStr).forEach(t=>{
         const tEl=document.createElement('div');
 
-        // ✅ NEW: show completed style
-        tEl.className = `task ${t.intensity}${t.completed ? " completed" : ""}`;
-        tEl.textContent=t.title;
+        const statusClass = t.failed ? " failed" : (t.completed ? " done" : "");
+        tEl.className = `task ${t.intensity}${statusClass}`;
+        tEl.textContent = t.title;
 
-        // ✅ NEW: click marks complete (no accidental un-complete)
-        tEl.onclick=()=>{
-          if (t.completed) return;
-
-          t.completed = true;
-          if (window._setTaskCompleted) window._setTaskCompleted(t.id, true);
-
-          updateStats(); renderCalendar(); showNotifications();
-          evaluateCoachMessages(); // coach already skips completed tasks
-        };
+        // ✅ Click opens the slide-down bar (does not toggle instantly)
+        tEl.onclick = ()=> openTaskBar(t);
 
         day.appendChild(tEl);
       });
@@ -584,7 +697,7 @@
   function updateStats(){
     document.getElementById('totalTasks').textContent=tasks.length;
     document.getElementById('completedTasks').textContent=tasks.filter(t=>t.completed).length;
-    document.getElementById('missedTasks').textContent=tasks.filter(t=>!t.completed).length;
+    document.getElementById('missedTasks').textContent=tasks.filter(t=>!t.completed && !t.failed).length;
   }
 
   // ==================== TOOLTIP / COACH NOTIFICATIONS ====================
@@ -599,22 +712,19 @@
   function showNotifications(){
     const todayStr = new Date().toISOString().split('T')[0];
     tasks.forEach(t=>{
-      if(!t.completed && t.deadline < todayStr){
+      if((t.completed || t.failed)) return;
+      if(t.deadline < todayStr){
         showTooltip(`⏰ Overdue: ${t.title}`);
-      } else if(!t.completed && t.deadline === todayStr){
+      } else if(t.deadline === todayStr){
         showTooltip(`⚠️ Due Today: ${t.title}`);
       }
     });
   }
 
   renderCalendar();
-
-  // ✅ NEW: run overdue prompt check on initial load (won’t prompt unless overdue)
   checkOverdueCompletionPrompts();
 
-  // ==================== COACH MESSAGING SYSTEM - NEW CODE ====================
-
-  // Coach Panel Toggle
+  // ==================== COACH MESSAGING SYSTEM ====================
   const coachPanel = document.getElementById('coachPanel');
   const coachPanelToggle = document.getElementById('coachPanelToggle');
   let coachPanelMinimized = false;
@@ -632,65 +742,23 @@
     }
   };
 
-  // Phrase Library - 100 unique phrases per urgency level
   const COACH_PHRASES = {
     low: [
       "Hey there! Just a gentle reminder about {task}. You've got this!",
       "Thinking about {task}? Now's a great time to make some progress.",
-      "Small steps count! Consider tackling {task} today.",
-      "Your future self will thank you for working on {task} now.",
-      "Ready to shine? {task} is waiting for your attention.",
-      "Let's keep the momentum going with {task}!",
-      "You're doing great! Don't forget about {task}.",
-      "Early bird gets the worm! {task} could use some love.",
-      "Building good habits starts with {task} today.",
-      "Imagine how good you'll feel when {task} is done!",
-      "A little progress on {task} goes a long way.",
-      "You've got time to make magic happen with {task}.",
-      "Let's turn {task} into a win today!",
-      "Your goals are calling! {task} is next on the list.",
-      "Starting early on {task} = less stress later.",
-      "Ready to level up? {task} is your opportunity.",
-      "Consider this your friendly nudge for {task}.",
-      "You're capable of amazing things! Start with {task}.",
-      "Let's make today count by working on {task}.",
-      "The best time to start {task} is now!",
-      "Feeling motivated? Channel it into {task}!",
-      "You've already come so far. Keep going with {task}!",
-      "Small wins add up. {task} is your next victory.",
-      "Let's make {task} happen together!",
-      "Your dedication is inspiring! Show it with {task}.",
-      "Progress over perfection! Work on {task} today.",
-      "You're building something great. {task} is part of it.",
-      "Let's knock {task} out while you're in the zone!",
-      "The journey to success includes {task}.",
-      "You've got the skills. Apply them to {task}!"
+      "Small steps count! Consider tackling {task} today."
     ],
     medium: [
       "Time to focus! {task} needs your attention today.",
-      "Let's get serious about {task}. Deadline is approaching.",
-      "{task} won't complete itself. Time to take action!",
-      "Your accountability partner here: {task} is waiting.",
-      "Let's make {task} your top priority right now.",
-      "No more delays! {task} requires your focus today.",
-      "You committed to {task}. Let's honor that commitment.",
-      "It's time to deliver on {task}. You've got this!",
-      "Let's turn words into action with {task} today.",
-      "{task} is calling for your immediate attention."
+      "Let's get serious about {task}. Deadline is approaching."
     ],
     high: [
       "URGENT: {task} requires immediate action. No more waiting!",
-      "This is serious. {task} deadline is critical. Move NOW!",
-      "Zero excuses. {task} must be completed today. Period.",
-      "DROP EVERYTHING. {task} is your only priority right now!",
-      "This is non-negotiable. {task} gets done today or else."
+      "Zero excuses. {task} must be completed today. Period."
     ],
     extreme: [
       "CODE RED: {task} is OVERDUE. This is your LAST chance!",
-      "DEFCON 1: {task} cannot wait ONE MORE SECOND. MOVE!",
-      "NO MERCY: {task} demands your absolute focus THIS SECOND!",
-      "FULL STOP: Nothing matters except {task} completion NOW!",
-      "FINAL ULTIMATUM: {task} completion is MANDATORY right now!"
+      "DEFCON 1: {task} cannot wait ONE MORE SECOND. MOVE!"
     ]
   };
 
@@ -767,107 +835,23 @@
     storedMessages.push(payload);
     saveCoachMessages(storedMessages);
 
-    // ✅ ONLY CHANGE: persist coach panel messages to Firestore too (sync mobile/desktop)
     if (window._persistCoachMessage) {
       window._persistCoachMessage({ ...payload, taskTitle: task.title });
     }
-  }
 
-  function showCoachPopup(task, level, message) {
-    const popup = document.createElement('div');
-    popup.className = `coach-popup level-${level}`;
-    popup.innerHTML = `
-      <div class="coach-popup-header">🎯 Coach Alert</div>
-      <div class="coach-popup-body">${message}</div>
-      <div class="coach-popup-task">Task: ${task.title}</div>
-    `;
-    document.body.appendChild(popup);
-
-    setTimeout(() => {
-      popup.style.opacity = '0';
-      setTimeout(() => popup.remove(), 300);
-    }, 5000);
-
-    const storedMessages = getStoredCoachMessages();
-    storedMessages.push({
-      taskId: task.id,
-      type: 'popup',
-      level: level,
-      message: message,
-      date: new Date().toISOString().split('T')[0],
-      timestamp: new Date().toISOString(),
-      read: false
-    });
-    saveCoachMessages(storedMessages);
-  }
-
-  function showCoachMobileAlert(task, level, message) {
-    const existingAlert = document.querySelector('.coach-mobile-alert');
-    if (existingAlert) existingAlert.remove();
-
-    const alert = document.createElement('div');
-    alert.className = 'coach-mobile-alert';
-    alert.innerHTML = `
-      <div class="coach-mobile-alert-content">
-        <div><strong>🎯 Coach:</strong> ${message}</div>
-        <button class="coach-mobile-alert-close" onclick="this.parentElement.parentElement.remove()">✕</button>
-      </div>
-    `;
-    document.body.appendChild(alert);
-
-    setTimeout(() => {
-      if (alert.parentElement) alert.remove();
-    }, 8000);
-
-    const storedMessages = getStoredCoachMessages();
-    storedMessages.push({
-      taskId: task.id,
-      type: 'mobile',
-      level: level,
-      message: message,
-      date: new Date().toISOString().split('T')[0],
-      timestamp: new Date().toISOString(),
-      read: false
-    });
-    saveCoachMessages(storedMessages);
-  }
-
-  function sendCoachEmail(task, level, message) {
-    const emailData = {
-      to: 'user01@email.com',
-      subject: `Coach Alert: ${task.title} - ${level.toUpperCase()} Priority`,
-      body: `
-        <h2>🎯 Your Coach Has a Message</h2>
-        <p><strong>Urgency Level:</strong> ${level.toUpperCase()}</p>
-        <p><strong>Task:</strong> ${task.title}</p>
-        <p><strong>Deadline:</strong> ${task.deadline}</p>
-        <hr>
-        <p>${message}</p>
-        <hr>
-        <p><em>This is an automated message from your Metrix HardLine Coach system.</em></p>
-      `,
-      timestamp: new Date().toISOString()
-    };
-
-    console.log('📧 COACH EMAIL TRIGGERED:', emailData);
-
-    const storedMessages = getStoredCoachMessages();
-    storedMessages.push({
-      taskId: task.id,
-      type: 'email',
-      level: level,
-      message: message,
-      date: new Date().toISOString().split('T')[0],
-      timestamp: new Date().toISOString(),
-      emailData: emailData,
-      sent: true
-    });
-    saveCoachMessages(storedMessages);
+    // ✅ NEW: forward coach message to push notification pipeline (best-effort)
+    if (window._queuePushCoach) {
+      window._queuePushCoach({
+        title: "Metrix Coach",
+        body: message
+      });
+    }
   }
 
   function evaluateCoachMessages() {
     tasks.forEach(task => {
-      if (task.completed) return;
+      // ✅ IMPORTANT CHANGE: ignore done + failed
+      if (task.completed || task.failed) return;
 
       const daysUntilDeadline = getDaysUntilDeadline(task.deadline);
       const level = getUrgencyLevel(daysUntilDeadline);
@@ -888,42 +872,16 @@
 
       if (messageCountToday < maxMessagesPerDay) {
         const message = getRandomPhrase(level, task.title);
-
-        // Always to panel
         sendCoachPanelMessage(task, level, message);
-
-        // Extra channels
-        if (level !== 'low' && Math.random() > 0.5) showCoachPopup(task, level, message);
-        if ((level === 'high' || level === 'extreme') && Math.random() > 0.6) showCoachMobileAlert(task, level, message);
-        if (Math.random() > 0.85) sendCoachEmail(task, level, message);
       }
     });
   }
 
   evaluateCoachMessages();
-
   setInterval(() => { evaluateCoachMessages(); }, 60 * 60 * 1000);
-  setInterval(() => {
-    const extremeTasks = tasks.filter(t => {
-      if (t.completed) return false;
-      const days = getDaysUntilDeadline(t.deadline);
-      return days < 0 && Math.abs(days) >= 3;
-    });
-
-    extremeTasks.forEach(task => {
-      const level = 'extreme';
-      const message = getRandomPhrase(level, task.title);
-
-      if (getMessageCountToday(task.id) < 20) {
-        sendCoachPanelMessage(task, level, message);
-        if (Math.random() > 0.7) showCoachPopup(task, level, message);
-      }
-    });
-  }, 15 * 60 * 1000);
-
 </script>
 
-<!-- ✅ FIREBASE AUTH GATE + REAL LOGOUT + FIRESTORE PERSISTENCE -->
+<!-- ✅ FIREBASE AUTH + FIRESTORE + FCM TOKEN SAVE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
@@ -941,6 +899,13 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+  // ✅ FCM (push notifications)
+  import {
+    getMessaging,
+    getToken,
+    onMessage
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
     authDomain: "metrix-hardline.firebaseapp.com",
@@ -950,9 +915,14 @@
     appId: "1:899994703104:web:2979fe39d1c3c169ee4fe5"
   };
 
+  // ✅ IMPORTANT: set your Web Push certificate key (VAPID) from Firebase Console
+  // Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
+  const FCM_VAPID_KEY = "PASTE_YOUR_VAPID_KEY_HERE";
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const messaging = getMessaging(app);
 
   // --------- Task persistence helpers ---------
   async function loadTasks(uid) {
@@ -960,13 +930,17 @@
     const loaded = [];
     snap.forEach(d => loaded.push(d.data()));
 
-    // Replace in-memory tasks array (used by your existing UI)
+    // Ensure defaults for old tasks
+    loaded.forEach(t => {
+      if (typeof t.failed === "undefined") t.failed = false;
+      if (typeof t.status === "undefined") t.status = t.completed ? "done" : "open";
+    });
+
     window.tasks.length = 0;
     loaded.forEach(t => window.tasks.push(t));
   }
 
   async function saveTask(uid, task) {
-    // Use task.id as Firestore doc id for stable updates
     await setDoc(doc(db, "users", uid, "tasks", task.id), task, { merge: true });
   }
 
@@ -974,16 +948,26 @@
     await updateDoc(doc(db, "users", uid, "tasks", taskId), { completed });
   }
 
-  // Expose tiny hooks to your existing script (no UI changes)
+  async function updateTaskFields(uid, taskId, updates) {
+    await updateDoc(doc(db, "users", uid, "tasks", taskId), updates);
+  }
+
   window._saveTask = (task) => {
     const uid = localStorage.getItem("uid");
     if (!uid) return;
     return saveTask(uid, task);
   };
+
   window._setTaskCompleted = (taskId, completed) => {
     const uid = localStorage.getItem("uid");
     if (!uid) return;
     return setTaskCompleted(uid, taskId, completed);
+  };
+
+  window._updateTaskFields = (taskId, updates) => {
+    const uid = localStorage.getItem("uid");
+    if (!uid) return;
+    return updateTaskFields(uid, taskId, updates);
   };
 
   // --------- Coach message persistence helpers ---------
@@ -997,10 +981,8 @@
     const msgs = [];
     snap.forEach(d => msgs.push(d.data()));
 
-    // Keep your existing logic working (it reads from localStorage)
     localStorage.setItem("metrix_coach_messages", JSON.stringify(msgs));
 
-    // Render panel messages into existing UI (no UI changes)
     const container = document.getElementById("coachMessages");
     if (container) {
       container.innerHTML = "";
@@ -1032,11 +1014,75 @@
   window._persistCoachMessage = (msg) => {
     const uid = localStorage.getItem("uid");
     if (!uid) return;
-    // fire-and-forget to avoid changing UX
     persistCoachMessage(uid, msg).catch(() => {});
   };
 
-  // Expose logout globally so your existing menu button can call it
+  // --------- PUSH NOTIFICATIONS (FCM) ---------
+  async function saveFcmToken(uid, token) {
+    // token doc id = token string (easy dedupe)
+    await setDoc(doc(db, "users", uid, "fcmTokens", token), {
+      token,
+      platform: navigator.userAgent || "",
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  let didInitPush = false;
+
+  async function initPushWithUserGesture() {
+    if (didInitPush) return;
+    didInitPush = true;
+
+    try {
+      if (!("Notification" in window)) return;
+
+      // Only ask if default
+      if (Notification.permission === "default") {
+        const perm = await Notification.requestPermission();
+        if (perm !== "granted") return;
+      }
+      if (Notification.permission !== "granted") return;
+
+      // Register your existing SW (you already have sw.js in repo)
+      // sw.js must include the messaging handler (I give you below)
+      const swReg = await navigator.serviceWorker.register("/sw.js");
+
+      const token = await getToken(messaging, {
+        vapidKey: FCM_VAPID_KEY,
+        serviceWorkerRegistration: swReg
+      });
+
+      if (!token) return;
+
+      const uid = localStorage.getItem("uid");
+      if (!uid) return;
+
+      await saveFcmToken(uid, token);
+    } catch (e) {
+      // silent (no UX change)
+      console.log("Push init error:", e);
+    }
+  }
+
+  // Expose “gesture init” so clicking a task can trigger it
+  window._maybeInitPushFromGesture = initPushWithUserGesture;
+
+  // Foreground messages (when user IS on app) - optional, safe
+  onMessage(messaging, (payload) => {
+    // Use browser notification when app open too (best effort)
+    try {
+      if (Notification.permission === "granted" && payload?.notification?.body) {
+        new Notification(payload.notification.title || "Metrix Coach", {
+          body: payload.notification.body
+        });
+      }
+    } catch {}
+  });
+
+  // Optional: queue push message request to backend (if you add callable endpoint later)
+  window._queuePushCoach = (_msg) => {};
+
+  // Expose logout globally
   window.logout = function () {
     signOut(auth).finally(() => {
       localStorage.removeItem("uid");
@@ -1044,7 +1090,7 @@
     });
   };
 
-  // Gate access: if not logged in, redirect to login.html
+  // Gate access + load data
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       window.location.href = "login.html";
@@ -1053,19 +1099,14 @@
 
     localStorage.setItem("uid", user.uid);
 
-    // Show real logged-in email in the menu
     const emailEl = document.getElementById("menuEmail");
     if (emailEl) emailEl.textContent = user.email || "";
 
-    // ✅ Load persisted user data
     await loadTasks(user.uid);
     await loadCoachMessages(user.uid);
 
-    // Re-render using your existing functions (no UI changes)
     if (typeof window.renderCalendar === "function") window.renderCalendar();
     if (typeof window.updateStats === "function") window.updateStats();
-
-    // ✅ NEW: run overdue prompt check after Firestore loads
     if (window.checkOverdueCompletionPrompts) window.checkOverdueCompletionPrompts();
   });
 </script>
