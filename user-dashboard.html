@@ -563,8 +563,6 @@
     taskActionMeta.textContent = `Due: ${task.deadline || ""}`;
     taskActionBar.classList.add("open");
 
-    // ✅ Notification permission request can only be done from user gesture.
-    // Clicking a task counts as a gesture, so we gently request once.
     if (window._maybeInitPushFromGesture) window._maybeInitPushFromGesture();
   }
 
@@ -619,7 +617,6 @@
     renderCalendar();
   };
 
-  // ✅ Overdue prompt: now maps Yes->Done, No->Failed
   function checkOverdueCompletionPrompts() {
     const todayStr = new Date().toISOString().split('T')[0];
 
@@ -683,7 +680,6 @@
         tEl.className = `task ${t.intensity}${statusClass}`;
         tEl.textContent = t.title;
 
-        // ✅ Click opens the slide-down bar (does not toggle instantly)
         tEl.onclick = ()=> openTaskBar(t);
 
         day.appendChild(tEl);
@@ -693,14 +689,12 @@
     }
   }
 
-  // ==================== STATS ====================
   function updateStats(){
     document.getElementById('totalTasks').textContent=tasks.length;
     document.getElementById('completedTasks').textContent=tasks.filter(t=>t.completed).length;
     document.getElementById('missedTasks').textContent=tasks.filter(t=>!t.completed && !t.failed).length;
   }
 
-  // ==================== TOOLTIP / COACH NOTIFICATIONS ====================
   const tooltip = document.getElementById('tooltip');
 
   function showTooltip(message, duration=3000){
@@ -724,7 +718,6 @@
   renderCalendar();
   checkOverdueCompletionPrompts();
 
-  // ==================== COACH MESSAGING SYSTEM ====================
   const coachPanel = document.getElementById('coachPanel');
   const coachPanelToggle = document.getElementById('coachPanelToggle');
   let coachPanelMinimized = false;
@@ -839,7 +832,6 @@
       window._persistCoachMessage({ ...payload, taskTitle: task.title });
     }
 
-    // ✅ NEW: forward coach message to push notification pipeline (best-effort)
     if (window._queuePushCoach) {
       window._queuePushCoach({
         title: "Metrix Coach",
@@ -850,7 +842,6 @@
 
   function evaluateCoachMessages() {
     tasks.forEach(task => {
-      // ✅ IMPORTANT CHANGE: ignore done + failed
       if (task.completed || task.failed) return;
 
       const daysUntilDeadline = getDaysUntilDeadline(task.deadline);
@@ -915,22 +906,19 @@
     appId: "1:899994703104:web:2979fe39d1c3c169ee4fe5"
   };
 
-  // ✅ IMPORTANT: set your Web Push certificate key (VAPID) from Firebase Console
-  // Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
-  const FCM_VAPID_KEY = "PASTE_YOUR_VAPID_KEY_HERE";
+  // ✅ ONLY CHANGE HERE: set your Web Push certificate key (VAPID) from Firebase Console
+  const FCM_VAPID_KEY = "BEH0GI6sTAl39BH8VaKsBQuoit6skekTlIOa2AZfmRc7JK56onlsx_PjhdjRSxM3qb2LMf0hHpF6iDrY9LJpnYU";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const messaging = getMessaging(app);
 
-  // --------- Task persistence helpers ---------
   async function loadTasks(uid) {
     const snap = await getDocs(collection(db, "users", uid, "tasks"));
     const loaded = [];
     snap.forEach(d => loaded.push(d.data()));
 
-    // Ensure defaults for old tasks
     loaded.forEach(t => {
       if (typeof t.failed === "undefined") t.failed = false;
       if (typeof t.status === "undefined") t.status = t.completed ? "done" : "open";
@@ -970,7 +958,6 @@
     return updateTaskFields(uid, taskId, updates);
   };
 
-  // --------- Coach message persistence helpers ---------
   async function loadCoachMessages(uid) {
     const q = query(
       collection(db, "users", uid, "coachMessages"),
@@ -1017,9 +1004,7 @@
     persistCoachMessage(uid, msg).catch(() => {});
   };
 
-  // --------- PUSH NOTIFICATIONS (FCM) ---------
   async function saveFcmToken(uid, token) {
-    // token doc id = token string (easy dedupe)
     await setDoc(doc(db, "users", uid, "fcmTokens", token), {
       token,
       platform: navigator.userAgent || "",
@@ -1036,15 +1021,12 @@
     try {
       if (!("Notification" in window)) return;
 
-      // Only ask if default
       if (Notification.permission === "default") {
         const perm = await Notification.requestPermission();
         if (perm !== "granted") return;
       }
       if (Notification.permission !== "granted") return;
 
-      // Register your existing SW (you already have sw.js in repo)
-      // sw.js must include the messaging handler (I give you below)
       const swReg = await navigator.serviceWorker.register("/sw.js");
 
       const token = await getToken(messaging, {
@@ -1059,17 +1041,13 @@
 
       await saveFcmToken(uid, token);
     } catch (e) {
-      // silent (no UX change)
       console.log("Push init error:", e);
     }
   }
 
-  // Expose “gesture init” so clicking a task can trigger it
   window._maybeInitPushFromGesture = initPushWithUserGesture;
 
-  // Foreground messages (when user IS on app) - optional, safe
   onMessage(messaging, (payload) => {
-    // Use browser notification when app open too (best effort)
     try {
       if (Notification.permission === "granted" && payload?.notification?.body) {
         new Notification(payload.notification.title || "Metrix Coach", {
@@ -1079,10 +1057,8 @@
     } catch {}
   });
 
-  // Optional: queue push message request to backend (if you add callable endpoint later)
   window._queuePushCoach = (_msg) => {};
 
-  // Expose logout globally
   window.logout = function () {
     signOut(auth).finally(() => {
       localStorage.removeItem("uid");
@@ -1090,7 +1066,6 @@
     });
   };
 
-  // Gate access + load data
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       window.location.href = "login.html";
@@ -1113,3 +1088,5 @@
 
 </body>
 </html>
+
+
