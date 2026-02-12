@@ -1057,7 +1057,28 @@
     } catch {}
   });
 
-  window._queuePushCoach = (_msg) => {};
+  window._queuePushCoach = async ({ title, body }) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const idToken = await user.getIdToken();
+
+    await fetch("/api/send-push", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${idToken}`
+      },
+      body: JSON.stringify({
+        title: title || "Metrix Coach",
+        body: body || "",
+        url: "/user-dashboard.html"
+      })
+    });
+  } catch {}
+};
+
 
   window.logout = function () {
     signOut(auth).finally(() => {
@@ -1088,5 +1109,6 @@
 
 </body>
 </html>
+
 
 
