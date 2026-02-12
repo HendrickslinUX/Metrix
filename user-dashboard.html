@@ -157,6 +157,12 @@
   .GrindMode { background: var(--grind); }
   .HardLine { background: var(--hardline); }
 
+  /* ✅ NEW: completed task visual state (no layout change) */
+  .task.completed {
+    opacity: 0.55;
+    text-decoration: line-through;
+  }
+
   .tooltip {
     position: fixed;
     top: 10px;
@@ -476,6 +482,9 @@
     updateStats();
     showNotifications();
     evaluateCoachMessages(); // NEW: Trigger coach evaluation when task is created
+
+    // ✅ NEW: prompt overdue completion check (won’t prompt unless overdue)
+    checkOverdueCompletionPrompts();
   };
 
   // ==================== CALENDAR LOGIC ====================
@@ -490,6 +499,46 @@
     currentMonth.setMonth(currentMonth.getMonth()+1);
     renderCalendar();
   };
+
+  // ✅ NEW: overdue prompt helper (works on mobile + desktop)
+  function checkOverdueCompletionPrompts() {
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // ask max once per task per day (per device)
+    const promptedKey = "metrix_overdue_prompted";
+    const prompted = JSON.parse(localStorage.getItem(promptedKey) || "{}");
+
+    tasks.forEach((t) => {
+      if (t.completed) return;
+      if (!t.deadline) return;
+      if (t.deadline >= todayStr) return; // not past due
+
+      const k = `${t.id}_${todayStr}`;
+      if (prompted[k]) return;
+
+      prompted[k] = true;
+      localStorage.setItem(promptedKey, JSON.stringify(prompted));
+
+      const msg =
+        `Task past due:\n\n"${t.title}"\nDue: ${t.deadline}\n\nDid you complete this task?`;
+
+      // native confirm is the most reliable popup across desktop + mobile
+      const didComplete = window.confirm(msg);
+
+      if (didComplete) {
+        t.completed = true;
+        if (window._setTaskCompleted) window._setTaskCompleted(t.id, true);
+
+        updateStats();
+        renderCalendar();
+        showNotifications();
+        evaluateCoachMessages();
+      }
+    });
+  }
+
+  // expose so module script can call it after Firestore loads
+  window.checkOverdueCompletionPrompts = checkOverdueCompletionPrompts;
 
   function renderCalendar(){
     calendar.innerHTML='';
@@ -508,17 +557,22 @@
 
       tasks.filter(t=>t.deadline===dateStr).forEach(t=>{
         const tEl=document.createElement('div');
-        tEl.className=`task ${t.intensity}`;
-        tEl.textContent=t.title;
-        tEl.onclick=()=>{
-          t.completed = !t.completed;
 
-          // ✅ ONLY CHANGE: persist completion toggle
-          if (window._setTaskCompleted) window._setTaskCompleted(t.id, t.completed);
+        // ✅ NEW: show completed style
+        tEl.className = `task ${t.intensity}${t.completed ? " completed" : ""}`;
+        tEl.textContent=t.title;
+
+        // ✅ NEW: click marks complete (no accidental un-complete)
+        tEl.onclick=()=>{
+          if (t.completed) return;
+
+          t.completed = true;
+          if (window._setTaskCompleted) window._setTaskCompleted(t.id, true);
 
           updateStats(); renderCalendar(); showNotifications();
-          evaluateCoachMessages(); // NEW: Re-evaluate when task is completed
+          evaluateCoachMessages(); // coach already skips completed tasks
         };
+
         day.appendChild(tEl);
       });
 
@@ -554,6 +608,9 @@
   }
 
   renderCalendar();
+
+  // ✅ NEW: run overdue prompt check on initial load (won’t prompt unless overdue)
+  checkOverdueCompletionPrompts();
 
   // ==================== COACH MESSAGING SYSTEM - NEW CODE ====================
 
@@ -1007,6 +1064,9 @@
     // Re-render using your existing functions (no UI changes)
     if (typeof window.renderCalendar === "function") window.renderCalendar();
     if (typeof window.updateStats === "function") window.updateStats();
+
+    // ✅ NEW: run overdue prompt check after Firestore loads
+    if (window.checkOverdueCompletionPrompts) window.checkOverdueCompletionPrompts();
   });
 </script>
 
