@@ -366,7 +366,7 @@
 <div class="menu-drawer" id="menuDrawer">
   <h2>Menu</h2>
   <p><strong>Username:</strong> user01</p>
-  <p><strong>Email:</strong> user01@email.com</p>
+  <p><strong>Email:</strong> <span id="menuEmail">user01@email.com</span></p>
   <button id="closeMenu">Close Menu</button>
   <button id="drawerLogout">Logout</button>
 </div>
@@ -882,6 +882,10 @@
       return;
     }
     localStorage.setItem("uid", user.uid);
+
+    // ✅ ONLY CHANGE: show the real logged-in email in the menu
+    const emailEl = document.getElementById("menuEmail");
+    if (emailEl) emailEl.textContent = user.email || "";
   });
 </script>
 
