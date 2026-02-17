@@ -155,8 +155,21 @@ export default async function handler(req, res) {
         subscriptionStatus = "unknown";
       }
 
-      // Generate password setup link (password reset link)
-      const link = await admin.auth().generatePasswordResetLink(email);
+      // ✅ MOBILE SAFE PASSWORD SETUP LINK
+      // Set APP_URL in Vercel env, e.g. https://metrixhardline.com
+      const APP_URL = process.env.APP_URL || "https://YOUR_DOMAIN_HERE";
+
+      const actionCodeSettings = {
+        url: `${APP_URL}/login.html`,
+        handleCodeInApp: false,
+      };
+
+      const link = await admin
+        .auth()
+        .generatePasswordResetLink(email, actionCodeSettings);
+
+      // ✅ Prevent iOS/Gmail email clients breaking query params in HTML
+      const safeLink = link.replace(/&/g, "&amp;");
 
       // Store subscription info
       await admin.firestore().collection("users").doc(userRecord.uid).set(
@@ -188,7 +201,7 @@ export default async function handler(req, res) {
           <h2>Metrix HardLine</h2>
           <p>Your subscription is active. Set your password using the button below:</p>
           <p>
-            <a href="${link}" style="display:inline-block;padding:12px 16px;background:#401d65;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">
+            <a href="${safeLink}" style="display:inline-block;padding:12px 16px;background:#401d65;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">
               Set Password
             </a>
           </p>
