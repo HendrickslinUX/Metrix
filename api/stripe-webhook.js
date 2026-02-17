@@ -51,6 +51,33 @@ async function sendEmailViaResend({ to, subject, html }) {
   }
 }
 
+// ✅ STEP 2: find the correct user doc for subscription events
+async function findUserByStripeIds({ stripeSubscriptionId, stripeCustomerId }) {
+  const db = admin.firestore();
+
+  if (stripeSubscriptionId) {
+    const subSnap = await db
+      .collection("users")
+      .where("stripeSubscriptionId", "==", stripeSubscriptionId)
+      .limit(1)
+      .get();
+
+    if (!subSnap.empty) return subSnap.docs[0].ref;
+  }
+
+  if (stripeCustomerId) {
+    const cusSnap = await db
+      .collection("users")
+      .where("stripeCustomerId", "==", stripeCustomerId)
+      .limit(1)
+      .get();
+
+    if (!cusSnap.empty) return cusSnap.docs[0].ref;
+  }
+
+  return null;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
@@ -77,6 +104,9 @@ export default async function handler(req, res) {
       return res.status(400).send(`Webhook signature error: ${err.message}`);
     }
 
+    // =========================================================
+    // 1) CHECKOUT COMPLETED (your existing flow, with real status)
+    // =========================================================
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
@@ -101,7 +131,6 @@ export default async function handler(req, res) {
         userRecord = await admin.auth().createUser({ email });
       }
 
-      // ✅ NEW: pull subscription status from Stripe (real gating source of truth)
       const stripeCustomerId = session.customer || null;
       const stripeSubscriptionId = session.subscription || null;
 
@@ -112,14 +141,16 @@ export default async function handler(req, res) {
       if (stripeSubscriptionId) {
         const sub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
 
-        subscriptionStatus = sub.status; // active, trialing, past_due, canceled, unpaid...
-        subscriptionActive = subscriptionStatus === "active" || subscriptionStatus === "trialing";
+        subscriptionStatus = sub.status;
+        subscriptionActive =
+          subscriptionStatus === "active" || subscriptionStatus === "trialing";
 
         if (sub.current_period_end) {
-          currentPeriodEnd = admin.firestore.Timestamp.fromMillis(sub.current_period_end * 1000);
+          currentPeriodEnd = admin.firestore.Timestamp.fromMillis(
+            sub.current_period_end * 1000
+          );
         }
       } else {
-        // Fallback if Stripe didn’t attach a subscription (should not happen for subscription mode)
         subscriptionActive = true;
         subscriptionStatus = "unknown";
       }
@@ -127,18 +158,16 @@ export default async function handler(req, res) {
       // Generate password setup link (password reset link)
       const link = await admin.auth().generatePasswordResetLink(email);
 
-      // ✅ UPDATED: Store subscription info (real status)
+      // Store subscription info
       await admin.firestore().collection("users").doc(userRecord.uid).set(
         {
           email,
           uid: userRecord.uid,
 
-          // ✅ Subscription gate fields (top-level)
           subscriptionActive,
           subscriptionStatus,
           currentPeriodEnd,
 
-          // ✅ Stripe identifiers (top-level for easy updates)
           stripeCustomerId,
           stripeSubscriptionId,
 
@@ -168,6 +197,54 @@ export default async function handler(req, res) {
       `;
 
       await sendEmailViaResend({ to: email, subject, html });
+    }
+
+    // =========================================================
+    // 2) ✅ STEP 2: SUBSCRIPTION UPDATED / DELETED (enforcement sync)
+    // =========================================================
+    if (
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted"
+    ) {
+      const sub = event.data.object;
+
+      const stripeSubscriptionId = sub.id || null;
+      const stripeCustomerId = sub.customer || null;
+
+      const subscriptionStatus = sub.status || null;
+      const subscriptionActive =
+        subscriptionStatus === "active" || subscriptionStatus === "trialing";
+
+      const currentPeriodEnd = sub.current_period_end
+        ? admin.firestore.Timestamp.fromMillis(sub.current_period_end * 1000)
+        : null;
+
+      const userRef = await findUserByStripeIds({
+        stripeSubscriptionId,
+        stripeCustomerId,
+      });
+
+      if (!userRef) {
+        return res
+          .status(200)
+          .json({ received: true, ignored: "user_not_found_for_subscription" });
+      }
+
+      await userRef.set(
+        {
+          subscriptionActive,
+          subscriptionStatus,
+          currentPeriodEnd,
+          stripeCustomerId,
+          stripeSubscriptionId,
+          stripe: {
+            customerId: stripeCustomerId,
+            subscriptionId: stripeSubscriptionId,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          },
+        },
+        { merge: true }
+      );
     }
 
     return res.status(200).json({ received: true });
