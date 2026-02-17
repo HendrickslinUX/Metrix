@@ -128,6 +128,34 @@ body{
   transform:scale(1.05);
   box-shadow:0 0 15px var(--accent);
 }
+
+/* ✅ NEW: small links + status text (minimal styling) */
+.helper-row{
+  margin-top:0.75rem;
+  display:flex;
+  justify-content:space-between;
+  gap:0.75rem;
+  flex-wrap:wrap;
+}
+.helper-link{
+  background:transparent;
+  border:none;
+  color:rgba(255,255,255,0.85);
+  text-decoration:underline;
+  cursor:pointer;
+  padding:0;
+  font-weight:600;
+}
+.helper-link:disabled{
+  opacity:0.55;
+  cursor:not-allowed;
+}
+.status-text{
+  margin-top:0.75rem;
+  font-size:0.9rem;
+  color:rgba(255,255,255,0.85);
+  line-height:1.35;
+}
 </style>
 </head>
 
@@ -141,6 +169,16 @@ body{
   <input id="password" placeholder="Password" type="password">
 
   <button onclick="login()">Login</button>
+
+  <!-- ✅ NEW: password help actions -->
+  <div class="helper-row">
+    <button class="helper-link" id="forgotBtn" type="button">Forgot password?</button>
+    <button class="helper-link" id="resendBtn" type="button">Resend set-password link</button>
+  </div>
+
+  <!-- ✅ NEW: action-mode UI (only shows when user opened email link) -->
+  <div class="status-text" id="actionStatus" style="display:none;"></div>
+
   <button class="return-btn" onclick="goBack()">Return</button>
 </div>
 
@@ -152,7 +190,13 @@ function goBack(){
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    verifyPasswordResetCode,
+    confirmPasswordReset
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
@@ -166,6 +210,9 @@ function goBack(){
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
+  // ================================
+  // Existing login (UNCHANGED logic)
+  // ================================
   window.login = function () {
     const email = document.getElementById("email").value.trim();
     const pass = document.getElementById("password").value.trim();
@@ -184,6 +231,140 @@ function goBack(){
         alert(err.message);
       });
   };
+
+  // ================================
+  // ✅ NEW: helpers
+  // ================================
+  const forgotBtn = document.getElementById("forgotBtn");
+  const resendBtn = document.getElementById("resendBtn");
+  const actionStatus = document.getElementById("actionStatus");
+
+  function showStatus(html) {
+    actionStatus.style.display = "block";
+    actionStatus.innerHTML = html;
+  }
+
+  function getParamFromUrl(name) {
+    // Support both query (?a=b) and hash (#a=b) variants
+    const url = new URL(window.location.href);
+    const q = url.searchParams.get(name);
+    if (q) return q;
+
+    if (url.hash && url.hash.includes("=")) {
+      const hashParams = new URLSearchParams(url.hash.replace(/^#/, ""));
+      return hashParams.get(name);
+    }
+    return null;
+  }
+
+  // 1) Forgot password (Firebase built-in)
+  forgotBtn.onclick = async () => {
+    const email = document.getElementById("email").value.trim();
+    if (!email) return alert("Enter your email first, then press Forgot password.");
+
+    try {
+      forgotBtn.disabled = true;
+      await sendPasswordResetEmail(auth, email);
+      alert("Password reset email sent. Check your inbox (and spam).");
+    } catch (e) {
+      alert(e?.message || "Could not send reset email.");
+    } finally {
+      forgotBtn.disabled = false;
+    }
+  };
+
+  // 2) Resend set-password link (your Resend + Firebase Admin API endpoint)
+  //    This assumes your /api/resend-set-password.js accepts { email } and sends a fresh Firebase reset link.
+  resendBtn.onclick = async () => {
+    const email = document.getElementById("email").value.trim();
+    if (!email) return alert("Enter your email first, then press Resend.");
+
+    try {
+      resendBtn.disabled = true;
+
+      const resp = await fetch("/api/resend-set-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+      if (!resp.ok) {
+        const txt = await resp.text().catch(() => "");
+        throw new Error(`Resend failed (${resp.status}). ${txt}`);
+      }
+
+      alert("Set-password link resent. Check your email.");
+    } catch (e) {
+      alert(e?.message || "Could not resend link.");
+    } finally {
+      resendBtn.disabled = false;
+    }
+  };
+
+  // ================================
+  // ✅ NEW: handle email action links (mobile-safe)
+  // Firebase opens this page with:
+  //   ?mode=resetPassword&oobCode=...&apiKey=...
+  // ================================
+  (async function handleEmailAction() {
+    const mode = getParamFromUrl("mode");
+    const oobCode = getParamFromUrl("oobCode");
+
+    if (mode !== "resetPassword" || !oobCode) return;
+
+    // At this point, the user clicked the email link.
+    // We show a simple "set new password" flow right inside this page.
+    try {
+      // Verify code first (gives us the email tied to it)
+      const email = await verifyPasswordResetCode(auth, oobCode);
+
+      // Pre-fill email field to reduce friction (no change if user typed already)
+      const emailInput = document.getElementById("email");
+      if (emailInput && !emailInput.value) emailInput.value = email;
+
+      // Build minimal UI inline (keeps your page small & mobile-friendly)
+      showStatus(`
+        <div style="margin-top:10px;">
+          <div style="font-weight:800;margin-bottom:6px;">Create a new password</div>
+          <div style="font-size:0.85rem;color:rgba(255,255,255,0.75);margin-bottom:10px;">
+            Account: <strong>${email}</strong>
+          </div>
+          <input id="newPass1" type="password" placeholder="New password" style="width:100%;padding:.75rem;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#1b1b1b;color:#fff;font-weight:700;margin-bottom:.75rem;">
+          <input id="newPass2" type="password" placeholder="Confirm new password" style="width:100%;padding:.75rem;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#1b1b1b;color:#fff;font-weight:700;margin-bottom:.75rem;">
+          <button id="setPassBtn" type="button" style="width:100%;padding:.8rem;border:none;border-radius:10px;background:${getComputedStyle(document.documentElement).getPropertyValue('--accent')};color:#fff;font-weight:800;cursor:pointer;">
+            Set Password
+          </button>
+        </div>
+      `);
+
+      const setBtn = document.getElementById("setPassBtn");
+      setBtn.onclick = async () => {
+        const p1 = document.getElementById("newPass1").value.trim();
+        const p2 = document.getElementById("newPass2").value.trim();
+
+        if (!p1 || p1.length < 6) return alert("Password must be at least 6 characters.");
+        if (p1 !== p2) return alert("Passwords do not match.");
+
+        try {
+          setBtn.disabled = true;
+          await confirmPasswordReset(auth, oobCode, p1);
+
+          // Clean URL so refresh won't repeat the action
+          window.history.replaceState({}, document.title, window.location.pathname);
+
+          alert("Password set successfully. You can now log in.");
+        } catch (e) {
+          alert(e?.message || "Could not set password.");
+        } finally {
+          setBtn.disabled = false;
+        }
+      };
+    } catch (e) {
+      showStatus(`<div style="color:#ffb4b4;font-weight:700;">
+        This password link is invalid or expired. Use “Resend set-password link” below.
+      </div>`);
+    }
+  })();
 </script>
 
 </body>
