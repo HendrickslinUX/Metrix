@@ -882,6 +882,7 @@
     doc,
     setDoc,
     updateDoc,
+    getDoc,
     getDocs,
     query,
     orderBy,
@@ -906,13 +907,29 @@
     appId: "1:899994703104:web:2979fe39d1c3c169ee4fe5"
   };
 
-  // ✅ ONLY CHANGE HERE: set your Web Push certificate key (VAPID) from Firebase Console
   const FCM_VAPID_KEY = "BEH0GI6sTAl39BH8VaKsBQuoit6skekTlIOa2AZfmRc7JK56onlsx_PjhdjRSxM3qb2LMf0hHpF6iDrY9LJpnYU";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const messaging = getMessaging(app);
+
+  // ✅ NEW: Subscription gate helper (ONLY ADDITION)
+  async function enforceSubscriptionGate(uid) {
+    const ref = doc(db, "users", uid);
+    const snap = await getDoc(ref);
+    const data = snap.exists() ? snap.data() : null;
+
+    const active = data?.subscriptionActive === true;
+
+    if (!active) {
+      try { await signOut(auth); } catch {}
+      localStorage.removeItem("uid");
+      window.location.href = "login.html";
+      return false;
+    }
+    return true;
+  }
 
   async function loadTasks(uid) {
     const snap = await getDocs(collection(db, "users", uid, "tasks"));
@@ -1058,27 +1075,26 @@
   });
 
   window._queuePushCoach = async ({ title, body }) => {
-  try {
-    const user = auth.currentUser;
-    if (!user) return;
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
 
-    const idToken = await user.getIdToken();
+      const idToken = await user.getIdToken();
 
-    await fetch("/api/send-push", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${idToken}`
-      },
-      body: JSON.stringify({
-        title: title || "Metrix Coach",
-        body: body || "",
-        url: "/user-dashboard.html"
-      })
-    });
-  } catch {}
-};
-
+      await fetch("/api/send-push", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          title: title || "Metrix Coach",
+          body: body || "",
+          url: "/user-dashboard.html"
+        })
+      });
+    } catch {}
+  };
 
   window.logout = function () {
     signOut(auth).finally(() => {
@@ -1094,6 +1110,10 @@
     }
 
     localStorage.setItem("uid", user.uid);
+
+    // ✅ NEW: subscription gate enforced BEFORE loading dashboard data
+    const ok = await enforceSubscriptionGate(user.uid);
+    if (!ok) return;
 
     const emailEl = document.getElementById("menuEmail");
     if (emailEl) emailEl.textContent = user.email || "";
