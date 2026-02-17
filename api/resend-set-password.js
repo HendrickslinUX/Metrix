@@ -36,33 +36,55 @@ async function sendEmailViaResend({ to, subject, html }) {
   }
 }
 
+function getOrigin(req) {
+  // Works on Vercel + locally
+  const proto =
+    (req.headers["x-forwarded-proto"] || "https").toString().split(",")[0].trim();
+  const host =
+    (req.headers["x-forwarded-host"] || req.headers["host"] || "").toString().split(",")[0].trim();
+
+  if (!host) return "https://metrixsub.com";
+  return `${proto}://${host}`;
+}
+
 export default async function handler(req, res) {
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "POST only" });
+  if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
 
   try {
     initFirebaseAdmin();
 
-    const { email } = req.body;
+    const { email } = req.body || {};
     if (!email) return res.status(400).json({ error: "Email required" });
 
-    // Find Firebase user
-    const user = await admin.auth().getUserByEmail(email);
+    // Find Firebase user (if not found, return generic ok to avoid account enumeration)
+    let user;
+    try {
+      user = await admin.auth().getUserByEmail(email);
+    } catch {
+      return res.status(200).json({ ok: true });
+    }
 
-    // Optional: enforce subscription
+    // Enforce subscription (as you wanted)
     const userDoc = await admin.firestore().collection("users").doc(user.uid).get();
-
-    if (!userDoc.exists || !userDoc.data().subscriptionActive) {
+    if (!userDoc.exists || !userDoc.data()?.subscriptionActive) {
       return res.status(403).json({ error: "Subscription inactive" });
     }
 
-    // Generate NEW reset link
-    const link = await admin.auth().generatePasswordResetLink(email);
+    // ✅ Mobile-safe: send user back to YOUR login.html to finish setting password
+    const origin = getOrigin(req);
+    const continueUrl = `${origin}/login.html`;
+
+    const actionCodeSettings = {
+      url: continueUrl,        // where Firebase sends them after the action
+      handleCodeInApp: true,   // ensures the code stays in the link for web handling
+    };
+
+    const link = await admin.auth().generatePasswordResetLink(email, actionCodeSettings);
 
     const html = `
       <div style="font-family:Arial,sans-serif;line-height:1.5">
         <h2>Metrix HardLine</h2>
-        <p>Here is your password setup link:</p>
+        <p>Here is your password setup link (works on mobile + desktop):</p>
         <p>
           <a href="${link}" style="display:inline-block;padding:12px 16px;background:#401d65;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">
             Set Password
@@ -74,12 +96,12 @@ export default async function handler(req, res) {
 
     await sendEmailViaResend({
       to: email,
-      subject: "Metrix HardLine – Reset Your Password",
+      subject: "Metrix HardLine – Set/Reset Your Password",
       html,
     });
 
     return res.status(200).json({ ok: true });
   } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: e?.message || "Server error" });
   }
 }
