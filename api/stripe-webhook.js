@@ -101,19 +101,51 @@ export default async function handler(req, res) {
         userRecord = await admin.auth().createUser({ email });
       }
 
+      // ✅ NEW: pull subscription status from Stripe (real gating source of truth)
+      const stripeCustomerId = session.customer || null;
+      const stripeSubscriptionId = session.subscription || null;
+
+      let subscriptionStatus = null;
+      let subscriptionActive = false;
+      let currentPeriodEnd = null;
+
+      if (stripeSubscriptionId) {
+        const sub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+
+        subscriptionStatus = sub.status; // active, trialing, past_due, canceled, unpaid...
+        subscriptionActive = subscriptionStatus === "active" || subscriptionStatus === "trialing";
+
+        if (sub.current_period_end) {
+          currentPeriodEnd = admin.firestore.Timestamp.fromMillis(sub.current_period_end * 1000);
+        }
+      } else {
+        // Fallback if Stripe didn’t attach a subscription (should not happen for subscription mode)
+        subscriptionActive = true;
+        subscriptionStatus = "unknown";
+      }
+
       // Generate password setup link (password reset link)
       const link = await admin.auth().generatePasswordResetLink(email);
 
-      // Store subscription info
+      // ✅ UPDATED: Store subscription info (real status)
       await admin.firestore().collection("users").doc(userRecord.uid).set(
         {
           email,
           uid: userRecord.uid,
-          subscriptionActive: true,
+
+          // ✅ Subscription gate fields (top-level)
+          subscriptionActive,
+          subscriptionStatus,
+          currentPeriodEnd,
+
+          // ✅ Stripe identifiers (top-level for easy updates)
+          stripeCustomerId,
+          stripeSubscriptionId,
+
           stripe: {
             checkoutSessionId: session.id,
-            customerId: session.customer || null,
-            subscriptionId: session.subscription || null,
+            customerId: stripeCustomerId,
+            subscriptionId: stripeSubscriptionId,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
           },
         },
