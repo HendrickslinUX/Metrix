@@ -42,7 +42,30 @@
     position: relative;
     z-index: 1200;
   }
-  header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin:0; }
+
+  /* ✅ NEW: header brand with logo */
+  .brand {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width: 0;
+  }
+  .brand img {
+    height: 28px;
+    width: auto;
+    display:block;
+  }
+  .brand h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    margin:0;
+    white-space: nowrap;
+  }
+  @media (max-width: 480px){
+    .brand img { height: 24px; }
+    .brand h1 { font-size: 1.05rem; }
+  }
+
   header button {
     background: var(--accent);
     color:white;
@@ -416,7 +439,11 @@
 <body>
 
 <header>
-  <h1>Metrix HardLine</h1>
+  <!-- ✅ UPDATED: logo added -->
+  <div class="brand">
+    <img src="/icons/Metrix.png" alt="Metrix HardLine" />
+    <h1>Metrix HardLine</h1>
+  </div>
   <button id="menuBtn">Menu</button>
 </header>
 
@@ -1129,6 +1156,3 @@
 
 </body>
 </html>
-
-
-
