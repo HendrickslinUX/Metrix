@@ -4,9 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Metrix HardLine — Accountability Without Negotiation</title>
+
+  <!-- ✅ NEW: Canonical (helps Google understand the main domain) -->
+  <link rel="canonical" href="https://metrixsubs.com/" />
+
+  <!-- ✅ NEW: Favicons (tab icon + iOS icon + older browsers) -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png">
+
+  <!-- ✅ NEW: Social preview (shows logo when you share the site) -->
+  <meta property="og:site_name" content="Metrix HardLine">
+  <meta property="og:title" content="Metrix HardLine — Accountability Without Negotiation">
+  <meta property="og:description" content="You set tasks and deadlines. HardLine holds you to them. No negotiation. No excuses.">
+  <meta property="og:url" content="https://metrixsubs.com/">
+  <meta property="og:type" content="website">
+  <!-- Use a public image URL that exists (512 is fine for previews) -->
+  <meta property="og:image" content="https://metrixsubs.com/icons/icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Metrix HardLine — Accountability Without Negotiation">
+  <meta name="twitter:description" content="You set tasks and deadlines. HardLine holds you to them. No negotiation. No excuses.">
+  <meta name="twitter:image" content="https://metrixsubs.com/icons/icon-512.png">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="styles.css" />
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0b0b0b">
@@ -34,7 +62,6 @@
   <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
-      <!-- ✅ UPDATED: logo now includes image -->
       <a href="/" class="logo">
         <img src="/icons/Metrix.png" alt="Metrix HardLine" class="logo-mark" />
         <span>Metrix HardLine</span>
@@ -45,16 +72,15 @@
         <a href="#pricing">Pricing</a>
         <a href="#who-its-for">Who it's for</a>
         <a href="https://buy.stripe.com/aFa5kC7X48rX2tE8HJ6Vq04" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">Get started</a>
-        <!-- Login button -->
         <a href="login.html" class="btn btn-primary">Login</a>
       </nav>
+
       <button type="button" class="menu-toggle" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <!-- Hero Section -->
   <main>
     <section class="hero">
       <div class="hero-bg"></div>
@@ -73,13 +99,11 @@
         <div class="hero-actions">
           <a href="https://buy.stripe.com/aFa5kC7X48rX2tE8HJ6Vq04" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Start now</a>
           <a href="#how-it-works" class="btn btn-outline">How it works</a>
-          <!-- Hero Login button -->
           <a href="login.html" class="btn btn-primary hero-btn">Login</a>
         </div>
       </div>
     </section>
 
-    <!-- How it works -->
     <section id="how-it-works" class="how-it-works">
       <div class="container">
         <h2 class="section-title">How it works</h2>
@@ -103,7 +127,6 @@
       </div>
     </section>
 
-    <!-- Features Section -->
     <section id="features" class="features">
       <div class="container">
         <h2 class="section-title">What you get</h2>
@@ -138,7 +161,6 @@
       </div>
     </section>
 
-    <!-- Who it's for -->
     <section id="who-its-for" class="who-its-for">
       <div class="container narrow">
         <h2 class="section-title">Who this is for</h2>
@@ -155,7 +177,6 @@
       </div>
     </section>
 
-    <!-- Pricing Section -->
     <section id="pricing" class="plans">
       <div class="container">
         <h2 class="section-title">Pricing</h2>
@@ -181,7 +202,6 @@
       </div>
     </section>
 
-    <!-- FAQ Section -->
     <section id="faq" class="faq">
       <div class="container narrow">
         <h2 class="section-title">Frequently asked questions</h2>
@@ -203,10 +223,8 @@
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <!-- ✅ UPDATED: logo now includes image -->
       <a href="/" class="logo">
         <img src="/icons/Metrix.png" alt="Metrix HardLine" class="logo-mark" />
         <span>Metrix HardLine</span>
@@ -225,7 +243,6 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="script.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
