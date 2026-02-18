@@ -10,12 +10,36 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0b0b0b">
+
+  <!-- ✅ NEW: tiny logo styling (does not affect layout elsewhere) -->
+  <style>
+    .site-header .logo,
+    .site-footer .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+    }
+    .logo-mark{
+      height:28px;
+      width:auto;
+      display:block;
+    }
+    @media (max-width: 480px){
+      .logo-mark{ height:24px; }
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
-      <a href="/" class="logo">Metrix HardLine</a>
+      <!-- ✅ UPDATED: logo now includes image -->
+      <a href="/" class="logo">
+        <img src="/icons/Metrix.png" alt="Metrix HardLine" class="logo-mark" />
+        <span>Metrix HardLine</span>
+      </a>
+
       <nav class="nav">
         <a href="#how-it-works">How it works</a>
         <a href="#pricing">Pricing</a>
@@ -182,7 +206,12 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <a href="/" class="logo">Metrix HardLine</a>
+      <!-- ✅ UPDATED: logo now includes image -->
+      <a href="/" class="logo">
+        <img src="/icons/Metrix.png" alt="Metrix HardLine" class="logo-mark" />
+        <span>Metrix HardLine</span>
+      </a>
+
       <div class="footer-links">
         <a href="#how-it-works">How it works</a>
         <a href="#pricing">Pricing</a>
@@ -205,4 +234,3 @@
   </script>
 </body>
 </html>
-
