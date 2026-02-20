@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Metrix HardLine — User Dashboard</title>
+<title>Metrix HardLine — User Dashboard (v2.2)</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -41,7 +40,6 @@
     transition: background 0.2s ease, color 0.2s ease;
   }
 
-  /* ===== TOP BAR ===== */
   header {
     height: 64px;
     background: var(--bg-panel);
@@ -54,18 +52,8 @@
     z-index: 1200;
   }
 
-  /* ✅ header brand with logo */
-  .brand {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width: 0;
-  }
-  .brand img {
-    height: 28px;
-    width: auto;
-    display:block;
-  }
+  .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+  .brand img { height: 28px; width:auto; display:block; }
   .brand h1 {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.2rem;
@@ -78,15 +66,7 @@
   }
 
   .header-actions { display:flex; gap:.6rem; align-items:center; }
-
-  .icon-btn {
-    background: transparent;
-    border:1px solid rgba(255,255,255,.14);
-    color:var(--text-main);
-    padding:.45rem .65rem;
-    border-radius:10px;
-    cursor:pointer;
-  }
+  .icon-btn { background: transparent; border:1px solid rgba(255,255,255,.14); color:var(--text-main); padding:.45rem .65rem; border-radius:10px; cursor:pointer; }
 
   header button {
     background: var(--accent);
@@ -96,16 +76,14 @@
     border-radius:8px;
     cursor:pointer;
     font-weight:600;
-    min-height: 40px;
   }
 
-  /* ✅ Slide-down task action bar */
   .task-action-bar {
     position: fixed;
     top: 64px;
     left: 0;
     right: 0;
-    background: var(--bg-panel);
+    background: #111;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     transform: translateY(-120%);
     transition: transform 0.25s ease;
@@ -113,7 +91,6 @@
     padding: 0.75rem 1rem;
   }
   .task-action-bar.open { transform: translateY(0); }
-
   .task-action-row {
     max-width: 1400px;
     margin: auto;
@@ -125,7 +102,7 @@
   .task-action-title {
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--text-main);
+    color: white;
     flex: 1;
     min-width: 0;
     overflow: hidden;
@@ -134,7 +111,7 @@
   }
   .task-action-meta {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: rgba(255,255,255,0.7);
     white-space: nowrap;
   }
   .task-action-buttons {
@@ -149,27 +126,24 @@
     font-weight: 800;
     cursor: pointer;
     color: white;
-    min-height: 42px;
   }
   .task-action-btn.done { background: #2e7d32; }
   .task-action-btn.failed { background: #d32f2f; }
   .task-action-btn.close { background: var(--accent); }
 
-  /* ===== MENU DRAWER ===== */
   .menu-drawer {
     position: fixed;
     top:0;
     right:-300px;
     width:300px;
     height:100%;
-    background: var(--bg-panel);
-    color: var(--text-main);
+    background:#111;
+    color:white;
     padding:1.5rem;
     transition: right 0.3s ease;
     z-index:1000;
     display:flex;
     flex-direction:column;
-    border-left: 1px solid rgba(255,255,255,0.08);
   }
   .menu-drawer.open { right:0; }
   .menu-drawer h2 { margin-top:0; }
@@ -182,13 +156,10 @@
     cursor:pointer;
     color:white;
     font-weight:bold;
-    min-height: 44px;
   }
 
-  /* ===== MAIN ===== */
   main { padding:1.5rem; max-width:1400px; margin:auto; }
 
-  /* ===== STATS ===== */
   .stats {
     display:grid;
     grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
@@ -200,92 +171,53 @@
     border-radius:14px;
     padding:1.2rem;
     text-align:center;
-    box-shadow:0 6px 16px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow:0 6px 16px rgba(0,0,0,0.3);
   }
   .stat-card h3 { margin:0; font-size:0.85rem; color:var(--text-muted); }
   .stat-card p { margin-top:0.4rem; font-size:1.6rem; font-weight:700; }
 
-  /* KPI */
   .kpi-row { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1rem; }
-  .kpi-card { background: var(--bg-card); border-radius:14px; padding:1rem; border: 1px solid rgba(255,255,255,0.06); }
-  .kpi-card h3 { margin:0; font-size:.85rem; color: var(--text-muted); }
-  .kpi-value { font-size:1.5rem; font-weight:800; margin-top:.25rem; }
-  .discipline-bar { height:8px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; margin-top:.5rem; }
+  .kpi-card { background: var(--bg-card); border-radius:14px; padding:1rem; }
+  .kpi-card h3 { margin:0; font-size:0.85rem; color:var(--text-muted); }
+  .kpi-value { font-size:1.5rem; font-weight:700; margin-top:.35rem; }
+  .discipline-bar { height:8px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; margin-top:.4rem; }
   .discipline-fill { height:100%; background:linear-gradient(90deg,#ff9800,#2e7d32); width:0%; }
 
   .filters { display:flex; gap:.7rem; margin-bottom:1rem; flex-wrap:wrap; }
-  .filters select {
-    background:var(--bg-card);
-    color:var(--text-main);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:8px;
-    padding:.55rem .7rem;
-    min-height: 44px;
-  }
+  .filters select { background:var(--bg-card); color:var(--text-main); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:.55rem .7rem; }
 
-  .analytics-panel, .weekly-panel {
-    background:var(--bg-card);
-    border-radius:14px;
-    padding:1rem;
-    margin-bottom:1rem;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .analytics-panel h3, .weekly-panel h3 { margin:0 0 .35rem 0; font-family:'Space Grotesk',sans-serif; }
+  .analytics-panel, .weekly-panel { background:var(--bg-card); border-radius:14px; padding:1rem; margin-bottom:1rem; }
   .analytics-canvas { width:100%; height:180px; background:rgba(255,255,255,.03); border-radius:10px; }
 
-  /* ===== TASK CREATOR ===== */
+  .toast-stack { position:fixed; top:80px; right:20px; display:flex; flex-direction:column; gap:.6rem; z-index:2200; }
+  .toast { background:var(--bg-panel); border-left:4px solid var(--accent); padding:.65rem .75rem; border-radius:8px; font-size:.85rem; box-shadow:0 8px 24px rgba(0,0,0,.2); }
+
   .task-form {
     background: var(--bg-card);
     border-radius:16px;
     padding:1.5rem;
-    margin-bottom:1.25rem;
-    max-width:560px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom:1rem;
+    max-width:520px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
   }
   .task-form h2 { font-family:'Space Grotesk',sans-serif; margin:0 0 1rem 0; }
   .task-step { display:none; flex-direction:column; gap:.6rem; margin-bottom:1rem; }
   .task-step.active { display:flex; }
-
   .task-form input, .task-form select {
     width:100%;
     padding:.7rem;
     border-radius:10px;
     border:1px solid rgba(255,255,255,0.08);
-    background: rgba(0,0,0,0.25);
-    color:var(--text-main);
-    font-weight:700;
-    min-height: 44px;
-  }
-
-  .task-form button {
-    width:100%;
-    background: var(--accent);
+    background:#0f0f0f;
     color:white;
-    border:none;
-    padding:.75rem;
-    border-radius:10px;
-    font-weight:800;
-    cursor:pointer;
-    min-height: 44px;
+    font-weight:600;
   }
+  .task-form button { width:100%; background: var(--accent); color:white; border:none; padding:.75rem; border-radius:10px; font-weight:700; cursor:pointer; }
 
-  /* ===== CALENDAR ===== */
-  .calendar-controls { display:flex; justify-content:space-between; margin-bottom:.5rem; max-width:1100px; gap:.6rem; }
-  .calendar-controls button {
-    background: var(--accent);
-    border:none;
-    color:white;
-    padding:.5rem 1rem;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:800;
-    min-height: 44px;
-    flex: 1;
-  }
+  .calendar-controls { display:flex; justify-content:space-between; margin-bottom:.5rem; max-width:1100px; }
+  .calendar-controls button { background: var(--accent); border:none; color:white; padding:.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; }
 
-  .calendar-wrapper { overflow-x:auto; padding-bottom:1rem; -webkit-overflow-scrolling: touch; }
+  .calendar-wrapper { overflow-x:auto; padding-bottom:1rem; }
   .calendar {
     display:grid;
     grid-template-columns: repeat(7,minmax(160px,1fr));
@@ -298,19 +230,16 @@
     padding:.6rem;
     min-height:140px;
     position:relative;
-    border: 1px solid rgba(255,255,255,0.06);
   }
   .day-header { font-size:.75rem; color:var(--text-muted); margin-bottom:.4rem; }
 
   .task {
-    padding:.45rem .6rem;
-    border-radius:10px;
-    font-size:.8rem;
-    font-weight:800;
-    margin-bottom:.35rem;
+    padding:.35rem .6rem;
+    border-radius:8px;
+    font-size:.75rem;
+    font-weight:700;
+    margin-bottom:.3rem;
     cursor:pointer;
-    user-select: none;
-    touch-action: pan-y;
   }
   .Softy { background: var(--softy); }
   .GrindMode { background: var(--grind); }
@@ -321,53 +250,14 @@
   .task.dragging-right { transform: translateX(40px); transition: transform .15s ease; }
   .task.dragging-left { transform: translateX(-40px); transition: transform .15s ease; }
 
-  .day.overdue { border: 2px solid #d32f2f; }
+  .day.overdue { border: 2px solid red; }
+  .empty-state { color:var(--text-muted); text-align:center; padding:1rem; }
 
-  .empty-state { color:var(--text-muted); text-align:center; padding:1rem; font-size:.85rem; }
-
-  /* Toast */
-  .toast-stack { position:fixed; top:80px; right:20px; display:flex; flex-direction:column; gap:.6rem; z-index:2200; max-width: 320px; }
-  .toast {
-    background:var(--bg-panel);
-    color: var(--text-main);
-    border-left:4px solid var(--accent);
-    padding:.65rem .75rem;
-    border-radius:10px;
-    font-size:.88rem;
-    box-shadow:0 8px 24px rgba(0,0,0,.2);
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  /* Edit modal */
   .edit-modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:2100; }
   .edit-modal.open { display:flex; }
-  .edit-card {
-    width:min(520px,92vw);
-    background:var(--bg-panel);
-    color: var(--text-main);
-    padding:1rem;
-    border-radius:14px;
-    display:flex;
-    flex-direction:column;
-    gap:.6rem;
-    border: 1px solid rgba(255,255,255,0.12);
-  }
-  .edit-card h3 { margin:0 0 .25rem 0; font-family:'Space Grotesk',sans-serif; }
-  .edit-card input, .edit-card select {
-    width:100%;
-    padding:.7rem;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.12);
-    background: rgba(0,0,0,0.22);
-    color: var(--text-main);
-    font-weight: 800;
-    min-height: 44px;
-  }
+  .edit-card { width:min(520px,92vw); background:var(--bg-panel); padding:1rem; border-radius:12px; display:flex; flex-direction:column; gap:.6rem; }
   .edit-actions { display:flex; gap:.6rem; }
-  .edit-actions button { flex: 1; min-height: 44px; }
-  .edit-actions .icon-btn { border-color: rgba(255,255,255,0.18); }
 
-  /* Coach panel (kept compatible) */
   .coach-panel {
     position: fixed;
     bottom: 20px;
@@ -389,7 +279,11 @@
     justify-content: space-between;
     align-items: center;
   }
-  .coach-panel-header h3 { margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; }
+  .coach-panel-header h3 {
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+  }
   .coach-panel-toggle {
     background: var(--accent);
     border: none;
@@ -398,8 +292,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.85rem;
-    font-weight: 700;
-    min-height: 36px;
+    font-weight: 600;
   }
   .coach-messages {
     flex: 1;
@@ -414,7 +307,6 @@
     padding: 0.8rem;
     border-radius: 10px;
     border-left: 3px solid;
-    border: 1px solid rgba(255,255,255,0.06);
   }
   .coach-message.level-low { border-left-color: #4caf50; }
   .coach-message.level-medium { border-left-color: #ff9800; }
@@ -427,17 +319,15 @@
     font-size: 0.75rem;
     color: var(--text-muted);
   }
-  .coach-message-body { font-size: 0.9rem; line-height: 1.4; }
+  .coach-message-body { font-size: 0.85rem; line-height: 1.4; }
   .coach-message-task { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; font-style: italic; }
 
   @media (max-width: 768px) {
-    main { padding: 1rem; }
-    .coach-panel { width: calc(100% - 24px); left: 12px; right: 12px; max-height: 400px; }
     .task-action-row { flex-wrap: wrap; }
     .task-action-buttons { width:100%; }
-    .task-action-btn { flex:1; }
-    .calendar { min-width: 980px; }
-    .toast-stack { right: 12px; left: 12px; max-width: unset; }
+    .task-action-btn { flex:1; min-height:42px; }
+    .calendar-controls button, .task-form button, .menu-drawer button { min-height:44px; }
+    .coach-panel { width: calc(100% - 40px); left: 20px; right: 20px; max-height: 400px; }
   }
 </style>
 </head>
@@ -450,8 +340,8 @@
     <h1>Metrix HardLine</h1>
   </div>
   <div class="header-actions">
-    <button class="icon-btn" id="themeToggle" type="button">🌙</button>
-    <button id="menuBtn" type="button">Menu</button>
+    <button class="icon-btn" id="themeToggle">🌙</button>
+    <button id="menuBtn">Menu</button>
   </div>
 </header>
 
@@ -460,45 +350,32 @@
     <div class="task-action-title" id="taskActionTitle">Task</div>
     <div class="task-action-meta" id="taskActionMeta">Due:</div>
     <div class="task-action-buttons">
-      <button class="task-action-btn done" id="taskDoneBtn" type="button">Task Done</button>
-      <button class="task-action-btn failed" id="taskFailedBtn" type="button">I Failed</button>
-      <button class="task-action-btn close" id="taskCloseBtn" type="button">Close</button>
+      <button class="task-action-btn done" id="taskDoneBtn">Task Done</button>
+      <button class="task-action-btn failed" id="taskFailedBtn">I Failed</button>
+      <button class="task-action-btn close" id="taskCloseBtn">Close</button>
     </div>
   </div>
 </div>
 
 <div class="menu-drawer" id="menuDrawer">
   <h2>Menu</h2>
-  <p><strong>Email:</strong> <span id="menuEmail">—</span></p>
-  <button id="closeMenu" type="button">Close Menu</button>
-  <button id="drawerLogout" type="button">Logout</button>
+  <p><strong>Username:</strong> user01</p>
+  <p><strong>Email:</strong> <span id="menuEmail">user01@email.com</span></p>
+  <button id="closeMenu">Close Menu</button>
+  <button id="drawerLogout">Logout</button>
 </div>
 
 <main>
-
   <section class="stats">
     <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
     <div class="stat-card"><h3>Completed</h3><p id="completedTasks">0</p></div>
-    <!-- Keeping original behavior (open/unresolved count) to avoid breaking expected logic -->
-    <div class="stat-card"><h3>Open</h3><p id="missedTasks">0</p></div>
+    <div class="stat-card"><h3>Missed</h3><p id="missedTasks">0</p></div>
   </section>
 
   <section class="kpi-row">
-    <div class="kpi-card">
-      <h3>🔥 Streak</h3>
-      <div class="kpi-value" id="streakValue">0 days</div>
-    </div>
-
-    <div class="kpi-card">
-      <h3>Discipline Score</h3>
-      <div class="kpi-value" id="disciplineScore">0</div>
-      <div class="discipline-bar"><div class="discipline-fill" id="disciplineFill"></div></div>
-    </div>
-
-    <div class="kpi-card">
-      <h3>Weekly Completion</h3>
-      <div class="kpi-value" id="weeklyCompletion">0%</div>
-    </div>
+    <div class="kpi-card"><h3>🔥 Streak</h3><div class="kpi-value" id="streakValue">0 days</div></div>
+    <div class="kpi-card"><h3>Discipline Score</h3><div class="kpi-value" id="disciplineScore">0</div><div class="discipline-bar"><div class="discipline-fill" id="disciplineFill"></div></div></div>
+    <div class="kpi-card"><h3>Weekly Completion</h3><div class="kpi-value" id="weeklyCompletion">0%</div></div>
   </section>
 
   <section class="filters">
@@ -511,7 +388,7 @@
     </select>
   </section>
 
-  <section class="weekly-panel" id="weeklyPanel">
+  <section class="weekly-panel">
     <h3>Weekly Report</h3>
     <p id="weeklySummary">No data yet.</p>
   </section>
@@ -525,11 +402,11 @@
     <h2>Create Task</h2>
     <div class="task-step step1 active">
       <input id="taskTitle" placeholder="Task title" />
-      <button id="step1Next" type="button">Next →</button>
+      <button id="step1Next">Next →</button>
     </div>
     <div class="task-step step2">
       <input id="taskDeadline" type="date"/>
-      <button id="step2Next" type="button">Next →</button>
+      <button id="step2Next">Next →</button>
     </div>
     <div class="task-step step3">
       <select id="taskIntensity">
@@ -549,24 +426,23 @@
         <option value="weekly">Weekly</option>
         <option value="monthly">Monthly</option>
       </select>
-      <button id="addTaskBtn" type="button">Add Task</button>
+      <button id="addTaskBtn">Add Task</button>
     </div>
   </section>
 
   <div class="calendar-controls">
-    <button id="prevMonth" type="button">← Prev</button>
-    <button id="nextMonth" type="button">Next →</button>
+    <button id="prevMonth">← Prev</button>
+    <button id="nextMonth">Next →</button>
   </div>
 
   <div class="calendar-wrapper">
     <section class="calendar" id="calendar"></section>
   </div>
-
 </main>
 
 <div class="toast-stack" id="toastStack"></div>
 
-<div class="edit-modal" id="editModal" aria-hidden="true">
+<div class="edit-modal" id="editModal">
   <div class="edit-card">
     <h3>Edit Task</h3>
     <input id="editTitle" placeholder="Task title" />
@@ -589,8 +465,8 @@
       <option value="monthly">Monthly</option>
     </select>
     <div class="edit-actions">
-      <button id="editSaveBtn" type="button" style="background:var(--accent);border:none;color:#fff;border-radius:10px;font-weight:900;">Save</button>
-      <button id="editCancelBtn" type="button" class="icon-btn">Cancel</button>
+      <button id="editSaveBtn">Save</button>
+      <button id="editCancelBtn" class="icon-btn">Cancel</button>
     </div>
   </div>
 </div>
@@ -598,89 +474,61 @@
 <div class="coach-panel" id="coachPanel">
   <div class="coach-panel-header">
     <h3>🎯 Your Coach</h3>
-    <button class="coach-panel-toggle" id="coachPanelToggle" type="button">Minimize</button>
+    <button class="coach-panel-toggle" id="coachPanelToggle">Minimize</button>
   </div>
   <div class="coach-messages" id="coachMessages"></div>
 </div>
 
 <script>
 (() => {
-  "use strict";
+  console.log("Metrix Dashboard loaded: v2.2 (persistence+debug)");
 
-  // ==================== STATE ====================
+  const LOCAL_KEY = () => {
+    const uid = localStorage.getItem("uid");
+    return uid ? `metrix_tasks_${uid}` : "metrix_tasks_unknown";
+  };
+
   const state = {
-    tasks: window.tasks = [],
+    tasks: [],
     selectedTaskId: null,
     editingTaskId: null,
     currentMonth: new Date(),
     categoryFilter: "all",
-    analytics: { streak: 0, discipline: 0, weeklyCompletionRate: 0, weeklyCompleted: 0, weeklyFailed: 0, streakHistory: [] },
-
-    // Safety: throttle spam + writes
-    _toastLast: new Map(),
-    _overduePromptedKey: "metrix_overdue_prompted",
-    _notifThrottleKey: "metrix_notification_throttle",
-    _notifThrottleMs: 60 * 60 * 1000, // 1h
-    _analyticsPersistTimer: null,
-    _analyticsDirty: false,
-    _lastAnalyticsPersistAt: 0,
-    _analyticsPersistMinMs: 30 * 1000, // 30s
-    _coachThrottleMs: 45 * 60 * 1000, // 45m per task per level-ish
-    _coachLastSentKey: "metrix_coach_last_sent",
-    _didSessionPersistOnce: false
+    analytics: { streak: 0, discipline: 0, weeklyCompletionRate: 0, weeklyCompleted: 0, weeklyFailed: 0, streakHistory: [] }
   };
 
-  // ==================== ELEMENTS ====================
-  const menuBtn = document.getElementById('menuBtn');
-  const menuDrawer = document.getElementById('menuDrawer');
-  const closeMenu = document.getElementById('closeMenu');
-  const drawerLogout = document.getElementById('drawerLogout');
-  const themeToggle = document.getElementById('themeToggle');
-  const categoryFilter = document.getElementById('categoryFilter');
   const toastStack = document.getElementById('toastStack');
-  const weeklyChart = document.getElementById('weeklyChart');
+  function notify(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.borderLeftColor = (type === 'error') ? '#d32f2f' : (type === 'success') ? '#2e7d32' : 'var(--accent)';
+    toast.textContent = message;
+    toastStack.appendChild(toast);
+    setTimeout(() => toast.remove(), 4200);
+  }
 
-  const step1 = document.querySelector('.step1');
-  const step2 = document.querySelector('.step2');
-  const step3 = document.querySelector('.step3');
+  // Exposed so Firebase module can show errors
+  window._uiToast = (msg, type) => notify(msg, type);
 
-  const taskActionBar = document.getElementById("taskActionBar");
-  const taskActionTitle = document.getElementById("taskActionTitle");
-  const taskActionMeta = document.getElementById("taskActionMeta");
-  const taskDoneBtn = document.getElementById("taskDoneBtn");
-  const taskFailedBtn = document.getElementById("taskFailedBtn");
-  const taskCloseBtn = document.getElementById("taskCloseBtn");
-
-  const editModal = document.getElementById('editModal');
-
-  // ==================== TOAST (throttled) ====================
-  function notify(message, type = 'info', throttleKey = null, throttleMs = 4000) {
+  function saveLocalTasks() {
     try {
-      if (throttleKey) {
-        const last = state._toastLast.get(throttleKey) || 0;
-        const now = Date.now();
-        if (now - last < throttleMs) return;
-        state._toastLast.set(throttleKey, now);
-      }
-
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      if (type === 'error') toast.style.borderLeftColor = '#d32f2f';
-      if (type === 'success') toast.style.borderLeftColor = '#2e7d32';
-      toast.textContent = message;
-      toastStack.appendChild(toast);
-
-      setTimeout(() => {
-        try { toast.remove(); } catch {}
-      }, 3200);
-    } catch {}
+      localStorage.setItem(LOCAL_KEY(), JSON.stringify(state.tasks));
+    } catch (e) {
+      console.warn("localStorage save failed", e);
+    }
   }
 
-  function setLoading(isLoading) {
-    document.body.style.cursor = isLoading ? 'progress' : '';
+  function loadLocalTasks() {
+    try {
+      const raw = localStorage.getItem(LOCAL_KEY());
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
   }
 
-  // ==================== THEME ====================
+  // THEME
+  const themeToggle = document.getElementById('themeToggle');
   function applyTheme(theme) {
     document.body.classList.toggle('light-mode', theme === 'light');
     themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
@@ -689,29 +537,27 @@
   applyTheme(localStorage.getItem('metrix_theme') || 'dark');
   themeToggle.onclick = () => applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light');
 
-  // ==================== MENU ====================
+  // MENU
+  const menuBtn = document.getElementById('menuBtn');
+  const menuDrawer = document.getElementById('menuDrawer');
+  const closeMenu = document.getElementById('closeMenu');
+  const drawerLogout = document.getElementById('drawerLogout');
   menuBtn.onclick = ()=> menuDrawer.classList.add('open');
   closeMenu.onclick = ()=> menuDrawer.classList.remove('open');
-  drawerLogout.onclick = ()=> window.logout && window.logout();
+  drawerLogout.onclick = ()=> window.logout();
 
-  // ==================== HELPERS ====================
-  const CATEGORY_COLORS = { Study:'#2196f3', Exam:'#ff9800', Coursework:'#9c27b0', Personal:'#009688' };
-
-  function dateKey(d) {
-    return new Date(d).toISOString().split('T')[0];
-  }
-
-  function safeNormalizeTask(t) {
-    // Backward compatible defaults; no destructive changes
-    if (typeof t.failed === "undefined") t.failed = false;
-    if (typeof t.status === "undefined") t.status = t.completed ? "done" : (t.failed ? "failed" : "open");
-    if (typeof t.category === "undefined") t.category = "Study";
-    if (typeof t.recurrence === "undefined") t.recurrence = "none";
-    if (typeof t.reminder24hSent === "undefined") t.reminder24hSent = false;
-    if (typeof t.reminderSameDaySent === "undefined") t.reminderSameDaySent = false;
-    if (!t.id) t.id = String(Date.now());
-    return t;
-  }
+  // Task form steps
+  const step1 = document.querySelector('.step1');
+  const step2 = document.querySelector('.step2');
+  const step3 = document.querySelector('.step3');
+  document.getElementById('step1Next').onclick = ()=> {
+    if(!document.getElementById('taskTitle').value.trim()) return notify('Enter task title', 'error');
+    step1.classList.remove('active'); step2.classList.add('active');
+  };
+  document.getElementById('step2Next').onclick = ()=> {
+    if(!document.getElementById('taskDeadline').value) return notify('Select date', 'error');
+    step2.classList.remove('active'); step3.classList.add('active');
+  };
 
   function nextDateForRecurrence(deadline, recurrence) {
     if (!deadline || recurrence === 'none') return null;
@@ -722,97 +568,54 @@
     return d.toISOString().split('T')[0];
   }
 
-  function markAnalyticsDirty() {
-    state._analyticsDirty = true;
-
-    // B) Persist only once per session + on task changes (throttled)
-    if (state._analyticsPersistTimer) return;
-
-    state._analyticsPersistTimer = setTimeout(() => {
-      state._analyticsPersistTimer = null;
-      persistAnalyticsIfNeeded();
-    }, 3500);
-  }
-
-  function persistAnalyticsIfNeeded(force = false) {
-    try {
-      if (!state._analyticsDirty && !force) return;
-
-      const now = Date.now();
-      if (!force && (now - state._lastAnalyticsPersistAt) < state._analyticsPersistMinMs) return;
-
-      state._lastAnalyticsPersistAt = now;
-      state._analyticsDirty = false;
-
-      // These are provided by the Firebase module script below (unchanged integration surface)
-      if (window._persistUserAnalytics) window._persistUserAnalytics(state.analytics);
-      if (window._persistWeeklyStats) window._persistWeeklyStats(state.analytics);
-    } catch {}
-  }
-
-  // ==================== TASK STORAGE WRAPPERS ====================
   function saveTaskLocallyAndRemote(task) {
     state.tasks.push(task);
+    saveLocalTasks(); // ✅ fallback persistence
 
-    if (window._saveTask) {
-      window._saveTask(task).catch(() => notify('Task saved locally. Cloud sync failed.', 'error', 'save_fail', 8000));
+    if (!window._saveTask) {
+      notify("Cloud save not ready (Firebase not loaded). Task stored locally.", "error");
+      console.warn("window._saveTask is not defined - Firebase module may be failing.");
+      return;
     }
-    markAnalyticsDirty();
-  }
 
-  function updateTaskRemote(taskId, updates) {
-    if (window._updateTaskFields) {
-      window._updateTaskFields(taskId, updates).catch(() => notify('Update saved locally. Cloud sync failed.', 'error', 'update_fail', 8000));
-    }
-    markAnalyticsDirty();
+    window._saveTask(task)
+      .then(() => {
+        console.log("Firestore save OK:", task.id);
+      })
+      .catch((e) => {
+        console.error("Firestore save FAILED:", e);
+        notify(`Cloud sync failed: ${e?.message || e}`, "error");
+      });
   }
 
   function maybeCreateRecurringTask(task) {
-    try {
-      if (!task.recurrence || task.recurrence === 'none') return;
-      const next = nextDateForRecurrence(task.deadline, task.recurrence);
-      if (!next) return;
+    if (!task.recurrence || task.recurrence === 'none') return;
+    const next = nextDateForRecurrence(task.deadline, task.recurrence);
+    if (!next) return;
 
-      // Strong duplicate prevention
-      const nextId = `${task.id}_${next}`;
-      const alreadyExists = state.tasks.some(t => t.id === nextId || (t.sourceTaskId === task.id && t.deadline === next));
-      if (alreadyExists) return;
+    const alreadyExists = state.tasks.some(t => t.sourceTaskId === task.id && t.deadline === next);
+    if (alreadyExists) return;
 
-      const recurringTask = safeNormalizeTask({
-        ...task,
-        id: nextId,
-        deadline: next,
-        completed: false,
-        failed: false,
-        status: 'open',
-        sourceTaskId: task.id,
-        createdAt: new Date().toISOString(),
-        reminder24hSent: false,
-        reminderSameDaySent: false
-      });
+    const recurringTask = {
+      ...task,
+      id: `${task.id}_${next}`,
+      deadline: next,
+      completed: false,
+      failed: false,
+      status: 'open',
+      sourceTaskId: task.id,
+      createdAt: new Date().toISOString()
+    };
 
-      saveTaskLocallyAndRemote(recurringTask);
-      notify(`Recurring task created for ${next}`, 'success', 'recurring', 3000);
-    } catch {}
+    saveTaskLocallyAndRemote(recurringTask);
   }
-
-  // ==================== TASK CREATION ====================
-  document.getElementById('step1Next').onclick = ()=> {
-    if(!document.getElementById('taskTitle').value.trim()) return notify('Enter task title', 'error', 'need_title', 1500);
-    step1.classList.remove('active'); step2.classList.add('active');
-  };
-
-  document.getElementById('step2Next').onclick = ()=> {
-    if(!document.getElementById('taskDeadline').value) return notify('Select date', 'error', 'need_date', 1500);
-    step2.classList.remove('active'); step3.classList.add('active');
-  };
 
   document.getElementById('addTaskBtn').onclick = ()=> {
     const title = document.getElementById('taskTitle').value.trim();
     const deadline = document.getElementById('taskDeadline').value;
-    if(!title || !deadline) return notify('Missing task details', 'error', 'missing_details', 1500);
+    if(!title||!deadline) return notify('Missing task details', 'error');
 
-    const task = safeNormalizeTask({
+    const task = {
       title,
       deadline,
       intensity: document.getElementById('taskIntensity').value,
@@ -825,18 +628,24 @@
       createdAt: new Date().toISOString(),
       reminder24hSent: false,
       reminderSameDaySent: false
-    });
+    };
 
     saveTaskLocallyAndRemote(task);
 
     step3.classList.remove('active'); step1.classList.add('active');
-    document.getElementById('taskTitle').value = '';
-    document.getElementById('taskDeadline').value = '';
+    ['taskTitle','taskDeadline'].forEach(id => document.getElementById(id).value='');
     runAllRenderers();
-    notify('Task added', 'success', 'task_added', 1000);
+    notify('Task added', 'success');
   };
 
-  // ==================== TASK ACTION BAR + EDIT ====================
+  // Task action bar
+  const taskActionBar = document.getElementById("taskActionBar");
+  const taskActionTitle = document.getElementById("taskActionTitle");
+  const taskActionMeta = document.getElementById("taskActionMeta");
+  const taskDoneBtn = document.getElementById("taskDoneBtn");
+  const taskFailedBtn = document.getElementById("taskFailedBtn");
+  const taskCloseBtn = document.getElementById("taskCloseBtn");
+
   function openTaskBar(task) {
     state.selectedTaskId = task.id;
     taskActionTitle.textContent = task.title || 'Task';
@@ -844,14 +653,14 @@
     taskActionBar.classList.add('open');
     if (window._maybeInitPushFromGesture) window._maybeInitPushFromGesture();
   }
-
   function closeTaskBar() {
     state.selectedTaskId = null;
     taskActionBar.classList.remove('open');
   }
-
   taskCloseBtn.onclick = closeTaskBar;
 
+  // Edit modal
+  const editModal = document.getElementById('editModal');
   function openEditModal(task) {
     if (!task) return;
     state.editingTaskId = task.id;
@@ -861,14 +670,8 @@
     document.getElementById('editCategory').value = task.category || 'Study';
     document.getElementById('editRecurrence').value = task.recurrence || 'none';
     editModal.classList.add('open');
-    editModal.setAttribute('aria-hidden', 'false');
   }
-
-  document.getElementById('editCancelBtn').onclick = () => {
-    editModal.classList.remove('open');
-    editModal.setAttribute('aria-hidden', 'true');
-  };
-
+  document.getElementById('editCancelBtn').onclick = () => editModal.classList.remove('open');
   document.getElementById('editSaveBtn').onclick = () => {
     const task = state.tasks.find(t => t.id === state.editingTaskId);
     if (!task) return;
@@ -881,24 +684,18 @@
       recurrence: document.getElementById('editRecurrence').value
     };
 
-    if (!updates.title || !updates.deadline) {
-      notify('Title and date required', 'error', 'edit_required', 1500);
-      return;
+    Object.assign(task, updates);
+    saveLocalTasks();
+
+    if (window._updateTaskFields) {
+      window._updateTaskFields(task.id, updates).catch(e => {
+        console.error("Firestore update FAILED:", e);
+        notify(`Cloud update failed: ${e?.message || e}`, "error");
+      });
     }
 
-    Object.assign(task, updates);
-    updateTaskRemote(task.id, updates);
-
     editModal.classList.remove('open');
-    editModal.setAttribute('aria-hidden', 'true');
-
     runAllRenderers();
-    notify('Task updated', 'success', 'edit_ok', 1500);
-  };
-
-  taskActionTitle.ondblclick = () => {
-    const t = state.tasks.find(x => x.id === state.selectedTaskId);
-    openEditModal(t);
   };
 
   function applyTaskStatus(status) {
@@ -906,21 +703,20 @@
     const t = state.tasks.find(x => x.id === state.selectedTaskId);
     if (!t) return;
 
-    const updates = {};
-    if (status === 'done') {
-      t.completed = true; t.failed = false; t.status = 'done';
-      updates.completed = true; updates.failed = false; updates.status = 'done';
-    } else if (status === 'failed') {
-      t.failed = true; t.completed = false; t.status = 'failed';
-      updates.completed = false; updates.failed = true; updates.status = 'failed';
-    } else {
-      return;
+    t.completed = status === 'done';
+    t.failed = status === 'failed';
+    t.status = status;
+
+    saveLocalTasks();
+
+    if (window._updateTaskFields) {
+      window._updateTaskFields(t.id, { completed: t.completed, failed: t.failed, status: t.status }).catch(e => {
+        console.error("Firestore status update FAILED:", e);
+        notify(`Cloud status update failed: ${e?.message || e}`, "error");
+      });
     }
 
-    updateTaskRemote(t.id, updates);
-
     if (status === 'done') maybeCreateRecurringTask(t);
-
     runAllRenderers();
     closeTaskBar();
   }
@@ -928,43 +724,24 @@
   taskDoneBtn.onclick = () => applyTaskStatus('done');
   taskFailedBtn.onclick = () => applyTaskStatus('failed');
 
-  // ==================== CALENDAR ====================
+  // Calendar
   const calendar = document.getElementById('calendar');
+  document.getElementById('prevMonth').onclick = ()=> { state.currentMonth.setMonth(state.currentMonth.getMonth()-1); renderCalendar(); };
+  document.getElementById('nextMonth').onclick = ()=> { state.currentMonth.setMonth(state.currentMonth.getMonth()+1); renderCalendar(); };
 
-  document.getElementById('prevMonth').onclick = ()=> {
-    state.currentMonth.setMonth(state.currentMonth.getMonth()-1);
-    renderCalendar();
-  };
-  document.getElementById('nextMonth').onclick = ()=> {
-    state.currentMonth.setMonth(state.currentMonth.getMonth()+1);
-    renderCalendar();
-  };
+  const colorMap = { Study:'#2196f3', Exam:'#ff9800', Coursework:'#9c27b0', Personal:'#009688' };
 
   function bindSwipe(el, task) {
     let startX = 0;
-    let active = false;
-
-    el.addEventListener('touchstart', e => {
-      if (!e.touches || !e.touches[0]) return;
-      startX = e.touches[0].clientX;
-      active = true;
-    }, { passive: true });
-
+    el.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
     el.addEventListener('touchmove', e => {
-      if (!active || !e.touches || !e.touches[0]) return;
       const delta = e.touches[0].clientX - startX;
       el.classList.toggle('dragging-right', delta > 30);
       el.classList.toggle('dragging-left', delta < -30);
     }, { passive: true });
-
     el.addEventListener('touchend', e => {
-      if (!active) return;
-      active = false;
-
-      if (!e.changedTouches || !e.changedTouches[0]) return;
       const delta = e.changedTouches[0].clientX - startX;
       el.classList.remove('dragging-right', 'dragging-left');
-
       if (delta > 80) { state.selectedTaskId = task.id; applyTaskStatus('done'); }
       if (delta < -80) { state.selectedTaskId = task.id; applyTaskStatus('failed'); }
     }, { passive: true });
@@ -974,35 +751,34 @@
     calendar.innerHTML='';
     const start = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth(), 1);
     const end = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth()+1, 0);
-    const todayStr = dateKey(new Date());
+    const todayStr = new Date().toISOString().split('T')[0];
 
     for(let d=start.getDate(); d<=end.getDate(); d++){
       const dayDate = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth(), d);
-      const dateStr = dateKey(dayDate);
+      const dateStr = dayDate.toISOString().split('T')[0];
 
       const day = document.createElement('div');
       day.className='day';
       if(dateStr < todayStr) day.classList.add('overdue');
-      day.innerHTML = `<div class="day-header">${dateStr}</div>`;
+      day.innerHTML=`<div class="day-header">${dateStr}</div>`;
 
-      const dayTasks = state.tasks
+      const items = state.tasks
         .filter(t => t.deadline === dateStr)
         .filter(t => state.categoryFilter === 'all' ? true : (t.category || 'Study') === state.categoryFilter);
 
-      dayTasks.forEach(t => {
-        const tEl = document.createElement('div');
+      items.forEach(t => {
+        const tEl=document.createElement('div');
         const statusClass = t.failed ? ' failed' : (t.completed ? ' done' : '');
-        tEl.className = `task ${t.intensity || 'Softy'}${statusClass}`;
-        const c = CATEGORY_COLORS[t.category || 'Study'] || '#401d65';
-        tEl.style.borderLeft = `4px solid ${c}`;
-        tEl.textContent = t.title || 'Task';
+        tEl.className = `task ${t.intensity}${statusClass}`;
+        tEl.style.borderLeft = `4px solid ${colorMap[t.category||'Study'] || '#2196f3'}`;
+        tEl.textContent = t.title;
         tEl.onclick = ()=> openTaskBar(t);
         tEl.ondblclick = () => openEditModal(t);
         bindSwipe(tEl, t);
         day.appendChild(tEl);
       });
 
-      if (dayTasks.length === 0) {
+      if (items.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty-state';
         empty.textContent = 'No tasks';
@@ -1013,68 +789,45 @@
     }
   }
 
-  // ==================== ANALYTICS / KPI ====================
   function getWeekRange() {
     const now = new Date(); now.setHours(0,0,0,0);
     const start = new Date(now); start.setDate(now.getDate() - 6);
     return {start, end: now};
   }
+  function getDateKey(dateObj) {
+    return new Date(dateObj).toISOString().split('T')[0];
+  }
 
   function calculateAnalytics() {
     const { start, end } = getWeekRange();
-    const endKey = dateKey(end);
-    const startKey = dateKey(start);
+    const endKey = getDateKey(end);
 
-    const openOverdue = state.tasks.filter(t => !t.completed && !t.failed && t.deadline && t.deadline < endKey).length;
+    const openOverdue = state.tasks.filter(t => !t.completed && !t.failed && t.deadline < endKey).length;
 
-    const weekly = state.tasks.filter(t => t.deadline && t.deadline >= startKey && t.deadline <= endKey);
+    const weekly = state.tasks.filter(t => t.deadline >= getDateKey(start) && t.deadline <= endKey);
     const completed = weekly.filter(t => t.completed).length;
     const failed = weekly.filter(t => t.failed).length;
     const total = Math.max(weekly.length, 1);
     const weeklyCompletionRate = Math.round((completed / total) * 100);
 
-    const all = Math.max(state.tasks.length, 1);
-    const completionRate = state.tasks.filter(t => t.completed).length / all;
+    const completionRate = state.tasks.length ? (state.tasks.filter(t => t.completed).length / state.tasks.length) : 0;
+    const discipline = Math.max(0, Math.min(100, Math.round(completionRate * 70 + Math.min(state.analytics.streak, 30) - openOverdue * 3)));
 
-    // Streak: consecutive days (from today backwards) where ALL tasks due that day were completed.
     let streak = 0;
     const streakHistory = [];
-    for (let i = 0; i < 90; i++) {
-      const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - i);
-      const key = dateKey(d);
-      const due = state.tasks.filter(t => t.deadline === key);
-      if (due.length === 0) continue;
-
-      const dayCompleted = due.every(t => t.completed === true);
+    for (let i = 0; i < 60; i++) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = getDateKey(d);
+      const dueTasks = state.tasks.filter(t => t.deadline === key);
+      if (!dueTasks.length) continue;
+      const dayCompleted = dueTasks.every(t => t.completed);
       streakHistory.push({ date: key, completed: dayCompleted });
-
-      // streak counts consecutive due-days completed starting from the most recent due-day
-      if (streak === 0) {
-        if (dayCompleted) streak = 1;
-        else break;
-      } else {
-        if (dayCompleted) streak += 1;
-        else break;
+      if (i === 0 || streak > 0) {
+        if (dayCompleted) streak += 1; else if (i > 0) break;
       }
     }
 
-    // Discipline score: bounded 0..100, stable formula, penalize overdue open items
-    const discipline = Math.max(
-      0,
-      Math.min(
-        100,
-        Math.round((completionRate * 70) + Math.min(streak, 30) - (openOverdue * 3))
-      )
-    );
-
-    state.analytics = {
-      streak,
-      discipline,
-      weeklyCompletionRate,
-      weeklyCompleted: completed,
-      weeklyFailed: failed,
-      streakHistory
-    };
+    state.analytics = { ...state.analytics, streak, discipline, weeklyCompletionRate, weeklyCompleted: completed, weeklyFailed: failed, streakHistory };
   }
 
   function renderTopMetrics() {
@@ -1082,287 +835,92 @@
     document.getElementById('disciplineScore').textContent = String(state.analytics.discipline);
     document.getElementById('disciplineFill').style.width = `${state.analytics.discipline}%`;
     document.getElementById('weeklyCompletion').textContent = `${state.analytics.weeklyCompletionRate}%`;
-    document.getElementById('weeklySummary').textContent =
-      `Completed: ${state.analytics.weeklyCompleted} • Failed: ${state.analytics.weeklyFailed} • Rate: ${state.analytics.weeklyCompletionRate}%`;
+    document.getElementById('weeklySummary').textContent = `Completed: ${state.analytics.weeklyCompleted} • Failed: ${state.analytics.weeklyFailed} • Rate: ${state.analytics.weeklyCompletionRate}%`;
+
+    if (window._persistUserAnalytics) window._persistUserAnalytics(state.analytics);
+    if (window._persistWeeklyStats) window._persistWeeklyStats(state.analytics);
   }
 
   function drawWeeklyChart() {
+    const weeklyChart = document.getElementById('weeklyChart');
     if (!weeklyChart) return;
     const ctx = weeklyChart.getContext('2d');
     const w = weeklyChart.width, h = weeklyChart.height;
-
     ctx.clearRect(0,0,w,h);
 
     const bars = [];
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
-      const key = dateKey(d);
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = getDateKey(d);
       bars.push(state.tasks.filter(t => t.completed && t.deadline === key).length);
     }
-
     const max = Math.max(1, ...bars);
     const bw = (w - 80) / 7;
 
     ctx.font = "14px DM Sans";
-    ctx.textBaseline = "alphabetic";
 
     bars.forEach((v, i) => {
       const bh = (v / max) * (h - 60);
       const x = 40 + i * bw;
       const y = h - 30 - bh;
-
       ctx.fillStyle = '#401d65';
-      ctx.fillRect(x + 10, y, Math.max(8, bw - 20), bh);
-
-      ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-muted').trim() || '#b5b5b5';
-      ctx.fillText(String(v), x + (bw/2) - 4, y - 8);
+      ctx.fillRect(x + 8, y, bw - 16, bh);
+      ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-muted');
+      ctx.fillText(String(v), x + bw/2 - 4, y - 6);
     });
   }
 
   function updateStats(){
     document.getElementById('totalTasks').textContent = state.tasks.length;
     document.getElementById('completedTasks').textContent = state.tasks.filter(t=>t.completed).length;
-    // Keep original behavior stable: open = not completed and not failed
-    document.getElementById('missedTasks').textContent = state.tasks.filter(t=>!t.completed && !t.failed).length;
-  }
-
-  // ==================== REMINDERS (guarded, not spammy) ====================
-  function maybeSendDeadlineReminders() {
-    try {
-      const now = new Date();
-      const todayKey = dateKey(now);
-      const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
-      const tomorrowKey = dateKey(tomorrow);
-
-      state.tasks.forEach(task => {
-        if (task.completed || task.failed) return;
-        if (!task.deadline) return;
-
-        if (task.deadline === tomorrowKey && !task.reminder24hSent) {
-          task.reminder24hSent = true;
-          updateTaskRemote(task.id, { reminder24hSent: true });
-          if (window._queuePushCoach) window._queuePushCoach({ title: '24h Reminder', body: `Task due tomorrow: ${task.title}` });
-        }
-
-        if (task.deadline === todayKey && !task.reminderSameDaySent) {
-          task.reminderSameDaySent = true;
-          updateTaskRemote(task.id, { reminderSameDaySent: true });
-          if (window._queuePushCoach) window._queuePushCoach({ title: 'Due Today', body: `Complete today: ${task.title}` });
-        }
-      });
-    } catch {}
-  }
-
-  // ==================== OVERDUE PROMPTS (non-blocking) ====================
-  function checkOverdueCompletionPrompts() {
-    const todayStr = dateKey(new Date());
-    const prompted = JSON.parse(localStorage.getItem(state._overduePromptedKey) || "{}");
-
-    state.tasks.forEach((t) => {
-      if (t.completed || t.failed) return;
-      if (!t.deadline) return;
-      if (t.deadline >= todayStr) return;
-
-      const k = `${t.id}_${todayStr}`;
-      if (prompted[k]) return;
-
-      prompted[k] = true;
-      localStorage.setItem(state._overduePromptedKey, JSON.stringify(prompted));
-      notify(`Overdue: ${t.title}. Tap it to mark Done/Failed.`, 'error', `overdue_${t.id}`, 60000);
-    });
-  }
-
-  // ==================== NOTIFICATIONS (throttled global) ====================
-  function showNotifications(){
-    // Prevent spamming on every render: only once per hour
-    const now = Date.now();
-    const last = Number(localStorage.getItem(state._notifThrottleKey) || "0");
-    if (now - last < state._notifThrottleMs) return;
-
-    localStorage.setItem(state._notifThrottleKey, String(now));
-
-    const todayStr = dateKey(new Date());
-    const dueToday = state.tasks.filter(t => !t.completed && !t.failed && t.deadline === todayStr);
-    const overdue = state.tasks.filter(t => !t.completed && !t.failed && t.deadline && t.deadline < todayStr);
-
-    if (dueToday.length) notify(`⚠️ Due today: ${dueToday.length} task(s).`, 'info', 'due_today', 5000);
-    if (overdue.length) notify(`⏰ Overdue: ${overdue.length} task(s).`, 'error', 'overdue_count', 5000);
-  }
-
-  // ==================== COACH (kept compatible, less spam) ====================
-  const coachPanel = document.getElementById('coachPanel');
-  const coachPanelToggle = document.getElementById('coachPanelToggle');
-  let coachPanelMinimized = false;
-
-  coachPanelToggle.onclick = ()=> {
-    coachPanelMinimized = !coachPanelMinimized;
-    if(coachPanelMinimized) {
-      coachPanel.style.maxHeight = '60px';
-      coachPanelToggle.textContent = 'Expand';
-      document.getElementById('coachMessages').style.display = 'none';
-    } else {
-      coachPanel.style.maxHeight = '500px';
-      coachPanelToggle.textContent = 'Minimize';
-      document.getElementById('coachMessages').style.display = 'flex';
-    }
-  };
-
-  const COACH_PHRASES = {
-    low:["Hey there! Just a gentle reminder about {task}. You've got this!","Thinking about {task}? Now's a great time to make some progress.","Small steps count! Consider tackling {task} today."],
-    medium:["Time to focus! {task} needs your attention today.","Let's get serious about {task}. Deadline is approaching."],
-    high:["URGENT: {task} requires immediate action. No more waiting!","Zero excuses. {task} must be completed today. Period."],
-    extreme:["CODE RED: {task} is OVERDUE. This is your LAST chance!","DEFCON 1: {task} cannot wait ONE MORE SECOND. MOVE!"]
-  };
-
-  const getCoachStorageKey = () => 'metrix_coach_messages';
-  const getStoredCoachMessages = () => JSON.parse(localStorage.getItem(getCoachStorageKey()) || '[]');
-  const saveCoachMessages = (messages) => localStorage.setItem(getCoachStorageKey(), JSON.stringify(messages));
-
-  function getRandomPhrase(level, taskTitle) {
-    const arr = COACH_PHRASES[level] || COACH_PHRASES.low;
-    return arr[Math.floor(Math.random() * arr.length)].replace('{task}', taskTitle);
-  }
-
-  function getUrgencyLevel(daysUntilDeadline) {
-    if (daysUntilDeadline < 0) return Math.abs(daysUntilDeadline) >= 3 ? 'extreme' : 'high';
-    if (daysUntilDeadline === 0) return 'high';
-    return daysUntilDeadline >= 7 ? 'low' : 'medium';
-  }
-
-  function getDaysUntilDeadline(deadlineStr) {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const deadline = new Date(deadlineStr); deadline.setHours(0,0,0,0);
-    return Math.floor((deadline - today)/(1000*60*60*24));
-  }
-
-  function coachCanSend(taskId, level) {
-    const key = state._coachLastSentKey;
-    const lastMap = JSON.parse(localStorage.getItem(key) || "{}");
-    const k = `${taskId}_${level}`;
-    const now = Date.now();
-    const last = Number(lastMap[k] || 0);
-    if (now - last < state._coachThrottleMs) return false;
-    lastMap[k] = now;
-    localStorage.setItem(key, JSON.stringify(lastMap));
-    return true;
-  }
-
-  function sendCoachPanelMessage(task, level, message) {
-    try {
-      const messagesContainer = document.getElementById('coachMessages');
-      const messageEl = document.createElement('div');
-      messageEl.className = `coach-message level-${level}`;
-      messageEl.innerHTML =
-        `<div class="coach-message-header"><span>🎯 Coach</span><span>${new Date().toLocaleTimeString()}</span></div>` +
-        `<div class="coach-message-body">${message}</div>` +
-        `<div class="coach-message-task">Re: ${task.title}</div>`;
-      messagesContainer.appendChild(messageEl);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-      const storedMessages = getStoredCoachMessages();
-      const payload = {
-        taskId: task.id,
-        type:'panel',
-        level,
-        message,
-        date: dateKey(new Date()),
-        timestamp: new Date().toISOString(),
-        read:false
-      };
-
-      storedMessages.push(payload);
-      saveCoachMessages(storedMessages);
-
-      if (window._persistCoachMessage) window._persistCoachMessage({ ...payload, taskTitle: task.title });
-      if (window._queuePushCoach) window._queuePushCoach({ title:'Metrix Coach', body:message });
-    } catch {}
-  }
-
-  function evaluateCoachMessages() {
-    try {
-      state.tasks.forEach(task => {
-        if (task.completed || task.failed) return;
-        if (!task.deadline) return;
-
-        const daysUntilDeadline = getDaysUntilDeadline(task.deadline);
-        const level = getUrgencyLevel(daysUntilDeadline);
-
-        if (!coachCanSend(task.id, level)) return;
-
-        const message = getRandomPhrase(level, task.title || "your task");
-        sendCoachPanelMessage(task, level, message);
-      });
-    } catch {}
-  }
-
-  // ==================== RENDER PIPELINE ====================
-  let _renderTimer = null;
-  function runAllRenderersDebounced() {
-    if (_renderTimer) return;
-    _renderTimer = setTimeout(() => {
-      _renderTimer = null;
-      runAllRenderers();
-    }, 50);
+    document.getElementById('missedTasks').textContent = state.tasks.filter(t=>t.failed).length;
   }
 
   function runAllRenderers() {
     calculateAnalytics();
-    renderTopMetrics();
-    updateStats();
     renderCalendar();
+    updateStats();
+    renderTopMetrics();
     drawWeeklyChart();
-
-    // B: only persist analytics on changes / once per session (throttled)
-    if (!state._didSessionPersistOnce) {
-      state._didSessionPersistOnce = true;
-      // Persist once shortly after initial hydrate (safe)
-      setTimeout(() => persistAnalyticsIfNeeded(true), 1200);
-    }
-
-    showNotifications();
-    maybeSendDeadlineReminders();
-    evaluateCoachMessages();
-    checkOverdueCompletionPrompts();
   }
 
-  // ==================== FILTERS ====================
+  // Category filter
+  const categoryFilter = document.getElementById('categoryFilter');
   categoryFilter.onchange = (e) => {
     state.categoryFilter = e.target.value;
     renderCalendar();
   };
 
-  // ==================== PUBLIC HOOK USED BY FIREBASE SCRIPT ====================
-  window._dashboardHydrate = async (loadedTasks, userProfile = {}) => {
-    setLoading(true);
-    try {
-      state.tasks.length = 0;
+  // HYDRATE: prefer Firestore tasks; fallback to local
+  window._dashboardHydrate = async (firestoreTasks, userProfile = {}) => {
+    const cloud = Array.isArray(firestoreTasks) ? firestoreTasks : [];
+    const local = loadLocalTasks();
 
-      // Normalize every task safely
-      loadedTasks.forEach(t => state.tasks.push(safeNormalizeTask(t)));
+    // If cloud empty but local exists, use local (means rules/cloud failing)
+    const use = (cloud.length > 0) ? cloud : local;
 
-      // If profile has existing streakHistory, keep it (non-breaking)
-      if (userProfile && typeof userProfile === 'object') {
-        if (Array.isArray(userProfile.streakHistory)) state.analytics.streakHistory = userProfile.streakHistory;
-      }
+    state.tasks.length = 0;
+    use.forEach(t => state.tasks.push(t));
+    saveLocalTasks(); // keep local synced to whichever source we're using
 
-      // Mark dirty (but will persist only once + on changes)
-      markAnalyticsDirty();
-      runAllRenderers();
-    } finally {
-      setLoading(false);
+    state.analytics.streak = Number(userProfile.streakCount || 0);
+    state.analytics.streakHistory = userProfile.streakHistory || [];
+
+    runAllRenderers();
+
+    if (cloud.length === 0 && local.length > 0) {
+      notify("Loaded tasks from local backup (cloud returned empty). Check Firestore rules.", "error");
+      console.warn("Cloud returned 0 tasks but local had tasks. Likely Firestore rules blocking reads/writes.");
+    } else {
+      console.log("Hydrate source:", cloud.length > 0 ? "Firestore" : "Local/empty");
     }
   };
 
-  // First render (empty)
-  runAllRenderersDebounced();
-
-  // Periodic checks (safe + throttled)
-  setInterval(() => { evaluateCoachMessages(); }, 60 * 60 * 1000);
-  setInterval(() => { maybeSendDeadlineReminders(); }, 60 * 60 * 1000);
+  // Initial render (empty) so UI isn't blank
+  runAllRenderers();
 })();
 </script>
 
-<!-- ✅ FIREBASE AUTH + FIRESTORE + FCM TOKEN SAVE (Stripe untouched) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
@@ -1381,9 +939,12 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js";
+  import {
+    getMessaging,
+    getToken,
+    onMessage
+  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js";
 
-  // ✅ Firebase config unchanged
   const firebaseConfig = {
     apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
     authDomain: "metrix-hardline.firebaseapp.com",
@@ -1400,12 +961,10 @@
   const db = getFirestore(app);
   const messaging = getMessaging(app);
 
-  // ✅ Subscription gate unchanged in behavior
   async function enforceSubscriptionGate(uid) {
     const ref = doc(db, "users", uid);
     const snap = await getDoc(ref);
     const data = snap.exists() ? snap.data() : null;
-
     const active = data?.subscriptionActive === true;
 
     if (!active) {
@@ -1421,12 +980,20 @@
     const snap = await getDocs(collection(db, "users", uid, "tasks"));
     const loaded = [];
     snap.forEach(d => loaded.push(d.data()));
-    // normalization is done in dashboard hydrate to keep single source of truth
-    window.tasks.length = 0;
-    loaded.forEach(t => window.tasks.push(t));
+
+    loaded.forEach(t => {
+      if (typeof t.failed === "undefined") t.failed = false;
+      if (typeof t.status === "undefined") t.status = t.completed ? "done" : "open";
+      if (typeof t.category === "undefined") t.category = "Study";
+      if (typeof t.recurrence === "undefined") t.recurrence = "none";
+      if (typeof t.reminder24hSent === "undefined") t.reminder24hSent = false;
+      if (typeof t.reminderSameDaySent === "undefined") t.reminderSameDaySent = false;
+    });
+
+    console.log("Loaded tasks from Firestore:", loaded.length);
+    return loaded;
   }
 
-  // ✅ analytics persistence (same collections/fields as you already accepted)
   async function saveUserAnalytics(uid, analytics) {
     await setDoc(doc(db, "users", uid), {
       streakCount: Number(analytics.streak || 0),
@@ -1439,13 +1006,7 @@
 
   async function saveWeeklyStats(uid, analytics) {
     const now = new Date();
-    // stable weekId; no destructive writes
-    const year = now.getUTCFullYear();
-    const jan1 = new Date(Date.UTC(year,0,1));
-    const days = Math.floor((Date.UTC(year, now.getUTCMonth(), now.getUTCDate()) - jan1.getTime()) / 86400000);
-    const week = Math.ceil((days + jan1.getUTCDay() + 1) / 7);
-    const weekId = `${year}-W${String(week).padStart(2,'0')}`;
-
+    const weekId = `${now.getUTCFullYear()}-W${String(Math.ceil((((now - new Date(Date.UTC(now.getUTCFullYear(),0,1))) / 86400000) + new Date(Date.UTC(now.getUTCFullYear(),0,1)).getUTCDay()+1) / 7))).padStart(2,'0')}`;
     await setDoc(doc(db, "users", uid, "weeklyStats", weekId), {
       completed: Number(analytics.weeklyCompleted || 0),
       failed: Number(analytics.weeklyFailed || 0),
@@ -1461,33 +1022,23 @@
   }
 
   async function saveTask(uid, task) {
+    // IMPORTANT: if rules deny this, you'll see the error in console + toast
     await setDoc(doc(db, "users", uid, "tasks", task.id), task, { merge: true });
-  }
-
-  async function setTaskCompleted(uid, taskId, completed) {
-    await updateDoc(doc(db, "users", uid, "tasks", taskId), { completed });
   }
 
   async function updateTaskFields(uid, taskId, updates) {
     await updateDoc(doc(db, "users", uid, "tasks", taskId), updates);
   }
 
-  // Globals used by the dashboard script (kept identical surface)
-  window._saveTask = (task) => {
+  window._saveTask = async (task) => {
     const uid = localStorage.getItem("uid");
-    if (!uid) return;
+    if (!uid) throw new Error("No uid in localStorage (auth not ready)");
     return saveTask(uid, task);
-  };
-
-  window._setTaskCompleted = (taskId, completed) => {
-    const uid = localStorage.getItem("uid");
-    if (!uid) return;
-    return setTaskCompleted(uid, taskId, completed);
   };
 
   window._updateTaskFields = (taskId, updates) => {
     const uid = localStorage.getItem("uid");
-    if (!uid) return;
+    if (!uid) return Promise.reject(new Error("No uid in localStorage"));
     return updateTaskFields(uid, taskId, updates);
   };
 
@@ -1503,13 +1054,11 @@
     return saveWeeklyStats(uid, analytics).catch(() => {});
   };
 
-  // Coach persistence unchanged
   async function loadCoachMessages(uid) {
-    const qy = query(collection(db, "users", uid, "coachMessages"), orderBy("timestamp"), limit(200));
-    const snap = await getDocs(qy);
+    const q = query(collection(db, "users", uid, "coachMessages"), orderBy("timestamp"), limit(200));
+    const snap = await getDocs(q);
     const msgs = [];
     snap.forEach(d => msgs.push(d.data()));
-
     localStorage.setItem("metrix_coach_messages", JSON.stringify(msgs));
 
     const container = document.getElementById("coachMessages");
@@ -1534,10 +1083,7 @@
   }
 
   async function persistCoachMessage(uid, msg) {
-    await addDoc(collection(db, "users", uid, "coachMessages"), {
-      ...msg,
-      createdAt: serverTimestamp()
-    });
+    await addDoc(collection(db, "users", uid, "coachMessages"), { ...msg, createdAt: serverTimestamp() });
   }
 
   window._persistCoachMessage = (msg) => {
@@ -1546,7 +1092,6 @@
     persistCoachMessage(uid, msg).catch(() => {});
   };
 
-  // Push token save unchanged
   async function saveFcmToken(uid, token) {
     await setDoc(doc(db, "users", uid, "fcmTokens", token), {
       token,
@@ -1556,7 +1101,6 @@
   }
 
   let didInitPush = false;
-
   async function initPushWithUserGesture() {
     if (didInitPush) return;
     didInitPush = true;
@@ -1593,9 +1137,7 @@
   onMessage(messaging, (payload) => {
     try {
       if (Notification.permission === "granted" && payload?.notification?.body) {
-        new Notification(payload.notification.title || "Metrix Coach", {
-          body: payload.notification.body
-        });
+        new Notification(payload.notification.title || "Metrix Coach", { body: payload.notification.body });
       }
     } catch {}
   });
@@ -1604,20 +1146,12 @@
     try {
       const user = auth.currentUser;
       if (!user) return;
-
       const idToken = await user.getIdToken();
 
       await fetch("/api/send-push", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${idToken}`
-        },
-        body: JSON.stringify({
-          title: title || "Metrix Coach",
-          body: body || "",
-          url: "/user-dashboard.html"
-        })
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+        body: JSON.stringify({ title: title || "Metrix Coach", body: body || "", url: "/user-dashboard.html" })
       });
     } catch {}
   };
@@ -1643,16 +1177,23 @@
     const emailEl = document.getElementById("menuEmail");
     if (emailEl) emailEl.textContent = user.email || "";
 
-    await loadTasks(user.uid);
+    let loadedTasks = [];
+    try {
+      loadedTasks = await loadTasks(user.uid);
+    } catch (e) {
+      console.error("Firestore loadTasks FAILED:", e);
+      window._uiToast?.(`Cloud load failed: ${e?.message || e}`, "error");
+      loadedTasks = [];
+    }
+
     await loadCoachMessages(user.uid);
     const userProfile = await loadUserProfile(user.uid);
 
     if (typeof window._dashboardHydrate === "function") {
-      await window._dashboardHydrate(window.tasks, userProfile);
+      await window._dashboardHydrate(loadedTasks, userProfile);
     }
   });
 </script>
 
 </body>
 </html>
-
