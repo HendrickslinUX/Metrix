@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Metrix HardLine — User Dashboard (v2.2)</title>
+<title>Metrix HardLine — User Dashboard</title>
 
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -52,8 +53,17 @@
     z-index: 1200;
   }
 
-  .brand { display:flex; align-items:center; gap:10px; min-width:0; }
-  .brand img { height: 28px; width:auto; display:block; }
+  .brand {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width: 0;
+  }
+  .brand img {
+    height: 28px;
+    width: auto;
+    display:block;
+  }
   .brand h1 {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.2rem;
@@ -64,9 +74,6 @@
     .brand img { height: 24px; }
     .brand h1 { font-size: 1.05rem; }
   }
-
-  .header-actions { display:flex; gap:.6rem; align-items:center; }
-  .icon-btn { background: transparent; border:1px solid rgba(255,255,255,.14); color:var(--text-main); padding:.45rem .65rem; border-radius:10px; cursor:pointer; }
 
   header button {
     background: var(--accent);
@@ -91,6 +98,7 @@
     padding: 0.75rem 1rem;
   }
   .task-action-bar.open { transform: translateY(0); }
+
   .task-action-row {
     max-width: 1400px;
     margin: auto;
@@ -176,10 +184,13 @@
   .stat-card h3 { margin:0; font-size:0.85rem; color:var(--text-muted); }
   .stat-card p { margin-top:0.4rem; font-size:1.6rem; font-weight:700; }
 
+  .header-actions { display:flex; gap:.6rem; align-items:center; }
+  .icon-btn { background: transparent; border:1px solid rgba(255,255,255,.14); color:var(--text-main); padding:.45rem .65rem; border-radius:10px; cursor:pointer; }
+
   .kpi-row { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1rem; }
   .kpi-card { background: var(--bg-card); border-radius:14px; padding:1rem; }
-  .kpi-card h3 { margin:0; font-size:0.85rem; color:var(--text-muted); }
-  .kpi-value { font-size:1.5rem; font-weight:700; margin-top:.35rem; }
+  .kpi-card h3 { margin:0 0 .35rem 0; font-size:.9rem; color:var(--text-muted); }
+  .kpi-value { font-size:1.5rem; font-weight:700; }
   .discipline-bar { height:8px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; margin-top:.4rem; }
   .discipline-fill { height:100%; background:linear-gradient(90deg,#ff9800,#2e7d32); width:0%; }
 
@@ -201,8 +212,10 @@
     box-shadow:0 8px 20px rgba(0,0,0,0.25);
   }
   .task-form h2 { font-family:'Space Grotesk',sans-serif; margin:0 0 1rem 0; }
+
   .task-step { display:none; flex-direction:column; gap:.6rem; margin-bottom:1rem; }
   .task-step.active { display:flex; }
+
   .task-form input, .task-form select {
     width:100%;
     padding:.7rem;
@@ -212,6 +225,8 @@
     color:white;
     font-weight:600;
   }
+  body.light-mode .task-form input, body.light-mode .task-form select { background:#f3f4f6; color:#1c1c1c; }
+
   .task-form button { width:100%; background: var(--accent); color:white; border:none; padding:.75rem; border-radius:10px; font-weight:700; cursor:pointer; }
 
   .calendar-controls { display:flex; justify-content:space-between; margin-bottom:.5rem; max-width:1100px; }
@@ -249,14 +264,13 @@
 
   .task.dragging-right { transform: translateX(40px); transition: transform .15s ease; }
   .task.dragging-left { transform: translateX(-40px); transition: transform .15s ease; }
-
-  .day.overdue { border: 2px solid red; }
   .empty-state { color:var(--text-muted); text-align:center; padding:1rem; }
 
   .edit-modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:2100; }
   .edit-modal.open { display:flex; }
   .edit-card { width:min(520px,92vw); background:var(--bg-panel); padding:1rem; border-radius:12px; display:flex; flex-direction:column; gap:.6rem; }
   .edit-actions { display:flex; gap:.6rem; }
+  .edit-actions button { flex:1; min-height:44px; }
 
   .coach-panel {
     position: fixed;
@@ -323,11 +337,16 @@
   .coach-message-task { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; font-style: italic; }
 
   @media (max-width: 768px) {
+    .coach-panel {
+      width: calc(100% - 40px);
+      left: 20px;
+      right: 20px;
+      max-height: 400px;
+    }
     .task-action-row { flex-wrap: wrap; }
     .task-action-buttons { width:100%; }
     .task-action-btn { flex:1; min-height:42px; }
     .calendar-controls button, .task-form button, .menu-drawer button { min-height:44px; }
-    .coach-panel { width: calc(100% - 40px); left: 20px; right: 20px; max-height: 400px; }
   }
 </style>
 </head>
@@ -366,10 +385,11 @@
 </div>
 
 <main>
+
   <section class="stats">
     <div class="stat-card"><h3>Total Tasks</h3><p id="totalTasks">0</p></div>
     <div class="stat-card"><h3>Completed</h3><p id="completedTasks">0</p></div>
-    <div class="stat-card"><h3>Missed</h3><p id="missedTasks">0</p></div>
+    <div class="stat-card"><h3>Failed</h3><p id="missedTasks">0</p></div>
   </section>
 
   <section class="kpi-row">
@@ -388,7 +408,7 @@
     </select>
   </section>
 
-  <section class="weekly-panel">
+  <section class="weekly-panel" id="weeklyPanel">
     <h3>Weekly Report</h3>
     <p id="weeklySummary">No data yet.</p>
   </section>
@@ -438,6 +458,7 @@
   <div class="calendar-wrapper">
     <section class="calendar" id="calendar"></section>
   </div>
+
 </main>
 
 <div class="toast-stack" id="toastStack"></div>
@@ -447,23 +468,9 @@
     <h3>Edit Task</h3>
     <input id="editTitle" placeholder="Task title" />
     <input id="editDeadline" type="date" />
-    <select id="editIntensity">
-      <option value="Softy">Softy</option>
-      <option value="GrindMode">GrindMode</option>
-      <option value="HardLine">HardLine</option>
-    </select>
-    <select id="editCategory">
-      <option value="Study">Study</option>
-      <option value="Exam">Exam</option>
-      <option value="Coursework">Coursework</option>
-      <option value="Personal">Personal</option>
-    </select>
-    <select id="editRecurrence">
-      <option value="none">No Recurrence</option>
-      <option value="daily">Daily</option>
-      <option value="weekly">Weekly</option>
-      <option value="monthly">Monthly</option>
-    </select>
+    <select id="editIntensity"><option value="Softy">Softy</option><option value="GrindMode">GrindMode</option><option value="HardLine">HardLine</option></select>
+    <select id="editCategory"><option value="Study">Study</option><option value="Exam">Exam</option><option value="Coursework">Coursework</option><option value="Personal">Personal</option></select>
+    <select id="editRecurrence"><option value="none">No Recurrence</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select>
     <div class="edit-actions">
       <button id="editSaveBtn">Save</button>
       <button id="editCancelBtn" class="icon-btn">Cancel</button>
@@ -481,15 +488,8 @@
 
 <script>
 (() => {
-  console.log("Metrix Dashboard loaded: v2.2 (persistence+debug)");
-
-  const LOCAL_KEY = () => {
-    const uid = localStorage.getItem("uid");
-    return uid ? `metrix_tasks_${uid}` : "metrix_tasks_unknown";
-  };
-
   const state = {
-    tasks: [],
+    tasks: window.tasks = [],
     selectedTaskId: null,
     editingTaskId: null,
     currentMonth: new Date(),
@@ -497,38 +497,38 @@
     analytics: { streak: 0, discipline: 0, weeklyCompletionRate: 0, weeklyCompleted: 0, weeklyFailed: 0, streakHistory: [] }
   };
 
+  const menuBtn = document.getElementById('menuBtn');
+  const menuDrawer = document.getElementById('menuDrawer');
+  const closeMenu = document.getElementById('closeMenu');
+  const drawerLogout = document.getElementById('drawerLogout');
+  const themeToggle = document.getElementById('themeToggle');
+  const categoryFilter = document.getElementById('categoryFilter');
   const toastStack = document.getElementById('toastStack');
+  const weeklyChart = document.getElementById('weeklyChart');
+
+  const step1 = document.querySelector('.step1');
+  const step2 = document.querySelector('.step2');
+  const step3 = document.querySelector('.step3');
+
+  const taskActionBar = document.getElementById("taskActionBar");
+  const taskActionTitle = document.getElementById("taskActionTitle");
+  const taskActionMeta = document.getElementById("taskActionMeta");
+  const taskDoneBtn = document.getElementById("taskDoneBtn");
+  const taskFailedBtn = document.getElementById("taskFailedBtn");
+  const taskCloseBtn = document.getElementById("taskCloseBtn");
+
+  const editModal = document.getElementById('editModal');
+
   function notify(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.style.borderLeftColor = (type === 'error') ? '#d32f2f' : (type === 'success') ? '#2e7d32' : 'var(--accent)';
+    if (type === 'error') toast.style.borderLeftColor = '#d32f2f';
+    if (type === 'success') toast.style.borderLeftColor = '#2e7d32';
     toast.textContent = message;
     toastStack.appendChild(toast);
-    setTimeout(() => toast.remove(), 4200);
+    setTimeout(() => toast.remove(), 3200);
   }
 
-  // Exposed so Firebase module can show errors
-  window._uiToast = (msg, type) => notify(msg, type);
-
-  function saveLocalTasks() {
-    try {
-      localStorage.setItem(LOCAL_KEY(), JSON.stringify(state.tasks));
-    } catch (e) {
-      console.warn("localStorage save failed", e);
-    }
-  }
-
-  function loadLocalTasks() {
-    try {
-      const raw = localStorage.getItem(LOCAL_KEY());
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  // THEME
-  const themeToggle = document.getElementById('themeToggle');
   function applyTheme(theme) {
     document.body.classList.toggle('light-mode', theme === 'light');
     themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
@@ -537,27 +537,9 @@
   applyTheme(localStorage.getItem('metrix_theme') || 'dark');
   themeToggle.onclick = () => applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light');
 
-  // MENU
-  const menuBtn = document.getElementById('menuBtn');
-  const menuDrawer = document.getElementById('menuDrawer');
-  const closeMenu = document.getElementById('closeMenu');
-  const drawerLogout = document.getElementById('drawerLogout');
   menuBtn.onclick = ()=> menuDrawer.classList.add('open');
   closeMenu.onclick = ()=> menuDrawer.classList.remove('open');
   drawerLogout.onclick = ()=> window.logout();
-
-  // Task form steps
-  const step1 = document.querySelector('.step1');
-  const step2 = document.querySelector('.step2');
-  const step3 = document.querySelector('.step3');
-  document.getElementById('step1Next').onclick = ()=> {
-    if(!document.getElementById('taskTitle').value.trim()) return notify('Enter task title', 'error');
-    step1.classList.remove('active'); step2.classList.add('active');
-  };
-  document.getElementById('step2Next').onclick = ()=> {
-    if(!document.getElementById('taskDeadline').value) return notify('Select date', 'error');
-    step2.classList.remove('active'); step3.classList.add('active');
-  };
 
   function nextDateForRecurrence(deadline, recurrence) {
     if (!deadline || recurrence === 'none') return null;
@@ -570,29 +552,24 @@
 
   function saveTaskLocallyAndRemote(task) {
     state.tasks.push(task);
-    saveLocalTasks(); // ✅ fallback persistence
 
-    if (!window._saveTask) {
-      notify("Cloud save not ready (Firebase not loaded). Task stored locally.", "error");
-      console.warn("window._saveTask is not defined - Firebase module may be failing.");
-      return;
+    // IMPORTANT: remote save must still happen; show error if it fails
+    if (window._saveTask) {
+      window._saveTask(task)
+        .then(() => notify('Saved', 'success'))
+        .catch((e) => {
+          console.error('Save failed:', e);
+          notify('Cloud save failed. Check Firestore rules / console.', 'error');
+        });
+    } else {
+      notify('Save hook missing (_saveTask). Task only local.', 'error');
     }
-
-    window._saveTask(task)
-      .then(() => {
-        console.log("Firestore save OK:", task.id);
-      })
-      .catch((e) => {
-        console.error("Firestore save FAILED:", e);
-        notify(`Cloud sync failed: ${e?.message || e}`, "error");
-      });
   }
 
   function maybeCreateRecurringTask(task) {
     if (!task.recurrence || task.recurrence === 'none') return;
     const next = nextDateForRecurrence(task.deadline, task.recurrence);
     if (!next) return;
-
     const alreadyExists = state.tasks.some(t => t.sourceTaskId === task.id && t.deadline === next);
     if (alreadyExists) return;
 
@@ -606,9 +583,17 @@
       sourceTaskId: task.id,
       createdAt: new Date().toISOString()
     };
-
     saveTaskLocallyAndRemote(recurringTask);
   }
+
+  document.getElementById('step1Next').onclick = ()=> {
+    if(!document.getElementById('taskTitle').value.trim()) return notify('Enter task title', 'error');
+    step1.classList.remove('active'); step2.classList.add('active');
+  };
+  document.getElementById('step2Next').onclick = ()=> {
+    if(!document.getElementById('taskDeadline').value) return notify('Select date', 'error');
+    step2.classList.remove('active'); step3.classList.add('active');
+  };
 
   document.getElementById('addTaskBtn').onclick = ()=> {
     const title = document.getElementById('taskTitle').value.trim();
@@ -635,16 +620,7 @@
     step3.classList.remove('active'); step1.classList.add('active');
     ['taskTitle','taskDeadline'].forEach(id => document.getElementById(id).value='');
     runAllRenderers();
-    notify('Task added', 'success');
   };
-
-  // Task action bar
-  const taskActionBar = document.getElementById("taskActionBar");
-  const taskActionTitle = document.getElementById("taskActionTitle");
-  const taskActionMeta = document.getElementById("taskActionMeta");
-  const taskDoneBtn = document.getElementById("taskDoneBtn");
-  const taskFailedBtn = document.getElementById("taskFailedBtn");
-  const taskCloseBtn = document.getElementById("taskCloseBtn");
 
   function openTaskBar(task) {
     state.selectedTaskId = task.id;
@@ -659,8 +635,6 @@
   }
   taskCloseBtn.onclick = closeTaskBar;
 
-  // Edit modal
-  const editModal = document.getElementById('editModal');
   function openEditModal(task) {
     if (!task) return;
     state.editingTaskId = task.id;
@@ -671,11 +645,11 @@
     document.getElementById('editRecurrence').value = task.recurrence || 'none';
     editModal.classList.add('open');
   }
+
   document.getElementById('editCancelBtn').onclick = () => editModal.classList.remove('open');
   document.getElementById('editSaveBtn').onclick = () => {
     const task = state.tasks.find(t => t.id === state.editingTaskId);
     if (!task) return;
-
     const updates = {
       title: document.getElementById('editTitle').value.trim(),
       deadline: document.getElementById('editDeadline').value,
@@ -683,17 +657,13 @@
       category: document.getElementById('editCategory').value,
       recurrence: document.getElementById('editRecurrence').value
     };
-
     Object.assign(task, updates);
-    saveLocalTasks();
-
     if (window._updateTaskFields) {
-      window._updateTaskFields(task.id, updates).catch(e => {
-        console.error("Firestore update FAILED:", e);
-        notify(`Cloud update failed: ${e?.message || e}`, "error");
+      window._updateTaskFields(task.id, updates).catch((e) => {
+        console.error('Update failed:', e);
+        notify('Edit saved locally only', 'error');
       });
     }
-
     editModal.classList.remove('open');
     runAllRenderers();
   };
@@ -707,13 +677,14 @@
     t.failed = status === 'failed';
     t.status = status;
 
-    saveLocalTasks();
-
     if (window._updateTaskFields) {
-      window._updateTaskFields(t.id, { completed: t.completed, failed: t.failed, status: t.status }).catch(e => {
-        console.error("Firestore status update FAILED:", e);
-        notify(`Cloud status update failed: ${e?.message || e}`, "error");
-      });
+      window._updateTaskFields(t.id, { completed: t.completed, failed: t.failed, status: t.status })
+        .catch((e) => {
+          console.error('Status update failed:', e);
+          notify('Cloud update failed', 'error');
+        });
+    } else if (window._setTaskCompleted) {
+      window._setTaskCompleted(t.id, t.completed).catch?.(() => {});
     }
 
     if (status === 'done') maybeCreateRecurringTask(t);
@@ -724,12 +695,9 @@
   taskDoneBtn.onclick = () => applyTaskStatus('done');
   taskFailedBtn.onclick = () => applyTaskStatus('failed');
 
-  // Calendar
   const calendar = document.getElementById('calendar');
   document.getElementById('prevMonth').onclick = ()=> { state.currentMonth.setMonth(state.currentMonth.getMonth()-1); renderCalendar(); };
   document.getElementById('nextMonth').onclick = ()=> { state.currentMonth.setMonth(state.currentMonth.getMonth()+1); renderCalendar(); };
-
-  const colorMap = { Study:'#2196f3', Exam:'#ff9800', Coursework:'#9c27b0', Personal:'#009688' };
 
   function bindSwipe(el, task) {
     let startX = 0;
@@ -753,24 +721,25 @@
     const end = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth()+1, 0);
     const todayStr = new Date().toISOString().split('T')[0];
 
+    const categoryColors = { Study:'#2196f3', Exam:'#ff9800', Coursework:'#9c27b0', Personal:'#009688' };
+
     for(let d=start.getDate(); d<=end.getDate(); d++){
       const dayDate = new Date(state.currentMonth.getFullYear(), state.currentMonth.getMonth(), d);
       const dateStr = dayDate.toISOString().split('T')[0];
-
       const day = document.createElement('div');
       day.className='day';
       if(dateStr < todayStr) day.classList.add('overdue');
       day.innerHTML=`<div class="day-header">${dateStr}</div>`;
 
-      const items = state.tasks
+      const matches = state.tasks
         .filter(t => t.deadline === dateStr)
         .filter(t => state.categoryFilter === 'all' ? true : (t.category || 'Study') === state.categoryFilter);
 
-      items.forEach(t => {
+      matches.forEach(t => {
         const tEl=document.createElement('div');
         const statusClass = t.failed ? ' failed' : (t.completed ? ' done' : '');
         tEl.className = `task ${t.intensity}${statusClass}`;
-        tEl.style.borderLeft = `4px solid ${colorMap[t.category||'Study'] || '#2196f3'}`;
+        tEl.style.borderLeft = `4px solid ${categoryColors[t.category||'Study'] || '#401d65'}`;
         tEl.textContent = t.title;
         tEl.onclick = ()=> openTaskBar(t);
         tEl.ondblclick = () => openEditModal(t);
@@ -778,24 +747,22 @@
         day.appendChild(tEl);
       });
 
-      if (items.length === 0) {
+      if (matches.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty-state';
         empty.textContent = 'No tasks';
         day.appendChild(empty);
       }
-
       calendar.appendChild(day);
     }
   }
+
+  function getDateKey(dateObj) { return new Date(dateObj).toISOString().split('T')[0]; }
 
   function getWeekRange() {
     const now = new Date(); now.setHours(0,0,0,0);
     const start = new Date(now); start.setDate(now.getDate() - 6);
     return {start, end: now};
-  }
-  function getDateKey(dateObj) {
-    return new Date(dateObj).toISOString().split('T')[0];
   }
 
   function calculateAnalytics() {
@@ -803,7 +770,6 @@
     const endKey = getDateKey(end);
 
     const openOverdue = state.tasks.filter(t => !t.completed && !t.failed && t.deadline < endKey).length;
-
     const weekly = state.tasks.filter(t => t.deadline >= getDateKey(start) && t.deadline <= endKey);
     const completed = weekly.filter(t => t.completed).length;
     const failed = weekly.filter(t => t.failed).length;
@@ -842,7 +808,6 @@
   }
 
   function drawWeeklyChart() {
-    const weeklyChart = document.getElementById('weeklyChart');
     if (!weeklyChart) return;
     const ctx = weeklyChart.getContext('2d');
     const w = weeklyChart.width, h = weeklyChart.height;
@@ -854,11 +819,11 @@
       const key = getDateKey(d);
       bars.push(state.tasks.filter(t => t.completed && t.deadline === key).length);
     }
+
     const max = Math.max(1, ...bars);
     const bw = (w - 80) / 7;
 
     ctx.font = "14px DM Sans";
-
     bars.forEach((v, i) => {
       const bh = (v / max) * (h - 60);
       const x = 40 + i * bw;
@@ -884,43 +849,27 @@
     drawWeeklyChart();
   }
 
-  // Category filter
-  const categoryFilter = document.getElementById('categoryFilter');
-  categoryFilter.onchange = (e) => {
-    state.categoryFilter = e.target.value;
-    renderCalendar();
-  };
+  window.renderCalendar = renderCalendar;
+  window.updateStats = updateStats;
 
-  // HYDRATE: prefer Firestore tasks; fallback to local
-  window._dashboardHydrate = async (firestoreTasks, userProfile = {}) => {
-    const cloud = Array.isArray(firestoreTasks) ? firestoreTasks : [];
-    const local = loadLocalTasks();
+  categoryFilter.onchange = (e) => { state.categoryFilter = e.target.value; renderCalendar(); };
 
-    // If cloud empty but local exists, use local (means rules/cloud failing)
-    const use = (cloud.length > 0) ? cloud : local;
-
-    state.tasks.length = 0;
-    use.forEach(t => state.tasks.push(t));
-    saveLocalTasks(); // keep local synced to whichever source we're using
-
+  // ====== FIXED HYDRATION (THIS IS THE BUG FIX) ======
+  // Clone loadedTasks BEFORE clearing state.tasks so we don't wipe the input array.
+  window._dashboardHydrate = async (loadedTasks, userProfile = {}) => {
+    const snapshot = Array.isArray(loadedTasks) ? loadedTasks.map(t => ({ ...t })) : [];   // ✅ clone objects
+    state.tasks.length = 0;                                                               // ✅ safe now
+    snapshot.forEach(t => state.tasks.push(t));
     state.analytics.streak = Number(userProfile.streakCount || 0);
     state.analytics.streakHistory = userProfile.streakHistory || [];
-
     runAllRenderers();
-
-    if (cloud.length === 0 && local.length > 0) {
-      notify("Loaded tasks from local backup (cloud returned empty). Check Firestore rules.", "error");
-      console.warn("Cloud returned 0 tasks but local had tasks. Likely Firestore rules blocking reads/writes.");
-    } else {
-      console.log("Hydrate source:", cloud.length > 0 ? "Firestore" : "Local/empty");
-    }
   };
 
-  // Initial render (empty) so UI isn't blank
   runAllRenderers();
 })();
 </script>
 
+<!-- ✅ FIREBASE AUTH + FIRESTORE + FCM TOKEN SAVE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
@@ -939,11 +888,7 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-  import {
-    getMessaging,
-    getToken,
-    onMessage
-  } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBqQF1Tijz_wctD0Z7kSCB80DeiWY1ZPyw",
@@ -990,8 +935,9 @@
       if (typeof t.reminderSameDaySent === "undefined") t.reminderSameDaySent = false;
     });
 
-    console.log("Loaded tasks from Firestore:", loaded.length);
-    return loaded;
+    // keep window.tasks updated for compatibility
+    window.tasks.length = 0;
+    loaded.forEach(t => window.tasks.push(t));
   }
 
   async function saveUserAnalytics(uid, analytics) {
@@ -1006,7 +952,7 @@
 
   async function saveWeeklyStats(uid, analytics) {
     const now = new Date();
-    const weekId = `${now.getUTCFullYear()}-W${String(Math.ceil((((now - new Date(Date.UTC(now.getUTCFullYear(),0,1))) / 86400000) + new Date(Date.UTC(now.getUTCFullYear(),0,1)).getUTCDay()+1) / 7))).padStart(2,'0')}`;
+    const weekId = `${now.getUTCFullYear()}-W${String(Math.ceil((((now - new Date(Date.UTC(now.getUTCFullYear(),0,1))) / 86400000) + new Date(Date.UTC(now.getUTCFullYear(),0,1)).getUTCDay()+1) / 7)).padStart(2,'0')}`;
     await setDoc(doc(db, "users", uid, "weeklyStats", weekId), {
       completed: Number(analytics.weeklyCompleted || 0),
       failed: Number(analytics.weeklyFailed || 0),
@@ -1022,18 +968,27 @@
   }
 
   async function saveTask(uid, task) {
-    // IMPORTANT: if rules deny this, you'll see the error in console + toast
     await setDoc(doc(db, "users", uid, "tasks", task.id), task, { merge: true });
+  }
+
+  async function setTaskCompleted(uid, taskId, completed) {
+    await updateDoc(doc(db, "users", uid, "tasks", taskId), { completed });
   }
 
   async function updateTaskFields(uid, taskId, updates) {
     await updateDoc(doc(db, "users", uid, "tasks", taskId), updates);
   }
 
-  window._saveTask = async (task) => {
+  window._saveTask = (task) => {
     const uid = localStorage.getItem("uid");
-    if (!uid) throw new Error("No uid in localStorage (auth not ready)");
+    if (!uid) return Promise.reject(new Error("No uid in localStorage"));
     return saveTask(uid, task);
+  };
+
+  window._setTaskCompleted = (taskId, completed) => {
+    const uid = localStorage.getItem("uid");
+    if (!uid) return Promise.reject(new Error("No uid in localStorage"));
+    return setTaskCompleted(uid, taskId, completed);
   };
 
   window._updateTaskFields = (taskId, updates) => {
@@ -1055,7 +1010,11 @@
   };
 
   async function loadCoachMessages(uid) {
-    const q = query(collection(db, "users", uid, "coachMessages"), orderBy("timestamp"), limit(200));
+    const q = query(
+      collection(db, "users", uid, "coachMessages"),
+      orderBy("timestamp"),
+      limit(200)
+    );
     const snap = await getDocs(q);
     const msgs = [];
     snap.forEach(d => msgs.push(d.data()));
@@ -1083,7 +1042,10 @@
   }
 
   async function persistCoachMessage(uid, msg) {
-    await addDoc(collection(db, "users", uid, "coachMessages"), { ...msg, createdAt: serverTimestamp() });
+    await addDoc(collection(db, "users", uid, "coachMessages"), {
+      ...msg,
+      createdAt: serverTimestamp()
+    });
   }
 
   window._persistCoachMessage = (msg) => {
@@ -1101,6 +1063,7 @@
   }
 
   let didInitPush = false;
+
   async function initPushWithUserGesture() {
     if (didInitPush) return;
     didInitPush = true;
@@ -1137,7 +1100,9 @@
   onMessage(messaging, (payload) => {
     try {
       if (Notification.permission === "granted" && payload?.notification?.body) {
-        new Notification(payload.notification.title || "Metrix Coach", { body: payload.notification.body });
+        new Notification(payload.notification.title || "Metrix Coach", {
+          body: payload.notification.body
+        });
       }
     } catch {}
   });
@@ -1146,12 +1111,20 @@
     try {
       const user = auth.currentUser;
       if (!user) return;
+
       const idToken = await user.getIdToken();
 
       await fetch("/api/send-push", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-        body: JSON.stringify({ title: title || "Metrix Coach", body: body || "", url: "/user-dashboard.html" })
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          title: title || "Metrix Coach",
+          body: body || "",
+          url: "/user-dashboard.html"
+        })
       });
     } catch {}
   };
@@ -1177,23 +1150,22 @@
     const emailEl = document.getElementById("menuEmail");
     if (emailEl) emailEl.textContent = user.email || "";
 
-    let loadedTasks = [];
-    try {
-      loadedTasks = await loadTasks(user.uid);
-    } catch (e) {
-      console.error("Firestore loadTasks FAILED:", e);
-      window._uiToast?.(`Cloud load failed: ${e?.message || e}`, "error");
-      loadedTasks = [];
-    }
-
+    await loadTasks(user.uid);
     await loadCoachMessages(user.uid);
     const userProfile = await loadUserProfile(user.uid);
 
+    // ✅ FIX: pass a CLONED snapshot into hydrate so it can’t be wiped
+    const snapshot = window.tasks.map(t => ({ ...t }));
+
     if (typeof window._dashboardHydrate === "function") {
-      await window._dashboardHydrate(loadedTasks, userProfile);
+      await window._dashboardHydrate(snapshot, userProfile);
+    } else {
+      if (typeof window.renderCalendar === "function") window.renderCalendar();
+      if (typeof window.updateStats === "function") window.updateStats();
     }
   });
 </script>
 
 </body>
 </html>
+
