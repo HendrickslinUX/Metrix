@@ -285,6 +285,7 @@
     display: flex;
     flex-direction: column;
     border: 1px solid rgba(255,255,255,0.1);
+    transition: max-height 0.18s ease;
   }
   .coach-panel-header {
     padding: 1rem;
@@ -519,6 +520,35 @@
 
   const editModal = document.getElementById('editModal');
 
+  // ✅ FIX: Coach minimize toggle wiring
+  const coachPanel = document.getElementById('coachPanel');
+  const coachPanelToggle = document.getElementById('coachPanelToggle');
+  const coachMessages = document.getElementById('coachMessages');
+  let coachMinimized = false;
+
+  function applyCoachPanelState() {
+    if (!coachPanel || !coachPanelToggle || !coachMessages) return;
+    if (coachMinimized) {
+      coachPanel.style.maxHeight = '64px';
+      coachMessages.style.display = 'none';
+      coachPanelToggle.textContent = 'Expand';
+    } else {
+      coachPanel.style.maxHeight = '';
+      coachMessages.style.display = 'flex';
+      coachPanelToggle.textContent = 'Minimize';
+    }
+  }
+
+  if (coachPanelToggle) {
+    coachPanelToggle.addEventListener('click', () => {
+      coachMinimized = !coachMinimized;
+      applyCoachPanelState();
+    });
+  }
+
+  // Ensure correct initial state
+  applyCoachPanelState();
+
   function notify(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = 'toast';
@@ -553,7 +583,6 @@
   function saveTaskLocallyAndRemote(task) {
     state.tasks.push(task);
 
-    // IMPORTANT: remote save must still happen; show error if it fails
     if (window._saveTask) {
       window._saveTask(task)
         .then(() => notify('Saved', 'success'))
@@ -854,11 +883,10 @@
 
   categoryFilter.onchange = (e) => { state.categoryFilter = e.target.value; renderCalendar(); };
 
-  // ====== FIXED HYDRATION (THIS IS THE BUG FIX) ======
-  // Clone loadedTasks BEFORE clearing state.tasks so we don't wipe the input array.
+  // ====== FIXED HYDRATION (YOUR TASK SAVE FIX) ======
   window._dashboardHydrate = async (loadedTasks, userProfile = {}) => {
-    const snapshot = Array.isArray(loadedTasks) ? loadedTasks.map(t => ({ ...t })) : [];   // ✅ clone objects
-    state.tasks.length = 0;                                                               // ✅ safe now
+    const snapshot = Array.isArray(loadedTasks) ? loadedTasks.map(t => ({ ...t })) : [];
+    state.tasks.length = 0;
     snapshot.forEach(t => state.tasks.push(t));
     state.analytics.streak = Number(userProfile.streakCount || 0);
     state.analytics.streakHistory = userProfile.streakHistory || [];
@@ -935,7 +963,6 @@
       if (typeof t.reminderSameDaySent === "undefined") t.reminderSameDaySent = false;
     });
 
-    // keep window.tasks updated for compatibility
     window.tasks.length = 0;
     loaded.forEach(t => window.tasks.push(t));
   }
@@ -1154,7 +1181,6 @@
     await loadCoachMessages(user.uid);
     const userProfile = await loadUserProfile(user.uid);
 
-    // ✅ FIX: pass a CLONED snapshot into hydrate so it can’t be wiped
     const snapshot = window.tasks.map(t => ({ ...t }));
 
     if (typeof window._dashboardHydrate === "function") {
@@ -1168,4 +1194,3 @@
 
 </body>
 </html>
-
